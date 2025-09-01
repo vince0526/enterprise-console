@@ -1,0 +1,4 @@
+{
+  "preset": "laravel",
+  "rules": { "strict_param": true }
+}

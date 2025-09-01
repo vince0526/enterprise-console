@@ -6,6 +6,8 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
+$this->call(RolesSeeder::class);
+
 class DatabaseSeeder extends Seeder
 {
     /**
