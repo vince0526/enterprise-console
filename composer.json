@@ -63,21 +63,23 @@
             "@php artisan test"
         ]
     },
-    "extra": {
-        "laravel": {
-            "dont-discover": []
-        }
+  "extra": {
+    "laravel": {
+      "dont-discover": []
+    }
+  },
+  "config": {
+    "sort-packages": true,
+    "optimize-autoloader": true,
+    "preferred-install": "dist",
+    "platform": {
+      "php": "8.3"
     },
-    "config": {
-	"sort-packages": true,
-    	"platform": { "php": "8.3" }
-        "optimize-autoloader": true,
-        "preferred-install": "dist",
-        "allow-plugins": {
-            "pestphp/pest-plugin": true,
-            "php-http/discovery": true
-        }
-    },
-    "minimum-stability": "stable",
-    "prefer-stable": true
+    "allow-plugins": {
+      "pestphp/pest-plugin": true,
+      "php-http/discovery": true
+    }
+  },
+  "minimum-stability": "stable",
+  "prefer-stable": true
 }
