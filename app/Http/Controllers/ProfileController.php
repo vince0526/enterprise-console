@@ -3,57 +3,57 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
-use Illuminate\View\View;
+use Illuminate\Validation\Rules;
 
 class ProfileController extends Controller
 {
-    public function edit(Request $request): View
+    public function edit(Request $request)
     {
         return view('profile.edit', [
             'user' => $request->user(),
         ]);
     }
 
-    public function update(Request $request): RedirectResponse
+    public function update(Request $request)
     {
+        $user = $request->user();
+
         $validated = $request->validate([
-            'name'  => ['required', 'string', 'max:255'],
+            'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
         ]);
 
-        $user = $request->user();
+        $user->fill($validated);
 
-        // Only reset verification if email changed
-        if ($validated['email'] !== $user->email) {
+        if ($user->isDirty('email')) {
             $user->email_verified_at = null;
         }
 
-        $user->fill($validated)->save();
+        $user->save();
 
-        // Breeze tests expect redirect back to /profile
-        return Redirect::to('/profile');
+        return redirect('/profile')->with('status', 'profile-updated');
     }
 
-    public function destroy(Request $request): RedirectResponse
+    public function destroy(Request $request)
     {
-        // Error bag name must be "userDeletion" for the test
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+        $request->validate([
+            'password' => ['required', Rules\Password::defaults()],
         ]);
 
         $user = $request->user();
 
+        if (! Auth::validate(['email' => $user->email, 'password' => $request->password])) {
+            return back()->withErrors(['password' => 'The provided password is incorrect.'])
+                ->withInput()
+                ->with('userDeletion', true);
+        }
+
         Auth::logout();
-
         $user->delete();
-
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        // Breeze tests expect redirect to "/"
-        return Redirect::to('/');
+        return redirect('/');
     }
 }

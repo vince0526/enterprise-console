@@ -18,6 +18,8 @@ return [
 
     'enabled' => env('TELESCOPE_ENABLED', true),
 
+    'allowed_emails' => ['vincentvillanueva@gmail.com', 'villanuevav.customs.gov.ph'],
+
     /*
     |--------------------------------------------------------------------------
     | Telescope Domain
