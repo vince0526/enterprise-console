@@ -1,0 +1,17 @@
+parameters:
+  paths:
+    - app
+  level: 5
+  tmpDir: storage/framework/cache/phpstan
+  checkMissingIterableValueType: false
+  reportUnmatchedIgnoredErrors: true
+
+includes:
+  - vendor/larastan/larastan/extension.neon
+
+larastan:
+  analyse:
+    paths:
+      - app
+  container:
+    application_path: app

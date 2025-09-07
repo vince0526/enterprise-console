@@ -1,30 +1,29 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ProfileUpdateRequest;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Validation\Rules;
+use Illuminate\View\View;
 
-class ProfileController extends Controller
+class ProfileController
 {
-    public function edit(Request $request)
+    public function edit(Request $request): View
     {
         return view('profile.edit', [
             'user' => $request->user(),
         ]);
     }
 
-    public function update(Request $request)
+    public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
 
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255'],
-        ]);
-
-        $user->fill($validated);
+        $user->fill($request->validated());
 
         if ($user->isDirty('email')) {
             $user->email_verified_at = null;
@@ -32,28 +31,24 @@ class ProfileController extends Controller
 
         $user->save();
 
-        return redirect('/profile')->with('status', 'profile-updated');
+        return redirect()->route('profile.edit')->with('status', 'profile-updated');
     }
 
-    public function destroy(Request $request)
+    public function destroy(Request $request): RedirectResponse
     {
-        $request->validate([
-            'password' => ['required', Rules\Password::defaults()],
+        $request->validateWithBag('userDeletion', [
+            'password' => ['required', 'current_password'],
         ]);
 
         $user = $request->user();
 
-        if (! Auth::validate(['email' => $user->email, 'password' => $request->password])) {
-            return back()->withErrors(['password' => 'The provided password is incorrect.'])
-                ->withInput()
-                ->with('userDeletion', true);
-        }
-
         Auth::logout();
+
         $user->delete();
+
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->to('/');
     }
 }

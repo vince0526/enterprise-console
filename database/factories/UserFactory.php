@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Database\Factories;
 
 use App\Models\User;
@@ -21,5 +23,11 @@ class UserFactory extends Factory
             'password' => bcrypt('password'),
             'remember_token' => Str::random(10),
         ];
+    }
+    public function unverified(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'email_verified_at' => null,
+        ]);
     }
 }

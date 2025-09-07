@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 use App\Http\Controllers\Api\V1\AdminOnlyController;
 use App\Http\Controllers\Api\V1\DashboardController;
 use App\Http\Controllers\Api\V1\HealthController;
@@ -75,3 +77,13 @@ Route::middleware(['auth:sanctum', 'permission:view dashboard'])->get('/dashboar
     'ok' => true,
     'feature' => 'dashboard',
 ]);
+
+Route::get('/v1/health', \App\Http\Controllers\HealthController::class);
+
+Route::get('/v1/health', \App\Http\Controllers\HealthController::class);
+
+Route::get('/v1/health', \App\Http\Controllers\HealthController::class);
+
+Route::get('/v1/health', \App\Http\Controllers\HealthController::class);
+
+Route::get('/v1/health', \App\Http\Controllers\HealthController::class);

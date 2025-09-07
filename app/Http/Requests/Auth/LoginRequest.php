@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace App\Http\Requests\Auth;
 
 use Illuminate\Auth\Events\Lockout;
@@ -11,6 +13,17 @@ use Illuminate\Validation\ValidationException;
 
 class LoginRequest extends FormRequest
 {
+    /**
+     * Normalize inputs before validation.
+     */
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            // normalize to a real string, trimmed & lowercased
+            'email' => Str::lower(trim((string) $this->input('email', ''))),
+        ]);
+    }
+
     /**
      * Determine if the user is authorized to make this request.
      */
@@ -80,6 +93,9 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->string('email')).'|'.$this->ip());
+        // email already normalized in prepareForValidation()
+        $email = (string) $this->input('email', '');
+
+        return Str::transliterate($email.'|'.$this->ip());
     }
 }
