@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Api\V1\AdminOnlyController;
 use App\Http\Controllers\Api\V1\DashboardController;
+use App\Http\Controllers\Api\V1\Database\RelationsController;
+use App\Http\Controllers\Api\V1\Database\TablesController;
 use App\Http\Controllers\Api\V1\HealthController;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -17,6 +19,10 @@ Route::prefix('v1')->group(function () {
     Route::middleware('auth:sanctum')->group(function () {
         Route::middleware('role:admin')->get('/admin/only', AdminOnlyController::class);
         Route::middleware('permission:view dashboard')->get('/dashboard', DashboardController::class);
+
+        // Database schema endpoints
+        Route::get('/database/{database_connection}/tables', TablesController::class);
+        Route::get('/database/{database_connection}/relations', RelationsController::class); // ?table=...
     });
 });
 
@@ -87,3 +93,30 @@ Route::get('/v1/health', \App\Http\Controllers\HealthController::class);
 Route::get('/v1/health', \App\Http\Controllers\HealthController::class);
 
 Route::get('/v1/health', \App\Http\Controllers\HealthController::class);
+
+/* --- User Management (API v1) --- */
+use App\Http\Controllers\Api\V1\UserManagement\UserPermissionsGrantController;
+use App\Http\Controllers\Api\V1\UserManagement\UserPermissionsRevokeController;
+use App\Http\Controllers\Api\V1\UserManagement\UserRolesAttachController;
+use App\Http\Controllers\Api\V1\UserManagement\UserRolesDetachController;
+use App\Http\Controllers\Api\V1\UserManagement\UsersDestroyController;
+use App\Http\Controllers\Api\V1\UserManagement\UsersIndexController;
+use App\Http\Controllers\Api\V1\UserManagement\UsersRestoreController;
+use App\Http\Controllers\Api\V1\UserManagement\UsersShowController;
+use App\Http\Controllers\Api\V1\UserManagement\UsersStoreController;
+use App\Http\Controllers\Api\V1\UserManagement\UsersUpdateController;
+
+Route::prefix('v1')->middleware(['auth:sanctum'])->group(function () {
+    Route::get('users', UsersIndexController::class);
+    Route::get('users/{user}', UsersShowController::class);
+    Route::post('users', UsersStoreController::class);
+    Route::patch('users/{user}', UsersUpdateController::class);
+    Route::delete('users/{user}', UsersDestroyController::class);
+    Route::post('users/{user}/restore', UsersRestoreController::class);
+
+    Route::post('users/{user}/roles', UserRolesAttachController::class);
+    Route::delete('users/{user}/roles', UserRolesDetachController::class);
+
+    Route::post('users/{user}/permissions', UserPermissionsGrantController::class);
+    Route::delete('users/{user}/permissions', UserPermissionsRevokeController::class);
+});

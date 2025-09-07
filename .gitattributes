@@ -1,10 +1,15 @@
+﻿# Normalize line endings to LF in repo; let Git handle checkout
 * text=auto
-*.php text eol=lf
-*.neon text eol=lf
-*.json text eol=lf
-*.yml  text eol=lf
-*.yaml text eol=lf
-*.md   text eol=lf
-.env*  text eol=lf
-.editorconfig text eol=lf
-.gitattributes text eol=lf
+
+# Force LF for source/config
+*.php   text eol=lf
+*.blade.php text eol=lf
+*.js    text eol=lf
+*.ts    text eol=lf
+*.css   text eol=lf
+*.scss  text eol=lf
+*.json  text eol=lf
+*.yml   text eol=lf
+*.yaml  text eol=lf
+*.neon  text eol=lf
+*.md    text eol=lf

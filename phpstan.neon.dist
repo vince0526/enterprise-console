@@ -7,3 +7,4 @@ parameters:
     - app
   tmpDir: storage/framework/cache/phpstan
   reportUnmatchedIgnoredErrors: true
+  ignoreErrors: []

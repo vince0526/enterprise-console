@@ -1,0 +1,49 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  laravel:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: mbstring, dom, fileinfo, sqlite3, intl, curl
+          coverage: xdebug
+          tools: composer
+
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: vendor
+          key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            composer-${{ runner.os }}-
+
+      - name: Install deps
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Pint (format check)
+        run: vendor/bin/pint --test
+
+      - name: PHPStan
+        run: vendor/bin/phpstan analyse --memory-limit=512M
+
+      - name: Tests (with coverage)
+        env:
+          APP_ENV: testing
+          APP_KEY: base64:$(php -r 'echo base64_encode(random_bytes(32));')
+          DB_CONNECTION: sqlite
+          DB_DATABASE: ':memory:'
+          MAIL_MAILER: array
+          CACHE_DRIVER: array
+          SESSION_DRIVER: array
+          QUEUE_CONNECTION: sync
+        run: php artisan test --coverage-text --colors=always

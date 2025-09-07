@@ -3,6 +3,8 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Web\Database\CompanyUserController as WebCompanyUser;
+use App\Http\Controllers\Web\Database\UserRestrictionController as WebUserRestriction;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => view('welcome'));
@@ -15,6 +17,14 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::resource('database/company-users', WebCompanyUser::class)
+        ->parameters(['company-users' => 'company_user'])
+        ->names('company-users');
+
+    Route::resource('database/user-restrictions', WebUserRestriction::class)
+        ->parameters(['user-restrictions' => 'user_restriction'])
+        ->names('user-restrictions');
 });
 
 require __DIR__.'/auth.php';
