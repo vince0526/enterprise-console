@@ -1,0 +1,27 @@
+name: Check PR Migrations
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+jobs:
+  check-migration-suffixes:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout PR
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Install deps
+        run: composer install --no-interaction --prefer-dist --no-progress
+
+      - name: Run PR migration suffix check
+        env:
+          GITHUB_EVENT_PATH: ${{ github.event_path }}
+        run: php ./scripts/check-pr-migration-suffixes.php
