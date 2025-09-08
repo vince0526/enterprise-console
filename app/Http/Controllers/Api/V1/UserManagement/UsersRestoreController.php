@@ -13,7 +13,7 @@ final class UsersRestoreController
     public function __invoke(int $user): JsonResponse
     {
         $auth = auth()->user();
-        abort_unless($auth?->hasRole('admin'), 403);
+        abort_unless((bool) ($auth?->hasRole('admin')), 403);
 
         $model = User::withTrashed()->findOrFail($user);
         $model->restore();

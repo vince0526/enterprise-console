@@ -18,9 +18,12 @@ class LoginRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
+        $email = $this->input('email', '');
+        $email = is_scalar($email) ? (string) $email : '';
+
         $this->merge([
             // normalize to a real string, trimmed & lowercased
-            'email' => Str::lower(trim((string) $this->input('email', ''))),
+            'email' => Str::lower(trim($email)),
         ]);
     }
 
@@ -94,8 +97,14 @@ class LoginRequest extends FormRequest
     public function throttleKey(): string
     {
         // email already normalized in prepareForValidation()
-        $email = (string) $this->input('email', '');
+        $emailRaw = $this->input('email', '');
+        $email = is_scalar($emailRaw) ? (string) $emailRaw : '';
 
-        return Str::transliterate($email.'|'.$this->ip());
+        $ip = $this->ip();
+        $ip = is_scalar($ip) ? (string) $ip : '';
+
+        $key = $email.'|'.$ip;
+
+        return (string) Str::transliterate($key);
     }
 }

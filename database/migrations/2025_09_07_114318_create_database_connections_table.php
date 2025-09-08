@@ -6,13 +6,19 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+final class CreateDatabaseConnectionsTable extends Migration
 {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
+        // Defensive: if the table already exists (e.g. stray duplicate migration
+        // executed), skip to avoid "table already exists" errors in tests.
+        if (Schema::hasTable('database_connections')) {
+            return;
+        }
+
         Schema::create('database_connections', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
@@ -35,4 +41,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('database_connections');
     }
-};
+}

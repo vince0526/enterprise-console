@@ -24,13 +24,27 @@ final class UserStoreRequest extends FormRequest
     }
 
     /**
-     * @return array<string, mixed>
+     * Return validated input with stable string types for consumers.
+     *
+     * @return array<string, string>
      */
     public function validated($key = null, $default = null): array
     {
-        $data = parent::validated($key, $default);
-        $data['email'] = \Illuminate\Support\Str::lower(trim((string) ($data['email'] ?? '')));
+        /** @var array<string, mixed> $data */
+        $data = parent::validated($key, $default) ?? [];
 
-        return $data;
+        $nameRaw = $data['name'] ?? '';
+        $emailRaw = $data['email'] ?? '';
+        $passwordRaw = $data['password'] ?? '';
+
+        $name = is_scalar($nameRaw) ? (string) $nameRaw : '';
+        $email = is_scalar($emailRaw) ? (string) $emailRaw : '';
+        $password = is_scalar($passwordRaw) ? (string) $passwordRaw : '';
+
+        return [
+            'name' => $name,
+            'email' => \Illuminate\Support\Str::lower(trim($email)),
+            'password' => $password,
+        ];
     }
 }

@@ -19,6 +19,6 @@ final class UsersShowController
 
     private function authorize(string $ability, mixed $arguments = []): void
     {
-        abort_unless(auth()->user()?->can($ability, $arguments), 403);
+        abort_unless((bool) auth()->user()?->can($ability, $arguments), 403);
     }
 }

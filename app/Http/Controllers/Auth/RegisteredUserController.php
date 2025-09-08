@@ -38,10 +38,18 @@ class RegisteredUserController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
 
+        $nameRaw = $request->input('name');
+        $emailRaw = $request->input('email');
+        $passwordRaw = $request->input('password');
+
+        $name = is_scalar($nameRaw) ? (string) $nameRaw : '';
+        $email = is_scalar($emailRaw) ? (string) $emailRaw : '';
+        $password = is_scalar($passwordRaw) ? (string) $passwordRaw : '';
+
         $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'name' => $name,
+            'email' => $email,
+            'password' => Hash::make($password),
         ]);
 
         event(new Registered($user));
