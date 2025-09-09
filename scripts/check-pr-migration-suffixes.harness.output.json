@@ -1,0 +1,8 @@
+{
+    "collisions": {
+        "create_users_table": {
+            "existing": "C:\\laragon\\www\\enterprise-console\\scripts/../database/migrations/0001_01_01_000000_create_users_table.php",
+            "added": "database/migrations/2025_09_09_000001_create_users_table.php"
+        }
+    }
+}
