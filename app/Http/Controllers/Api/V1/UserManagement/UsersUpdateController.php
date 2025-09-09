@@ -14,10 +14,12 @@ final class UsersUpdateController
 {
     public function __invoke(UserUpdateRequest $request, User $user): JsonResponse
     {
+        /** @var array<string, string> $data */
         $data = $request->validated();
 
         if (array_key_exists('password', $data)) {
-            $data['password'] = Hash::make((string) $data['password']);
+            // inside this branch the key exists and is a string per the FormRequest
+            $data['password'] = Hash::make($data['password']);
         }
 
         $user->fill($data)->save();

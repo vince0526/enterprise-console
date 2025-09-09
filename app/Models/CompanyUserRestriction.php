@@ -9,6 +9,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class CompanyUserRestriction extends Model
 {
+    /** @var list<string> */
+    protected $fillable = ['user_id', 'database_connection_id', 'read_only'];
+
     /** @return BelongsTo<User, $this> */
     public function user(): BelongsTo
     {

@@ -22,8 +22,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        ResetPassword::createUrlUsing(function (object $notifiable, string $token) {
-            return config('app.frontend_url')."/password-reset/$token?email={$notifiable->getEmailForPasswordReset()}";
+        ResetPassword::createUrlUsing(function ($notifiable, string $token): string {
+            // $notifiable can be any notifiable type; defensively cast
+            $email = '';
+            if (is_object($notifiable) && method_exists($notifiable, 'getEmailForPasswordReset')) {
+                $e = $notifiable->getEmailForPasswordReset();
+                $email = is_scalar($e) ? (string) $e : '';
+            }
+
+            $frontendRaw = config('app.frontend_url');
+            $frontend = is_scalar($frontendRaw) ? (string) $frontendRaw : '';
+
+            return sprintf('%s/password-reset/%s?email=%s', $frontend, (string) $token, urlencode($email));
         });
     }
 }

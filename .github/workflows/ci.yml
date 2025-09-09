@@ -30,6 +30,9 @@ jobs:
       - name: Install deps
         run: composer install --no-interaction --prefer-dist --no-progress
 
+      - name: Check for duplicate migrations
+        run: php ./scripts/check-migration-duplicates.php
+
       - name: Pint (format check)
         run: vendor/bin/pint --test
 

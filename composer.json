@@ -54,9 +54,7 @@
                     "stan":  "phpstan analyse --memory-limit=512M",
                     "check":  "pint && phpstan analyse --memory-limit=512M",
                     "test":  "php artisan test",
-                    "post-update-cmd":  [
-                                            "@php artisan vendor:publish --tag=laravel-assets --ansi --force"
-                                        ],
+                    "post-update-cmd":  [],
                     "post-autoload-dump":  [
                                                "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
                                                "@php artisan package:discover --ansi"

@@ -22,14 +22,16 @@ class ProfileController
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
         $user = $request->user();
+        /** @var \App\Models\User|null $user */
+        if ($user) {
+            $user->fill($request->validated());
 
-        $user->fill($request->validated());
+            if ($user->isDirty('email')) {
+                $user->email_verified_at = null;
+            }
 
-        if ($user->isDirty('email')) {
-            $user->email_verified_at = null;
+            $user->save();
         }
-
-        $user->save();
 
         return redirect()->route('profile.edit')->with('status', 'profile-updated');
     }
@@ -41,10 +43,10 @@ class ProfileController
         ]);
 
         $user = $request->user();
-
+        /** @var \App\Models\User|null $user */
         Auth::logout();
 
-        $user->delete();
+        $user?->delete();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();

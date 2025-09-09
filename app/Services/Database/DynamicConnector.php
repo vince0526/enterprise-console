@@ -9,7 +9,7 @@ use Illuminate\Database\ConnectionInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
-final class DynamicConnector
+final class DynamicConnector implements DynamicConnectorInterface
 {
     private const NAME = 'ec_dynamic';
 
@@ -30,8 +30,19 @@ final class DynamicConnector
             $cfg['sslmode'] = 'prefer';
         }
 
-        if ($conn->driver === 'sqlite' && (! $conn->database || $conn->database === ':memory:')) {
-            $cfg['database'] = database_path('external.sqlite');
+        if ($conn->driver === 'sqlite') {
+            if ($conn->database === ':memory:') {
+                // For in-memory sqlite, reuse the default connection so the test
+                // harness and dynamic connector operate on the same in-memory
+                // database instance and migrations only run once.
+                return DB::connection();
+            }
+
+            if (! $conn->database) {
+                $cfg['database'] = database_path('external.sqlite');
+            } else {
+                $cfg['database'] = $conn->database;
+            }
         }
 
         Config::set('database.connections.'.self::NAME, $cfg);

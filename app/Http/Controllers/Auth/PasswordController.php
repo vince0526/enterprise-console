@@ -22,9 +22,18 @@ class PasswordController extends Controller
             'password' => ['required', Password::defaults(), 'confirmed'],
         ]);
 
-        $request->user()->update([
-            'password' => Hash::make($validated['password']),
-        ]);
+        /** @var array<string, mixed> $validated */
+        /** @var \App\Models\User|null $user */
+        $user = $request->user();
+
+        if (isset($validated['password'])) {
+            $pwRaw = $validated['password'];
+            $pw = is_scalar($pwRaw) ? (string) $pwRaw : '';
+
+            $user?->update([
+                'password' => Hash::make($pw),
+            ]);
+        }
 
         return back()->with('status', 'password-updated');
     }

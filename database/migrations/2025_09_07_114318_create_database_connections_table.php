@@ -6,13 +6,14 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
+final class CreateDatabaseConnectionsTable extends Migration
 {
     /**
      * Run the migrations.
      */
     public function up(): void
     {
+        // Create database_connections table
         Schema::create('database_connections', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
@@ -35,4 +36,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('database_connections');
     }
-};
+}

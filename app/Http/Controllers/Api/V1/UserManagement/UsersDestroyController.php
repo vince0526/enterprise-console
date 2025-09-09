@@ -11,7 +11,7 @@ final class UsersDestroyController
 {
     public function __invoke(User $user): JsonResponse
     {
-        abort_unless(auth()->user()?->can('delete', $user), 403);
+        abort_unless((bool) auth()->user()?->can('delete', $user), 403);
         $user->delete();
 
         return response()->json(['deleted' => true]);

@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 
 class EnsureEmailIsVerified
 {
-    public function handle(Request $request, Closure $next): Response
+    public function handle(Request $request, Closure $next): mixed
     {
         if (! $request->user() || ! $request->user()->hasVerifiedEmail()) {
             if ($request->expectsJson()) {
@@ -20,6 +20,8 @@ class EnsureEmailIsVerified
             return redirect()->route('verification.notice');
         }
 
-        return $next($request);
+        $result = $next($request);
+
+        return $result instanceof Response ? $result : $result;
     }
 }
