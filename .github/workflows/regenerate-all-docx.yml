@@ -1,0 +1,50 @@
+name: Regenerate All DOCX
+
+on:
+  push:
+    branches: [main, feat/pr-migration-checker]
+    paths:
+      - "docs/modules.md"
+      - "docs/environment-setup.md"
+      - "scripts/md_to_docx.py"
+      - "scripts/env_setup_md_to_docx.py"
+      - "scripts/generate-all-docs.py"
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install python-docx
+        run: |
+          python -m pip install --upgrade pip
+          pip install python-docx
+
+      - name: Generate all DOCX
+        run: |
+          python scripts/generate-all-docs.py
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: all-docx
+          path: |
+            docs/modules.docx
+            docs/environment-setup.docx
+
+      - name: Auto-commit DOCX
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/modules.docx docs/environment-setup.docx
+          git diff --staged --quiet || (git commit -m "chore: regenerate all docx [skip ci]" && git push)

@@ -1,0 +1,18 @@
+{
+  "recommendations": [
+    "bmewburn.vscode-intelephense-client",
+    "ryannaddy.laravel-artisan",
+    "shufo.vscode-blade-formatter",
+    "onecentlin.laravel-blade",
+    "amiralizadeh9480.laravel-extra-intellisense",
+    "open-sourcing.laravel-pint",
+    "bradlc.vscode-tailwindcss",
+    "csstools.postcss",
+    "eamodio.gitlens",
+    "GitHub.vscode-pull-request-github",
+    "mikestead.dotenv",
+    "usernamehw.errorlens",
+    "christian-kohler.path-intellisense",
+    "yzhang.markdown-all-in-one"
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "editor.formatOnSave": true,
+  "files.eol": "\n",
+  "php.validate.executablePath": "C:/laragon/bin/php/php-8.3.x/php.exe",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "bladeFormatter.format.indentSize": 4,
+  "bladeFormatter.format.wrapLineLength": 140,
+  "tailwindCSS.includeLanguages": {
+    "blade": "html"
+  },
+  "tailwindCSS.experimental.classRegex": [
+    ["class=\\\"([^\\\"]*)\\\"", "[1]"]
+  ]
+}

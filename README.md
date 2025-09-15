@@ -11,19 +11,49 @@
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+-   [Simple, fast routing engine](https://laravel.com/docs/routing).
+-   [Powerful dependency injection container](https://laravel.com/docs/container).
+-   Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+-   Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+-   Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+-   [Robust background job processing](https://laravel.com/docs/queues).
+-   [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
 ## Project Environment Setup
 
 For the Enterprise Console specific development workstation provisioning guide (PHP 8.3, Laravel 12, Node/Vite, QA tooling) see: [docs/environment-setup.md](docs/environment-setup.md). A PowerShell bootstrap script is available in `scripts/bootstrap-dev-environment.ps1` and a DOCX version can be generated with `python scripts/env_setup_md_to_docx.py` (requires `python-docx`).
+
+### Quick Commands
+
+Common tasks are available via Makefile (macOS/Linux) or PowerShell script (Windows).
+
+Makefile examples:
+
+```
+make install      # composer install + npm install
+make dev          # concurrent dev (serve, queue, logs, vite)
+make qa-full      # pint + phpstan + tests
+make docs         # regenerate DOCX docs
+```
+
+PowerShell (Windows):
+
+```
+./scripts/dev-tasks.ps1 install
+./scripts/dev-tasks.ps1 dev
+./scripts/dev-tasks.ps1 qa-full
+./scripts/dev-tasks.ps1 docs
+```
+
+### DOCX Automation
+
+Workflows regenerate DOCX outputs on markdown changes:
+
+-   `regenerate-env-setup-docx.yml`
+-   `regenerate-docx.yml`
+-   `regenerate-all-docx.yml` (aggregate)
 
 ## Learning Laravel
 
@@ -39,14 +69,14 @@ We would like to extend our thanks to the following sponsors for funding Laravel
 
 ### Premium Partners
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+-   **[Vehikl](https://vehikl.com)**
+-   **[Tighten Co.](https://tighten.co)**
+-   **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+-   **[64 Robots](https://64robots.com)**
+-   **[Curotec](https://www.curotec.com/services/technologies/laravel)**
+-   **[DevSquad](https://devsquad.com/hire-laravel-developers)**
+-   **[Redberry](https://redberry.international/laravel-development)**
+-   **[Active Logic](https://activelogic.com)**
 
 ## Contributing
 
