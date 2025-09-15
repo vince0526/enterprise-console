@@ -23,3 +23,8 @@ Homestead.json
 Homestead.yaml
 Thumbs.db
 *.txt
+
+# Documentation extraction temp artifacts
+temp_doc_raw.xml
+temp_docx/
+temp_emc.zip
