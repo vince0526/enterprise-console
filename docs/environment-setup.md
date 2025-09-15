@@ -116,8 +116,31 @@ composer run check-all || exit 1
 6) MAIL_*, SANCTUM_*, SESSION_*
 
 ## 15. Optional: Sail / Docker
-1) `php artisan sail:install` (select services) then `./vendor/bin/sail up`.
-2) Remove Laragon overlap if adopting containers.
+1) Enable Sail (if you want a containerized stack):
+   - `php artisan sail:install` (choose: mysql/redis/meilisearch as needed)
+   - `php artisan sail:publish` (optional to customize Dockerfiles)
+2) Start environment (Linux/macOS): `./vendor/bin/sail up -d`
+3) Windows (PowerShell): `bash ./vendor/bin/sail up -d` (from WSL) or use Git Bash.
+4) Executing commands:
+   - `./vendor/bin/sail artisan migrate`
+   - `./vendor/bin/sail npm run dev`
+5) Performance tips (Windows): prefer WSL2 for volume mounts; put project inside `\\wsl$` distro filesystem for speed.
+6) If adopting Sail exclusively, stop Laragon services to avoid port conflicts (80, 3306, 6379).
+7) Example override `docker-compose.override.yml` (create at project root):
+```
+services:
+  laravel.test:
+    environment:
+      PHP_IDE_CONFIG: "serverName=enterprise-console"
+    volumes:
+      - ./:/var/www/html:delegated
+  mysql:
+    command: --default-authentication-plugin=mysql_native_password --max-connections=250
+```
+8) Running quality inside Sail:
+   - `./vendor/bin/sail composer run check-all`
+   - `./vendor/bin/sail php artisan test`
+9) Rebuild after PHP extension changes: `./vendor/bin/sail build --no-cache`
 
 ## 16. Verification Checklist
 1) `php artisan about` OK
@@ -135,6 +158,7 @@ composer run check-all || exit 1
 ## 18. Regenerating Documentation
 1) Update this file as needed.
 2) Convert to DOCX using Python helper (see below).
+3) CI Automation: A GitHub Action can auto-regenerate `environment-setup.docx` when this markdown changes. See workflow file `regenerate-env-setup-docx.yml` once added.
 
 ## 19. Matrix Summary
 
@@ -178,3 +202,5 @@ A Python script `scripts/md_to_docx.py` exists but targets `docs/modules.md`. Fo
 2) Duplicate script to target this file.
 
 A dedicated script will be added to generate a DOCX for this environment spec.
+3) Current dedicated script: `python scripts/env_setup_md_to_docx.py` (already committed).
+4) Planned automation: Add workflow `regenerate-env-setup-docx.yml` to watch `docs/environment-setup.md`.
