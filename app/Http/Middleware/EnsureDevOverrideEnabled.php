@@ -23,7 +23,7 @@ class EnsureDevOverrideEnabled
             return response()->json([
                 'success' => false,
                 'message' => 'dev override token not configured',
-            ], 500);
+            ], 422);
         }
 
         return $next($request);

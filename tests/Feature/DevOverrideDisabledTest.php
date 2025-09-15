@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\Auth\DevOverrideController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Tests\Support\WithDevOverride;
 use Tests\TestCase;
@@ -22,13 +20,11 @@ class DevOverrideDisabledTest extends TestCase
         $this->enableDevOverride('test-token');
         config(['dev_override.enabled' => false]);
 
-        $req = Request::create('/dev-override', 'POST', [], [], [], [], json_encode(['token' => 'test-token']));
-        $controller = new DevOverrideController;
-        $resp = $controller($req);
+        $response = $this->postJson('/dev-override', ['token' => 'test-token']);
 
-        $this->assertEquals(403, $resp->getStatusCode());
-        $data = $resp->getData(true);
-        $this->assertFalse($data['success']);
-        $this->assertEquals('dev override disabled', $data['message']);
+        $response->assertStatus(403)
+            ->assertJson(fn ($json) => $json
+                ->where('success', false)
+                ->where('message', 'dev override disabled'));
     }
 }

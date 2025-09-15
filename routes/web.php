@@ -32,9 +32,10 @@ require __DIR__.'/auth.php';
 use App\Http\Controllers\Auth\DevOverrideController;
 use App\Http\Controllers\Auth\ForgotUsernameController;
 use App\Http\Controllers\Auth\OAuthController;
+use App\Http\Middleware\EnsureDevOverrideEnabled;
 
 Route::post('/dev-override', DevOverrideController::class)
-    ->middleware('dev.override')
+    ->middleware([EnsureDevOverrideEnabled::class, 'throttle:5,1'])
     ->name('dev.override');
 
 Route::post('/auth/recover-username', [ForgotUsernameController::class, 'send'])->name('auth.recover-username');

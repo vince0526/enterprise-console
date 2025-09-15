@@ -4,8 +4,6 @@ declare(strict_types=1);
 
 namespace Tests\Feature;
 
-use App\Http\Controllers\Auth\DevOverrideController;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Tests\Support\WithDevOverride;
 use Tests\TestCase;
@@ -14,25 +12,23 @@ class DevOverrideTest extends TestCase
 {
     use WithDevOverride;
 
-    public function test_dev_override_creates_user_and_returns_success()
+    public function test_dev_override_creates_user_and_returns_success(): void
     {
-        // run migrations to ensure users table exists
+        // Run all pending migrations to ensure required tables (users, dev_override_logs) exist
         Artisan::call('migrate', ['--force' => true]);
 
         // ensure the env token is set for the test
         // Use a non-sensitive test token set in the test environment.
         $this->enableDevOverride();
-        $token = 'test-dev-token';
-        $req = Request::create('/dev-override', 'POST', [], [], [], [], json_encode(['token' => $token]));
-        $controller = new DevOverrideController;
+        $response = $this->postJson('/dev-override', [
+            'token' => 'test-dev-token',
+        ]);
 
-        $resp = $controller($req);
+        $response->assertOk()
+            ->assertJson(fn ($json) => $json->where('success', true)->has('redirect'));
 
-        $this->assertEquals(200, $resp->getStatusCode());
-        $data = $resp->getData(true);
-        $this->assertTrue($data['success']);
-        $this->assertArrayHasKey('redirect', $data);
-        $this->assertIsString($data['redirect']);
-        $this->assertNotEmpty($data['redirect']);
+        $this->assertDatabaseHas('dev_override_logs', [
+            'email' => 'dev@example.com',
+        ]);
     }
 }

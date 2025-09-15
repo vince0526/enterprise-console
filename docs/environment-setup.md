@@ -136,6 +136,10 @@ composer run check-all || exit 1
 8. DEV_OVERRIDE_TOKEN=local-dev-token (paired with enabled flag)
 
 > Developer Override Security: The `/dev-override` POST route is protected by the `dev.override` middleware (`EnsureDevOverrideEnabled`). To function locally you must set BOTH `DEV_OVERRIDE_ENABLED=true` and a non-empty `DEV_OVERRIDE_TOKEN`. The middleware also blocks usage in production environments regardless of flags.
+>
+> Additional Hardening: Missing token now returns HTTP 422 (validation style) instead of 500. The route is rate limited with `throttle:5,1` (max 5 requests per minute per IP) to reduce accidental brute forcing. A `DevOverrideUsed` event is dispatched and an info log line recorded when the override succeeds.
+>
+> Audit Trail: Each successful developer override creates a row in `dev_override_logs` (user_id, email, ip, timestamps) via a queued listener. This allows post-hoc review of usage.
 
 ## 15. Optional: Sail / Docker
 
