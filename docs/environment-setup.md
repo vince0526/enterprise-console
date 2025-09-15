@@ -135,6 +135,8 @@ composer run check-all || exit 1
 7. DEV_OVERRIDE_ENABLED=false (enable dev override endpoint locally)
 8. DEV_OVERRIDE_TOKEN=local-dev-token (paired with enabled flag)
 
+> Developer Override Security: The `/dev-override` POST route is protected by the `dev.override` middleware (`EnsureDevOverrideEnabled`). To function locally you must set BOTH `DEV_OVERRIDE_ENABLED=true` and a non-empty `DEV_OVERRIDE_TOKEN`. The middleware also blocks usage in production environments regardless of flags.
+
 ## 15. Optional: Sail / Docker
 
 1. Enable Sail (if you want a containerized stack):

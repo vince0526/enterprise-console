@@ -33,7 +33,9 @@ use App\Http\Controllers\Auth\DevOverrideController;
 use App\Http\Controllers\Auth\ForgotUsernameController;
 use App\Http\Controllers\Auth\OAuthController;
 
-Route::post('/dev-override', DevOverrideController::class)->name('dev.override');
+Route::post('/dev-override', DevOverrideController::class)
+    ->middleware('dev.override')
+    ->name('dev.override');
 
 Route::post('/auth/recover-username', [ForgotUsernameController::class, 'send'])->name('auth.recover-username');
 Route::post('/auth/verify-username-code', [ForgotUsernameController::class, 'verify'])->name('auth.verify-username-code');
