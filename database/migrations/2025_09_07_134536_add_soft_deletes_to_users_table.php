@@ -7,4 +7,3 @@
 declare(strict_types=1);
 
 // Intentionally left blank to ensure removal is recorded before deletion.
-

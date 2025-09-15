@@ -28,3 +28,14 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+use App\Http\Controllers\Auth\DevOverrideController;
+use App\Http\Controllers\Auth\ForgotUsernameController;
+use App\Http\Controllers\Auth\OAuthController;
+
+Route::post('/dev-override', DevOverrideController::class)->name('dev.override');
+
+Route::post('/auth/recover-username', [ForgotUsernameController::class, 'send'])->name('auth.recover-username');
+Route::post('/auth/verify-username-code', [ForgotUsernameController::class, 'verify'])->name('auth.verify-username-code');
+Route::get('/oauth/redirect/{provider}', [OAuthController::class, 'redirect'])->name('oauth.redirect');
+Route::get('/oauth/callback/{provider}', [OAuthController::class, 'callback'])->name('oauth.callback');

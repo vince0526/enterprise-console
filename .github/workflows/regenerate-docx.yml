@@ -1,0 +1,38 @@
+name: Regenerate DOCX
+
+on:
+  push:
+    branches: [ main, feat/pr-migration-checker ]
+    paths:
+      - 'docs/modules.md'
+  workflow_dispatch: {}
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r tools/python-docx-sample/requirements.txt
+
+    - name: Run converter
+      run: |
+        python tools/python-docx-sample/edit_docx.py
+
+    - name: Upload generated docs
+      uses: actions/upload-artifact@v4
+      with:
+        name: generated-docs
+        path: |
+          docs/modules.docx
+          docs/modules-edited.docx

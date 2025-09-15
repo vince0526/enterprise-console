@@ -21,6 +21,10 @@ Laravel is a web application framework with expressive, elegant syntax. We belie
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
+## Project Environment Setup
+
+For the Enterprise Console specific development workstation provisioning guide (PHP 8.3, Laravel 12, Node/Vite, QA tooling) see: [docs/environment-setup.md](docs/environment-setup.md). A PowerShell bootstrap script is available in `scripts/bootstrap-dev-environment.ps1` and a DOCX version can be generated with `python scripts/env_setup_md_to_docx.py` (requires `python-docx`).
+
 ## Learning Laravel
 
 Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.

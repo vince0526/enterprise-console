@@ -4,11 +4,10 @@ declare(strict_types=1);
 
 use App\Services\Database\TableExplorer;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-uses(Tests\TestCase::class, RefreshDatabase::class);
+// Uses binding is declared in tests/Pest.php
 
 it('can list tables, columns and foreign keys for sqlite', function () {
     // Ensure the in-memory sqlite connection exists

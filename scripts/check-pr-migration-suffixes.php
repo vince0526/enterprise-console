@@ -178,9 +178,9 @@ if (! empty($collisions)) {
 
     // Also print the collisions to STDOUT so they appear in Action logs for easier debugging
     fwrite(STDOUT, "PR migration suffix collisions detected:\n");
-    fwrite(STDOUT, $commentBody . "\n");
+    fwrite(STDOUT, $commentBody."\n");
     // Output a machine-readable JSON blob as well
-    fwrite(STDOUT, "COLLISIONS_JSON:" . json_encode($collisions, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) . "\n");
+    fwrite(STDOUT, 'COLLISIONS_JSON:'.json_encode($collisions, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE)."\n");
 
     // Log short note to STDERR for backward compatibility with existing checks
     fwrite(STDERR, "PR migration suffix collisions detected. See PR comment for details.\n");

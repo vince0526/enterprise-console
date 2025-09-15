@@ -13,14 +13,15 @@ final class TableExplorerTest extends TestCase
 {
     public function test_list_tables_for_sqlite(): void
     {
-        $conn = new DatabaseConnection();
+        $conn = new DatabaseConnection;
         $conn->driver = 'sqlite';
         $conn->database = ':memory:';
 
-        $dbStub = new class {
+        $dbStub = new class
+        {
             public function select(string $sql)
             {
-                return [ (object) ['name' => 'users'], (object) ['name' => 'posts'] ];
+                return [(object) ['name' => 'users'], (object) ['name' => 'posts']];
             }
         };
 
@@ -37,11 +38,12 @@ final class TableExplorerTest extends TestCase
 
     public function test_list_columns_for_sqlite(): void
     {
-        $conn = new DatabaseConnection();
+        $conn = new DatabaseConnection;
         $conn->driver = 'sqlite';
         $conn->database = ':memory:';
 
-        $dbStub = new class {
+        $dbStub = new class
+        {
             public function select(string $sql)
             {
                 return [
@@ -66,14 +68,15 @@ final class TableExplorerTest extends TestCase
 
     public function test_list_foreign_keys_for_sqlite(): void
     {
-        $conn = new DatabaseConnection();
+        $conn = new DatabaseConnection;
         $conn->driver = 'sqlite';
         $conn->database = ':memory:';
 
-        $dbStub = new class {
+        $dbStub = new class
+        {
             public function select(string $sql)
             {
-                return [ (object) ['id' => 0, 'seq' => 0, 'table' => 'companies', 'from' => 'company_id', 'to' => 'id'] ];
+                return [(object) ['id' => 0, 'seq' => 0, 'table' => 'companies', 'from' => 'company_id', 'to' => 'id']];
             }
         };
 
