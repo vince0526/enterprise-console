@@ -21,7 +21,10 @@ class DevOverrideTest extends TestCase
         putenv('DEV_OVERRIDE_TOKEN=test-dev-token');
         $_ENV['DEV_OVERRIDE_TOKEN'] = 'test-dev-token';
         // Ensure configuration is updated (config() not automatically reloaded after putenv in test)
-        config(['dev_override.token' => 'test-dev-token']);
+        config([
+            'dev_override.token' => 'test-dev-token',
+            'dev_override.enabled' => true,
+        ]);
 
         $token = 'test-dev-token';
         $req = Request::create('/dev-override', 'POST', [], [], [], [], json_encode(['token' => $token]));
