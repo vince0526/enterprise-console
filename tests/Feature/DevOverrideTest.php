@@ -18,12 +18,12 @@ class DevOverrideTest extends TestCase
 
         // ensure the env token is set for the test
         // Use a non-sensitive test token set in the test environment.
-    putenv('DEV_OVERRIDE_TOKEN=test-dev-token');
-    $_ENV['DEV_OVERRIDE_TOKEN'] = 'test-dev-token';
-    // Ensure configuration is updated (config() not automatically reloaded after putenv in test)
-    config(['dev_override.token' => 'test-dev-token']);
+        putenv('DEV_OVERRIDE_TOKEN=test-dev-token');
+        $_ENV['DEV_OVERRIDE_TOKEN'] = 'test-dev-token';
+        // Ensure configuration is updated (config() not automatically reloaded after putenv in test)
+        config(['dev_override.token' => 'test-dev-token']);
 
-    $token = 'test-dev-token';
+        $token = 'test-dev-token';
         $req = Request::create('/dev-override', 'POST', [], [], [], [], json_encode(['token' => $token]));
         $controller = new DevOverrideController;
 
@@ -33,5 +33,7 @@ class DevOverrideTest extends TestCase
         $data = $resp->getData(true);
         $this->assertTrue($data['success']);
         $this->assertArrayHasKey('redirect', $data);
+        $this->assertIsString($data['redirect']);
+        $this->assertNotEmpty($data['redirect']);
     }
 }

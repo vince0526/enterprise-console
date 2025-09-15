@@ -131,7 +131,9 @@ composer run check-all || exit 1
 3. DB_CONNECTION=sqlite (or mysql credentials)
 4. QUEUE_CONNECTION=database (or redis)
 5. CACHE_DRIVER=file (or redis)
-6. MAIL*\*, SANCTUM*_, SESSION\__
+6. MAIL*\*, SANCTUM*\_, SESSION\_\_
+7. DEV_OVERRIDE_ENABLED=false (enable dev override endpoint locally)
+8. DEV_OVERRIDE_TOKEN=local-dev-token (paired with enabled flag)
 
 ## 15. Optional: Sail / Docker
 

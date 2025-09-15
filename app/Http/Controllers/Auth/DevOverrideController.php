@@ -19,6 +19,10 @@ class DevOverrideController extends Controller
             return response()->json(['success' => false, 'message' => 'Not allowed in production'], 403);
         }
 
+        if (! (bool) config('dev_override.enabled')) {
+            return response()->json(['success' => false, 'message' => 'dev override disabled'], 403);
+        }
+
         $payload = $request->json()->all();
         $token = $payload['token'] ?? $request->input('token');
 
