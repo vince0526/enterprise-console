@@ -12,5 +12,10 @@
   },
   "tailwindCSS.experimental.classRegex": [
     ["class=\\\"([^\\\"]*)\\\"", "[1]"]
-  ]
+  ],
+  "terminal.integrated.shellIntegration.environmentReporting": true,
+  "terminal.integrated.suggest.enabled": true,
+  "terminal.integrated.sendKeybindingsToShell": true,
+  "terminal.integrated.windowsUseConptyDll": true,
+  "chat.agent.maxRequests": 100
 }

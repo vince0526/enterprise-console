@@ -47,6 +47,27 @@ PowerShell (Windows):
 ./scripts/dev-tasks.ps1 docs
 ```
 
+### Temporary Dev Auto-Login
+
+To quickly preview the application UI without the login flow you can enable a development-only automatic login middleware.
+
+1. Add to your local `.env` (never commit this enabled):
+	```env
+	DEV_AUTO_LOGIN=true
+	DEV_AUTO_LOGIN_USER_ID=1   # adjust to an existing user id
+	```
+2. Clear config & cache (if previously cached):
+	```bash
+	php artisan optimize:clear
+	```
+3. Visit any protected route (e.g. /dashboard); you should be auto-authenticated as that user.
+
+Safety:
+- Middleware is skipped automatically in `production` environment.
+- Disable by removing the vars or setting `DEV_AUTO_LOGIN=false`.
+- Use only on local/dev; never push an enabled flag to shared environments.
+
+
 ### DOCX Automation
 
 Workflows regenerate DOCX outputs on markdown changes:

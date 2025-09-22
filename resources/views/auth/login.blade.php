@@ -47,6 +47,21 @@
                 <a href="{{ route('oauth.redirect','google') }}" class="inline-flex items-center px-3 py-2 bg-red-600 text-white rounded text-sm hover:opacity-90">Sign in with Google</a>
                 @if (Route::has('password.request'))
                     <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none" href="#" id="forgot-username-link">Forgot username?</a>
+
+                        @if (config('dev_override.enabled'))
+                            <form method="POST" action="{{ route('dev.override') }}" class="mt-4 space-y-2" x-data="{ submitting: false }" @submit="submitting=true">
+                                @csrf
+                                <input type="hidden" name="next" value="{{ request('next', '/') }}">
+                                <div>
+                                    <label class="block text-sm font-medium">Dev Override Token</label>
+                                    <input name="token" type="password" class="input input-bordered w-full" placeholder="Enter dev token" required>
+                                </div>
+                                <button type="submit" class="btn btn-warning w-full" :disabled="submitting">
+                                    <span x-show="!submitting">Developer Override Login</span>
+                                    <span x-show="submitting">Authenticating...</span>
+                                </button>
+                            </form>
+                        @endif
                 @endif
             </div>
         </div>

@@ -12,7 +12,12 @@ class EnsureDevOverrideEnabled
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (app()->environment('production') || ! (bool) config('dev_override.enabled')) {
+        if (app()->environment('production')) {
+            // Obscure existence in production
+            abort(404);
+        }
+
+        if (! (bool) config('dev_override.enabled')) {
             return response()->json([
                 'success' => false,
                 'message' => 'dev override disabled',
