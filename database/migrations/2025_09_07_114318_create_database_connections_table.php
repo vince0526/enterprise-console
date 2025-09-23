@@ -13,12 +13,7 @@ final class CreateDatabaseConnectionsTable extends Migration
      */
     public function up(): void
     {
-        // Defensive: if the table already exists (e.g. stray duplicate migration
-        // executed), skip to avoid "table already exists" errors in tests.
-        if (Schema::hasTable('database_connections')) {
-            return;
-        }
-
+        // Create database_connections table
         Schema::create('database_connections', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();

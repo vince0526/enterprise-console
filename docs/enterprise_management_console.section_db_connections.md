@@ -1,0 +1,51 @@
+- Sub Module MenuMust pinned or unpinned on the side | MAIN SUBMODULE WORKSPACE | Activity Log
+
+- Enterprise Database Management System | Logout
+- DatabaseManagement | Tables and Views | File Management | Report Management | Artificial Intelligence Access | Communications | Preferences and Settings | About
+- Sub Menu | Database Management | BUTTON TO SHOW ACTIVITY LOG AND A PIN SIGN TO PIN IT
+- Report Summaries | Browse List of Databases Being Managed | Functionalities:1\. Manages the lists of databases being managed. The initial screen should show a browser that would show the lists of databases that is being managed by the system. Transition: a database must be created that would provide key in connection link and platforms, host, password, username and connection strings and other best practices information or data that can be input by the users.2\. This workspace screen will have an add button to add another database connection. When clicked, it will pop up a form to add another record (CRUD).3\. In the browsed data, if a record is clicked. It will pop up a gen a CRUD form.TABLES: DATABASECONNECTIONS, COMPANYUSERS, COMPANYUSERRESTRICTIONS, FTPCONNECTIONS | Activity Log
+- Current Database Managed | If the list is clicked, it will provide a relational view of theDatabase DescriptionCompany Users of the DatabaseUser Restrictions – Shows the allowed table, allowed processes
+
+- Enterprise Database Management System | Logout
+- DatabaseManagement | Tables and Views | File Management | Report Management | Artificial Intelligence Access | Communications | Preferences and Settings | About
+- Sub Menu | TABLES AND VIEWS | BUTTON TO SHOW ACTIVITY LOG AND A PIN SIGN TO PIN IT
+- Reports | Table List | If there is no database clicked, this is blank.if there is no table clicked this space is blankif a table is clicked on the table list DATABASE MANAGEMENT module | Activity Log
+- Create Table | This browses the tables on the database name that was clicked on the
+Create Relations
+Import Tables
+
+- Enterprise Database Management System | Logout
+- DatabaseManagement | Tables and Views | Report Management | File Management | User Management | Communications | Preferences and Settings | About
+- Sub Menu | FILE MANAGEMENT | BUTTON TO SHOW ACTIVITY LOG AND A PIN SIGN TO PIN IT
+- Find Files | This provides the area for the files in the FTP cited in the. This work space provide a windows like explorer interface. | Activity Log
+Create File
+Create Folder
+
+- Enterprise Database Management System | Logout
+- DatabaseManagement | Tables and Views | Report Management | File Management | User Management | Communications | Preferences and Settings | About
+
+Create Folder
+
+- Enterprise Database Management System | Logout
+- DatabaseManagement | Tables and Views | Report Management | File Management | User Management | Communications | Preferences and Settings | About
+- Sub Menu | Communications | BUTTON TO SHOW ACTIVITY LOG AND A PIN SIGN TO PIN IT
+- Mail Box Management | Mail Box management. This manages the mailboxes of any entity where the connections of the mailbox will be inputed. The interface is like Gmail and any other email management interface.Artificial Intelligence ScreenA browsing screen for AIs like ChatGpt, CoPilot, Grok, Gemini, and MetaIf artificial intelligence is selected, it will provide options for choosing which of the above will be used.Video and Audio ChatProvides video and audio chat for users in the system.Spread SheetManages a spreadsheet or in an excel like formatDocument | Activity Log
+Artificial Intelligence
+Video and Audio Chat
+Spread Sheet
+
+- Enterprise Database Management System | Logout
+- DatabaseManagement | Tables and Views | Report Management | File Management | User Management | Communications | Preferences and Settings | About
+- Sub Menu | PREFERENCES AND SETTINGS | BUTTON TO SHOW ACTIVITY LOG AND A PIN SIGN TO PIN IT
+- Themes and Screens | This can change the colors or themes or whatever setup the user wants. | Activity Log
+
+Enterprise Management Console
+
+It is a database management system that maintains and control various databases in different platforms.
+
+THE BROWSING FUNCTION OF THE SYSTEM:
+
+The browser on every module should function like a browser of an Excel spreadsheet other than sorting and filtering, with a check box that includes the following:
+
+**📊 Filtering Logic by Field Type**
+

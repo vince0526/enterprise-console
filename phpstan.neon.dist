@@ -7,4 +7,7 @@ parameters:
     - app
   tmpDir: storage/framework/cache/phpstan
   reportUnmatchedIgnoredErrors: true
-  ignoreErrors: []
+  ignoreErrors:
+    -
+      message: '#^Class App\\Models\\DevOverrideLog uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
+      path: app/Models/DevOverrideLog.php

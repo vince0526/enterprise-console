@@ -1,0 +1,14 @@
+#!/bin/sh
+# Prevent accidental commits of docs/modules.docx unless explicitly allowed.
+# To bypass this hook temporarily set SKIP_DOCX_HOOK=1 in the environment.
+if [ "$SKIP_DOCX_HOOK" = "1" ]; then
+  exit 0
+fi
+
+git diff --cached --name-only | grep -E "^docs/modules\.docx$" >/dev/null 2>&1
+if [ $? -eq 0 ]; then
+  echo "Detected staged docs/modules.docx. To commit regenerated docs, run tools/regenerate_and_commit.ps1 or set SKIP_DOCX_HOOK=1 to bypass."
+  exit 1
+fi
+
+exit 0

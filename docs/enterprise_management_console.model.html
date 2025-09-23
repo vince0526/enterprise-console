@@ -1,0 +1,877 @@
+<html>
+
+<head>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1252">
+<meta name=Generator content="Microsoft Word 15 (filtered)">
+<style>
+<!--
+ /* Font Definitions */
+ @font-face
+	{font-family:Courier;
+	panose-1:2 7 4 9 2 2 5 2 4 4;}
+@font-face
+	{font-family:"MS Mincho";
+	panose-1:2 2 6 9 4 2 5 8 3 4;}
+@font-face
+	{font-family:"MS Gothic";
+	panose-1:2 11 6 9 7 2 5 8 2 4;}
+@font-face
+	{font-family:"Cambria Math";
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Calibri;
+	panose-1:2 15 5 2 2 2 4 3 2 4;}
+@font-face
+	{font-family:Cambria;
+	panose-1:2 4 5 3 5 4 6 3 2 4;}
+@font-face
+	{font-family:Consolas;
+	panose-1:2 11 6 9 2 2 4 3 2 4;}
+@font-face
+	{font-family:"\@MS Mincho";
+	panose-1:2 2 6 9 4 2 5 8 3 4;}
+@font-face
+	{font-family:"\@MS Gothic";
+	panose-1:2 11 6 9 7 2 5 8 2 4;}
+ /* Style Definitions */
+ p.MsoNormal, li.MsoNormal, div.MsoNormal
+	{margin-top:0in;
+	margin-right:0in;
+	margin-bottom:10.0pt;
+	margin-left:0in;
+	line-height:115%;
+	font-size:11.0pt;
+	font-family:"Cambria",serif;}
+h1
+	{mso-style-link:"Heading 1 Char";
+	margin-top:24.0pt;
+	margin-right:0in;
+	margin-bottom:0in;
+	margin-left:0in;
+	line-height:115%;
+	page-break-after:avoid;
+	font-size:14.0pt;
+	font-family:"Calibri",sans-serif;
+	color:#365F91;}
+p.MsoFooter, li.MsoFooter, div.MsoFooter
+	{mso-style-link:"Footer Char";
+	margin:0in;
+	font-size:11.0pt;
+	font-family:"Cambria",serif;}
+span.FooterChar
+	{mso-style-name:"Footer Char";
+	mso-style-link:Footer;}
+span.Heading1Char
+	{mso-style-name:"Heading 1 Char";
+	mso-style-link:"Heading 1";
+	font-family:"Calibri",sans-serif;
+	color:#365F91;
+	font-weight:bold;}
+p.SubtitleGray, li.SubtitleGray, div.SubtitleGray
+	{mso-style-name:SubtitleGray;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:10.0pt;
+	margin-left:0in;
+	line-height:115%;
+	font-size:12.0pt;
+	font-family:"Cambria",serif;
+	color:#5A5A5A;}
+p.Callout, li.Callout, div.Callout
+	{mso-style-name:Callout;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:10.0pt;
+	margin-left:0in;
+	line-height:115%;
+	font-size:10.0pt;
+	font-family:"Cambria",serif;
+	color:#3C3C3C;}
+p.CodeBlock, li.CodeBlock, div.CodeBlock
+	{mso-style-name:CodeBlock;
+	margin-top:0in;
+	margin-right:0in;
+	margin-bottom:10.0pt;
+	margin-left:0in;
+	line-height:115%;
+	font-size:9.0pt;
+	font-family:Consolas;}
+.MsoChpDefault
+	{font-family:"Cambria",serif;}
+.MsoPapDefault
+	{margin-bottom:10.0pt;
+	line-height:115%;}
+ /* Page Definitions */
+ @page WordSection1
+	{size:8.5in 11.0in;
+	margin:1.0in 1.25in 1.0in 1.25in;}
+div.WordSection1
+	{page:WordSection1;}
+ /* List Definitions */
+ ol
+	{margin-bottom:0in;}
+ul
+	{margin-bottom:0in;}
+-->
+</style>
+
+</head>
+
+<body lang=EN-PH style='word-wrap:break-word'>
+
+<div class=WordSection1>
+
+<p class=MsoNormal align=center style='text-align:center'><b><span lang=EN-US
+style='font-size:24.0pt;line-height:115%'>Enterprise Console – Submenu,
+Wireframe &amp; React Prototype</span></b></p>
+
+<p class=SubtitleGray align=center style='text-align:center'><span lang=EN-US>Consolidated
+Design Document</span></p>
+
+<p class=SubtitleGray align=center style='text-align:center'><span lang=EN-US>Generated:
+September 22, 2025 08:14 PM</span></p>
+
+<div style='border:none;border-bottom:solid #DDDDDD 1.5pt;padding:0in 0in 1.0pt 0in'>
+
+<p class=MsoNormal style='border:none;padding:0in'><span lang=EN-US>&nbsp;</span></p>
+
+</div>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<h1><span lang=EN-US>Overview</span></h1>
+
+<p class=MsoNormal><span lang=EN-US>This document consolidates the information
+architecture and UI blueprint for the Enterprise Console Management App.</span></p>
+
+<p class=MsoNormal><span lang=EN-US>It contains:</span></p>
+
+<p class=MsoNormal><span lang=EN-US>• A high-level overview of modules</span></p>
+
+<p class=MsoNormal><span lang=EN-US>• A detailed submenu structure</span></p>
+
+<p class=MsoNormal><span lang=EN-US>• A wireframe navigation layout</span></p>
+
+<p class=MsoNormal><span lang=EN-US>• Implementation notes</span></p>
+
+<p class=MsoNormal><span lang=EN-US>• A complete React + Tailwind prototype
+component</span></p>
+
+<h1><span lang=EN-US>Module Matrix</span></h1>
+
+<table class=MsoTableLightGridAccent1 border=1 cellspacing=0 cellpadding=0
+ style='border-collapse:collapse;border:none'>
+ <tr>
+  <td width=288 valign=top style='width:3.0in;border:solid #4F81BD 1.0pt;
+  border-bottom:solid #4F81BD 2.25pt;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><b><span
+  lang=EN-US style='font-family:"Calibri",sans-serif'>Module</span></b></p>
+  </td>
+  <td width=288 valign=top style='width:3.0in;border-top:solid #4F81BD 1.0pt;
+  border-left:none;border-bottom:solid #4F81BD 2.25pt;border-right:solid #4F81BD 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><b><span
+  lang=EN-US style='font-family:"Calibri",sans-serif'>Submenus</span></b></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=288 valign=top style='width:3.0in;border:solid #4F81BD 1.0pt;
+  border-top:none;background:#D3DFEE;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><b><span
+  lang=EN-US style='font-family:"Calibri",sans-serif;color:black'>Database
+  Management</span></b></p>
+  </td>
+  <td width=288 valign=top style='width:3.0in;border-top:none;border-left:none;
+  border-bottom:solid #4F81BD 1.0pt;border-right:solid #4F81BD 1.0pt;
+  background:#D3DFEE;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><span
+  lang=EN-US style='color:black'>Connections; Backup &amp; Restore; Performance
+  Monitoring; Query Runner; Replication &amp; Clustering</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=288 valign=top style='width:3.0in;border:solid #4F81BD 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><b><span
+  lang=EN-US style='font-family:"Calibri",sans-serif'>Tables &amp; Views</span></b></p>
+  </td>
+  <td width=288 valign=top style='width:3.0in;border-top:none;border-left:none;
+  border-bottom:solid #4F81BD 1.0pt;border-right:solid #4F81BD 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><span
+  lang=EN-US>Schema Browser; Table Designer; View Designer; Data Import/Export;
+  Schema Migration</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=288 valign=top style='width:3.0in;border:solid #4F81BD 1.0pt;
+  border-top:none;background:#D3DFEE;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><b><span
+  lang=EN-US style='font-family:"Calibri",sans-serif;color:black'>File
+  Management</span></b></p>
+  </td>
+  <td width=288 valign=top style='width:3.0in;border-top:none;border-left:none;
+  border-bottom:solid #4F81BD 1.0pt;border-right:solid #4F81BD 1.0pt;
+  background:#D3DFEE;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><span
+  lang=EN-US style='color:black'>File Explorer; ETL Jobs; File Parsers; Storage
+  Connectors</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=288 valign=top style='width:3.0in;border:solid #4F81BD 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><b><span
+  lang=EN-US style='font-family:"Calibri",sans-serif'>Report Management</span></b></p>
+  </td>
+  <td width=288 valign=top style='width:3.0in;border-top:none;border-left:none;
+  border-bottom:solid #4F81BD 1.0pt;border-right:solid #4F81BD 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><span
+  lang=EN-US>Report Dashboard; Report Designer; Data Sources; Scheduled
+  Reports; Analytics Workbench</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=288 valign=top style='width:3.0in;border:solid #4F81BD 1.0pt;
+  border-top:none;background:#D3DFEE;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><b><span
+  lang=EN-US style='font-family:"Calibri",sans-serif;color:black'>Artificial
+  Intelligence Access</span></b></p>
+  </td>
+  <td width=288 valign=top style='width:3.0in;border-top:none;border-left:none;
+  border-bottom:solid #4F81BD 1.0pt;border-right:solid #4F81BD 1.0pt;
+  background:#D3DFEE;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><span
+  lang=EN-US style='color:black'>Model Training; Predictive Analytics;
+  AI-Powered Alerts; Natural Language Query</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=288 valign=top style='width:3.0in;border:solid #4F81BD 1.0pt;
+  border-top:none;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><b><span
+  lang=EN-US style='font-family:"Calibri",sans-serif'>Communications</span></b></p>
+  </td>
+  <td width=288 valign=top style='width:3.0in;border-top:none;border-left:none;
+  border-bottom:solid #4F81BD 1.0pt;border-right:solid #4F81BD 1.0pt;
+  padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><span
+  lang=EN-US>Email &amp; SMS Gateway; Internal Chat/Messaging; Notification
+  Templates; API Webhooks</span></p>
+  </td>
+ </tr>
+ <tr>
+  <td width=288 valign=top style='width:3.0in;border:solid #4F81BD 1.0pt;
+  border-top:none;background:#D3DFEE;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><b><span
+  lang=EN-US style='font-family:"Calibri",sans-serif;color:black'>Preferences
+  &amp; Settings</span></b></p>
+  </td>
+  <td width=288 valign=top style='width:3.0in;border-top:none;border-left:none;
+  border-bottom:solid #4F81BD 1.0pt;border-right:solid #4F81BD 1.0pt;
+  background:#D3DFEE;padding:0in 5.4pt 0in 5.4pt'>
+  <p class=MsoNormal style='margin-bottom:0in;line-height:normal'><span
+  lang=EN-US style='color:black'>User &amp; Role Management; System
+  Configuration; Audit Log; Application Builder; Licensing &amp; Billing</span></p>
+  </td>
+ </tr>
+</table>
+
+<span lang=EN-US style='font-size:11.0pt;line-height:115%;font-family:"Cambria",serif'><br
+clear=all style='page-break-before:always'>
+</span>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<h1><span lang=EN-US>Detailed Submenu Structure</span></h1>
+
+<p class=MsoNormal><span lang=EN-US>1) Database Management — The technical
+foundation of the app, covering the full lifecycle of database administration.<br>
+   • Connections — Manage connection strings, credentials, and test
+connectivity for MySQL, Postgres, SQL Server, and Oracle. (Already developed)<br>
+   • Backup &amp; Restore — Schedule automated backups, manage backup storage
+(local, S3), and perform point-in-time restores.<br>
+   • Performance Monitoring — Dashboard for query performance, CPU/memory
+usage, active connections, and slow query logs.<br>
+   • Query Runner — Integrated SQL editor to run ad-hoc queries.<br>
+   • Replication &amp; Clustering — Configure and monitor replication for high
+availability and load balancing.</span></p>
+
+<p class=MsoNormal><span lang=EN-US>2) Tables &amp; Views — Focuses on data
+architecture and schema manipulation.<br>
+   • Schema Browser — Visual explorer for tables, views, columns, indexes, and
+data types. (Already developed as “Table List”)<br>
+   • Table Designer — Visual tool for creating and modifying table structures.
+(Already developed as “Create Table”)<br>
+   • View Designer — UI for building and managing SQL views without writing raw
+code.<br>
+   • Data Import/Export — Map and import files (CSV, Excel, JSON), and export
+table data. (Partially developed)<br>
+   • Schema Migration — Track schema changes over time, with versioning and
+rollback options.</span></p>
+
+<p class=MsoNormal><span lang=EN-US>3) File Management — Bridges raw data files
+with structured databases.<br>
+   • File Explorer — Manage files on server or storage (local, FTP, S3).
+(Already developed)<br>
+   • ETL Jobs (Extract, Transform, Load) — Automate file ingestion, parsing,
+transformation, and database loading.<br>
+   • File Parsers — Define templates for parsing file formats (fixed-width,
+delimited, JSON, XML).<br>
+   • Storage Connectors — Configure cloud storage (Amazon S3, Google Cloud
+Storage).</span></p>
+
+<p class=MsoNormal><span lang=EN-US>4) Report Management — The BI and analytics
+hub.<br>
+   • Report Dashboard — Central access to all generated reports. (Already
+developed)<br>
+   • Report Designer — Drag-and-drop builder for reports, charts, and graphs.<br>
+   • Data Sources — Manage reportable data sources (e.g., Sales, Inventory).<br>
+   • Scheduled Reports — Automate report generation and email delivery.<br>
+   • Analytics Workbench — Advanced pivot, filter, and drill-down tools.</span></p>
+
+<p class=MsoNormal><span lang=EN-US>5) Artificial Intelligence Access — Unlocks
+predictive insights and automation.<br>
+   • Model Training — Workspace for training ML models (sales forecasting,
+churn analysis).<br>
+   • Predictive Analytics — Apply trained models to new data for actionable
+insights.<br>
+   • AI-Powered Alerts — Configure anomaly detection alerts (e.g., sales
+drops).<br>
+   • Natural Language Query — Ask questions in plain English (e.g., “Top 10
+products last month?”).</span></p>
+
+<p class=MsoNormal><span lang=EN-US>6) Communications — Handles both internal
+and external communication.<br>
+   • Email &amp; SMS Gateway — Configure gateways for transactional emails and
+SMS alerts.<br>
+   • Internal Chat/Messaging — Messaging tool for console users.<br>
+   • Notification Templates — Pre-define system notification formats.<br>
+   • API Webhooks — Manage inbound/outbound hooks for integrations (Shopify,
+payment gateways).</span></p>
+
+<p class=MsoNormal><span lang=EN-US>7) Preferences &amp; Settings —
+Administrative control center.<br>
+   • User &amp; Role Management — Define users, roles, and granular
+permissions.<br>
+   • System Configuration — General system settings (themes, languages,
+security).<br>
+   • Audit Log — Searchable log of all user/system actions.<br>
+   • Application Builder — Low-code tool to scaffold mini-apps (forms, tables,
+views).<br>
+   • Licensing &amp; Billing — Manage enterprise licenses and track usage for
+billing.</span></p>
+
+<span lang=EN-US style='font-size:11.0pt;line-height:115%;font-family:"Cambria",serif'><br
+clear=all style='page-break-before:always'>
+</span>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<h1><span lang=EN-US>Wireframe Navigation Layout</span></h1>
+
+<p class=MsoNormal><span lang=EN-US>Sidebar (Main Navigation)<br>
+— Database Management &#8594; Connections, Backup &amp; Restore, Performance
+Monitoring, Query Runner, Replication &amp; Clustering<br>
+— Tables &amp; Views &#8594; Schema Browser, Table Designer, View Designer,
+Data Import/Export, Schema Migration<br>
+— File Management &#8594; File Explorer, ETL Jobs, File Parsers, Storage
+Connectors<br>
+— Report Management &#8594; Report Dashboard, Report Designer, Data Sources,
+Scheduled Reports, Analytics Workbench<br>
+— Artificial Intelligence Access &#8594; Model Training, Predictive Analytics,
+AI-Powered Alerts, Natural Language Query<br>
+— Communications &#8594; Email &amp; SMS Gateway, Internal Chat/Messaging,
+Notification Templates, API Webhooks<br>
+— Preferences &amp; Settings &#8594; User &amp; Role Management, System
+Configuration, Audit Log, Application Builder, Licensing &amp; Billing</span></p>
+
+<p class=MsoNormal><span lang=EN-US>Top Bar (Global Actions)<br>
+— Search Bar, Notifications, User Menu, Theme Toggle (Light/Dark)</span></p>
+
+<p class=MsoNormal><span lang=EN-US>Content Pane<br>
+— Loads the selected submenu view (e.g., Connections, Report Designer, Natural
+Language Query)</span></p>
+
+<p class=Callout><span lang=EN-US>Wireframe (ASCII)</span></p>
+
+<p class=CodeBlock style='background:whitesmoke'><span lang=EN-US
+style='color:black'> -------------------------------------------------------<br>
+|  Enterprise Console Management                        |<br>
+|-------------------------------------------------------|<br>
+| Sidebar (collapsible) |        Content Pane           |<br>
+|                       |                               |<br>
+|  &gt; Database Mgmt      |   [Dashboard / Module View]   |<br>
+|    - Connections      |                               |<br>
+|    - Backup &amp; Restore |   Example: Database stats     |<br>
+|    - Monitoring       |   or Report Designer canvas   |<br>
+|                       |                               |<br>
+|  &gt; Tables &amp; Views     |                               |<br>
+|    - Schema Browser   |                               |<br>
+|    - Table Designer   |                               |<br>
+|                       |                               |<br>
+|  &gt; Reports            |                               |<br>
+|    - Dashboard        |                               |<br>
+|    - Designer         |                               |<br>
+|                       |                               |<br>
+ -------------------------------------------------------<br>
+| Bottom Bar: System Status | User | Notifications |    |<br>
+ -------------------------------------------------------<br>
+<br>
+</span></p>
+
+<h1><span lang=EN-US>Implementation Notes</span></h1>
+
+<p class=Callout><span lang=EN-US>• React + Tailwind: Use shadcn/ui and
+lucide-react for consistent UI primitives and icons.</span></p>
+
+<p class=Callout><span lang=EN-US>• State &amp; Routing: Prefer React Router
+(standalone SPA) or Inertia (Laravel + Vite) for seamless page transitions.</span></p>
+
+<p class=Callout><span lang=EN-US>• Charts: Recharts for
+time-series/aggregations in Performance Monitoring and Report Designer.</span></p>
+
+<p class=Callout><span lang=EN-US>• Access Control: Gate routes by role (Admin
+/ Accountant / Warehouse / Auditor) and feature-flags by tenant.</span></p>
+
+<p class=Callout><span lang=EN-US>• DX: Prettier + ESLint + TypeScript strict
+mode; Vitest/Playwright for tests; commit hooks via lint-staged.</span></p>
+
+<span lang=EN-US style='font-size:11.0pt;line-height:115%;font-family:"Cambria",serif'><br
+clear=all style='page-break-before:always'>
+</span>
+
+<p class=MsoNormal><span lang=EN-US>&nbsp;</span></p>
+
+<h1><span lang=EN-US>React + Tailwind Prototype (Code)</span></h1>
+
+<p class=Callout><span lang=EN-US>Copy-paste this component into your React
+project. It uses Tailwind CSS and lucide-react icons.</span></p>
+
+<p class=CodeBlock style='background:#F0F0F0'><span lang=EN-US
+style='color:black'>import React, { useMemo, useState } from &quot;react&quot;;<br>
+import {<br>
+  Database, Table2, FileStack, BarChart3, Bot, MessageSquare, Settings,<br>
+  ChevronDown, ChevronRight, Search, Bell, User, Moon, Sun, PlugZap, HardDrive,<br>
+  Gauge, Code2, Network, Layers, Columns3, Eye, Upload, History, PlaySquare,
+Boxes,<br>
+  Mail, MessageSquareText, Webhook, Shield, Component, CreditCard,<br>
+} from &quot;lucide-react&quot;;<br>
+<br>
+const MODULES = {<br>
+  &quot;Database Management&quot;: {<br>
+    icon: Database,<br>
+    items: [<br>
+      { key: &quot;Connections&quot;, icon: PlugZap },<br>
+      { key: &quot;Backup &amp; Restore&quot;, icon: HardDrive },<br>
+      { key: &quot;Performance Monitoring&quot;, icon: Gauge },<br>
+      { key: &quot;Query Runner&quot;, icon: Code2 },<br>
+      { key: &quot;Replication &amp; Clustering&quot;, icon: Network },<br>
+    ],<br>
+  },<br>
+  &quot;Tables &amp; Views&quot;: {<br>
+    icon: Table2,<br>
+    items: [<br>
+      { key: &quot;Schema Browser&quot;, icon: Layers },<br>
+      { key: &quot;Table Designer&quot;, icon: Columns3 },<br>
+      { key: &quot;View Designer&quot;, icon: Eye },<br>
+      { key: &quot;Data Import/Export&quot;, icon: Upload },<br>
+      { key: &quot;Schema Migration&quot;, icon: History },<br>
+    ],<br>
+  },<br>
+  &quot;File Management&quot;: {<br>
+    icon: FileStack,<br>
+    items: [<br>
+      { key: &quot;File Explorer&quot;, icon: FilesIcon },<br>
+      { key: &quot;ETL Jobs&quot;, icon: PlaySquare },<br>
+      { key: &quot;File Parsers&quot;, icon: Boxes },<br>
+      { key: &quot;Storage Connectors&quot;, icon: HardDrive },<br>
+    ],<br>
+  },<br>
+  &quot;Report Management&quot;: {<br>
+    icon: BarChart3,<br>
+    items: [<br>
+      { key: &quot;Report Dashboard&quot;, icon: Gauge },<br>
+      { key: &quot;Report Designer&quot;, icon: Component },<br>
+      { key: &quot;Data Sources&quot;, icon: Layers },<br>
+      { key: &quot;Scheduled Reports&quot;, icon: History },<br>
+      { key: &quot;Analytics Workbench&quot;, icon: BarChart3 },<br>
+    ],<br>
+  },<br>
+  &quot;Artificial Intelligence Access&quot;: {<br>
+    icon: Bot,<br>
+    items: [<br>
+      { key: &quot;Model Training&quot;, icon: Component },<br>
+      { key: &quot;Predictive Analytics&quot;, icon: BarChart3 },<br>
+      { key: &quot;AI-Powered Alerts&quot;, icon: Bell },<br>
+      { key: &quot;Natural Language Query&quot;, icon: MessageSquare },<br>
+    ],<br>
+  },<br>
+  Communications: {<br>
+    icon: MessageSquare,<br>
+    items: [<br>
+      { key: &quot;Email &amp; SMS Gateway&quot;, icon: Mail },<br>
+      { key: &quot;Internal Chat/Messaging&quot;, icon: MessageSquareText },<br>
+      { key: &quot;Notification Templates&quot;, icon: Bell },<br>
+      { key: &quot;API Webhooks&quot;, icon: Webhook },<br>
+    ],<br>
+  },<br>
+  &quot;Preferences &amp; Settings&quot;: {<br>
+    icon: Settings,<br>
+    items: [<br>
+      { key: &quot;User &amp; Role Management&quot;, icon: Shield },<br>
+      { key: &quot;System Configuration&quot;, icon: Settings },<br>
+      { key: &quot;Audit Log&quot;, icon: History },<br>
+      { key: &quot;Application Builder&quot;, icon: Component },<br>
+      { key: &quot;Licensing &amp; Billing&quot;, icon: CreditCard },<br>
+    ],<br>
+  },<br>
+};<br>
+<br>
+function FilesIcon(props) {<br>
+  return (<br>
+    &lt;svg {...props} xmlns=&quot;http://www.w3.org/2000/svg&quot;
+viewBox=&quot;0 0 24 24&quot;<br>
+         fill=&quot;none&quot; stroke=&quot;currentColor&quot;
+strokeWidth=&quot;2&quot; strokeLinecap=&quot;round&quot;
+strokeLinejoin=&quot;round&quot;&gt;<br>
+      &lt;path d=&quot;M7 3h8l5 5v11a2 2 0 0 1-2 2H7Z&quot; /&gt;<br>
+      &lt;path d=&quot;M14 3v6h6&quot; /&gt;<br>
+      &lt;path d=&quot;M3 7v13a2 2 0 0 0 2 2h12&quot; /&gt;<br>
+    &lt;/svg&gt;<br>
+  );<br>
+}<br>
+<br>
+function Badge({ children }) {<br>
+  return (<br>
+    &lt;span className=&quot;rounded-full bg-neutral-100 dark:bg-neutral-800
+px-2.5 py-1 text-xs text-neutral-600 dark:text-neutral-300&quot;&gt;<br>
+      {children}<br>
+    &lt;/span&gt;<br>
+  );<br>
+}<br>
+<br>
+function SectionHeader({ title, actions }) {<br>
+  return (<br>
+    &lt;div className=&quot;flex items-center justify-between border-b pb-3
+border-neutral-200 dark:border-neutral-800&quot;&gt;<br>
+      &lt;h2 className=&quot;text-xl font-semibold&quot;&gt;{title}&lt;/h2&gt;<br>
+      &lt;div className=&quot;flex items-center
+gap-2&quot;&gt;{actions}&lt;/div&gt;<br>
+    &lt;/div&gt;<br>
+  );<br>
+}<br>
+<br>
+function TopBar({ theme, setTheme }) {<br>
+  const [q, setQ] = useState(&quot;&quot;);<br>
+  return (<br>
+    &lt;div className=&quot;h-14 w-full border-b bg-white/70 backdrop-blur
+supports-[backdrop-filter]:bg-white/50 dark:bg-neutral-900/70
+border-neutral-200 dark:border-neutral-800 flex items-center justify-between
+px-4 gap-3&quot;&gt;<br>
+      &lt;div className=&quot;font-semibold&quot;&gt;Enterprise
+Console&lt;/div&gt;<br>
+      &lt;div className=&quot;flex items-center gap-3 w-full max-w-xl&quot;&gt;<br>
+        &lt;div className=&quot;relative flex-1&quot;&gt;<br>
+          &lt;Search className=&quot;absolute left-2 top-1/2 -translate-y-1/2
+h-4 w-4 text-neutral-400&quot; /&gt;<br>
+          &lt;input<br>
+            value={q}<br>
+            onChange={(e) =&gt; setQ(e.target.value)}<br>
+            placeholder=&quot;Search tables, reports, files, users…&quot;<br>
+            className=&quot;w-full rounded-xl border px-8 py-2 text-sm
+outline-none focus:ring-2 ring-neutral-300 dark:ring-neutral-700
+border-neutral-200 dark:border-neutral-700 bg-white dark:bg-neutral-900&quot;<br>
+          /&gt;<br>
+        &lt;/div&gt;<br>
+      &lt;/div&gt;<br>
+      &lt;div className=&quot;flex items-center gap-3&quot;&gt;<br>
+        &lt;button className=&quot;rounded-xl border px-3 py-2 text-sm
+hover:bg-neutral-50 dark:hover:bg-neutral-800 border-neutral-200
+dark:border-neutral-700&quot; title=&quot;Notifications&quot;&gt;<br>
+          &lt;Bell className=&quot;h-4 w-4&quot; /&gt;<br>
+        &lt;/button&gt;<br>
+        &lt;button onClick={() =&gt; setTheme(theme === &quot;dark&quot; ?
+&quot;light&quot; : &quot;dark&quot;)} className=&quot;rounded-xl border px-3
+py-2 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800 border-neutral-200
+dark:border-neutral-700&quot; title=&quot;Toggle theme&quot;&gt;<br>
+          {theme === &quot;dark&quot; ? &lt;Sun className=&quot;h-4 w-4&quot;
+/&gt; : &lt;Moon className=&quot;h-4 w-4&quot; /&gt;}<br>
+        &lt;/button&gt;<br>
+        &lt;button className=&quot;rounded-full border size-9 grid
+place-items-center border-neutral-200 dark:border-neutral-700&quot;&gt;<br>
+          &lt;User className=&quot;h-4 w-4&quot; /&gt;<br>
+        &lt;/button&gt;<br>
+      &lt;/div&gt;<br>
+    &lt;/div&gt;<br>
+  );<br>
+}<br>
+<br>
+function Sidebar({ openGroups, setOpenGroups, active, setActive }) {<br>
+  const Group = ({ title, icon: Icon, items }) =&gt; {<br>
+    const isOpen = openGroups[title];<br>
+    return (<br>
+      &lt;div className=&quot;mb-1&quot;&gt;<br>
+        &lt;button onClick={() =&gt; setOpenGroups({ ...openGroups, [title]:
+!isOpen })}<br>
+                className=&quot;flex w-full items-center justify-between
+rounded-xl px-3 py-2 hover:bg-neutral-100 dark:hover:bg-neutral-800&quot;&gt;<br>
+          &lt;span className=&quot;flex items-center gap-2&quot;&gt;<br>
+            &lt;Icon className=&quot;h-4 w-4&quot; /&gt;<br>
+            &lt;span className=&quot;text-sm
+font-medium&quot;&gt;{title}&lt;/span&gt;<br>
+          &lt;/span&gt;<br>
+          {isOpen ? &lt;ChevronDown className=&quot;h-4 w-4&quot; /&gt; :
+&lt;ChevronRight className=&quot;h-4 w-4&quot; /&gt;}<br>
+        &lt;/button&gt;<br>
+        {isOpen &amp;&amp; (<br>
+          &lt;div className=&quot;ml-6 mt-1 flex flex-col gap-1&quot;&gt;<br>
+            {items.map(({ key, icon: ItemIcon }) =&gt; {<br>
+              const activeHere = active.sub === key &amp;&amp; active.group ===
+title;<br>
+              return (<br>
+                &lt;button key={key} onClick={() =&gt; setActive({ group:
+title, sub: key })}<br>
+                        className={`flex items-center gap-2 rounded-xl px-3
+py-2 text-sm hover:bg-neutral-100 dark:hover:bg-neutral-800 ${activeHere ?
+&quot;bg-neutral-100 dark:bg-neutral-800 font-medium&quot; :
+&quot;&quot;}`}&gt;<br>
+                  &lt;ItemIcon className=&quot;h-4 w-4&quot; /&gt;<br>
+                  &lt;span&gt;{key}&lt;/span&gt;<br>
+                &lt;/button&gt;<br>
+              );<br>
+            })}<br>
+          &lt;/div&gt;<br>
+        )}<br>
+      &lt;/div&gt;<br>
+    );<br>
+  };<br>
+<br>
+  return (<br>
+    &lt;aside className=&quot;h-full w-72 shrink-0 border-r border-neutral-200
+dark:border-neutral-800 p-3 overflow-y-auto&quot;&gt;<br>
+      {Object.entries(MODULES).map(([title, def]) =&gt; (<br>
+        &lt;Group key={title} title={title} icon={def.icon} items={def.items}
+/&gt;<br>
+      ))}<br>
+    &lt;/aside&gt;<br>
+  );<br>
+}<br>
+<br>
+function ContentCard({ title, description, children, actions }) {<br>
+  return (<br>
+    &lt;div className=&quot;rounded-2xl border border-neutral-200
+dark:border-neutral-800 bg-white dark:bg-neutral-900 p-5 shadow-sm&quot;&gt;<br>
+      &lt;SectionHeader title={title} actions={actions} /&gt;<br>
+      {description &amp;&amp; &lt;p className=&quot;mt-3 text-sm
+text-neutral-600 dark:text-neutral-400&quot;&gt;{description}&lt;/p&gt;}<br>
+      &lt;div className=&quot;mt-4&quot;&gt;{children}&lt;/div&gt;<br>
+    &lt;/div&gt;<br>
+  );<br>
+}<br>
+<br>
+function Stat({ label, value }) {<br>
+  return (<br>
+    &lt;div className=&quot;rounded-2xl border border-neutral-200
+dark:border-neutral-800 p-4 text-center&quot;&gt;<br>
+      &lt;div className=&quot;text-2xl
+font-semibold&quot;&gt;{value}&lt;/div&gt;<br>
+      &lt;div className=&quot;mt-1 text-xs
+text-neutral-500&quot;&gt;{label}&lt;/div&gt;<br>
+    &lt;/div&gt;<br>
+  );<br>
+}<br>
+<br>
+function ConnectionsView() {<br>
+  return (<br>
+    &lt;div className=&quot;grid gap-4&quot;&gt;<br>
+      &lt;ContentCard title=&quot;Database Connections&quot;<br>
+                   description=&quot;Manage connection strings, credentials,
+and connectivity checks across engines.&quot;<br>
+                   actions={&lt;button className=&quot;rounded-xl border px-3
+py-1.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800&quot;&gt;+ New
+Connection&lt;/button&gt;}&gt;<br>
+        &lt;div className=&quot;grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3
+gap-3&quot;&gt;<br>
+          {[&quot;MySQL / prod-east&quot;, &quot;Postgres / staging&quot;,
+&quot;SQL Server / finance&quot;, &quot;Oracle / hr&quot;].map((n) =&gt; (<br>
+            &lt;div key={n} className=&quot;rounded-xl border
+border-neutral-200 dark:border-neutral-800 p-4&quot;&gt;<br>
+              &lt;div className=&quot;flex items-center
+justify-between&quot;&gt;<br>
+                &lt;div className=&quot;font-medium&quot;&gt;{n}&lt;/div&gt;<br>
+                &lt;Badge&gt;OK&lt;/Badge&gt;<br>
+              &lt;/div&gt;<br>
+              &lt;div className=&quot;mt-2 text-xs
+text-neutral-500&quot;&gt;Last check · 2m ago&lt;/div&gt;<br>
+              &lt;div className=&quot;mt-3 flex gap-2&quot;&gt;<br>
+                &lt;button className=&quot;rounded-lg border px-2 py-1 text-xs
+hover:bg-neutral-50 dark:hover:bg-neutral-800&quot;&gt;Test&lt;/button&gt;<br>
+                &lt;button className=&quot;rounded-lg border px-2 py-1 text-xs
+hover:bg-neutral-50 dark:hover:bg-neutral-800&quot;&gt;Edit&lt;/button&gt;<br>
+              &lt;/div&gt;<br>
+            &lt;/div&gt;<br>
+          ))}<br>
+        &lt;/div&gt;<br>
+      &lt;/ContentCard&gt;<br>
+    &lt;/div&gt;<br>
+  );<br>
+}<br>
+<br>
+function MonitoringView() {<br>
+  return (<br>
+    &lt;div className=&quot;grid gap-4&quot;&gt;<br>
+      &lt;ContentCard title=&quot;Performance Monitoring&quot;<br>
+                   description=&quot;Live view of query latency, resource
+usage, active connections, and slow logs.&quot;<br>
+                   actions={&lt;&gt;<br>
+                     &lt;button className=&quot;rounded-xl border px-3 py-1.5
+text-sm hover:bg-neutral-50
+dark:hover:bg-neutral-800&quot;&gt;Refresh&lt;/button&gt;<br>
+                     &lt;button className=&quot;rounded-xl border px-3 py-1.5
+text-sm hover:bg-neutral-50
+dark:hover:bg-neutral-800&quot;&gt;Configure&lt;/button&gt;<br>
+                   &lt;/&gt;}&gt;<br>
+        &lt;div className=&quot;grid grid-cols-2 lg:grid-cols-4 gap-3&quot;&gt;<br>
+          &lt;Stat label=&quot;Avg Query (ms)&quot; value=&quot;24&quot; /&gt;<br>
+          &lt;Stat label=&quot;CPU (%)&quot; value=&quot;36&quot; /&gt;<br>
+          &lt;Stat label=&quot;Memory (%)&quot; value=&quot;61&quot; /&gt;<br>
+          &lt;Stat label=&quot;Active Conns&quot; value=&quot;128&quot; /&gt;<br>
+        &lt;/div&gt;<br>
+        &lt;div className=&quot;mt-4 text-sm text-neutral-500&quot;&gt;(Charts
+placeholder) Integrate Recharts for time&#8209;series.&lt;/div&gt;<br>
+      &lt;/ContentCard&gt;<br>
+    &lt;/div&gt;<br>
+  );<br>
+}<br>
+<br>
+function QueryRunnerView() {<br>
+  return (<br>
+    &lt;ContentCard title=&quot;Query Runner&quot;<br>
+                 description=&quot;Run ad&#8209;hoc SQL across connected
+databases with safe guards.&quot;<br>
+                 actions={&lt;button className=&quot;rounded-xl border px-3
+py-1.5 text-sm hover:bg-neutral-50 dark:hover:bg-neutral-800&quot;&gt;Run
+&#9654;&lt;/button&gt;}&gt;<br>
+      &lt;div className=&quot;rounded-xl border border-neutral-200
+dark:border-neutral-800 overflow-hidden&quot;&gt;<br>
+        &lt;div className=&quot;bg-neutral-50 dark:bg-neutral-900/50 p-2
+text-xs text-neutral-500&quot;&gt;SQL Editor&lt;/div&gt;<br>
+        &lt;textarea defaultValue={`-- Example\nSELECT * FROM customers WHERE
+created_at &gt;= CURRENT_DATE - INTERVAL '30 days';`}<br>
+                  className=&quot;min-h-40 w-full resize-y bg-white
+dark:bg-neutral-950 p-3 outline-none text-sm&quot; /&gt;<br>
+      &lt;/div&gt;<br>
+      &lt;div className=&quot;mt-3 text-xs text-neutral-500&quot;&gt;(Table
+results placeholder)&lt;/div&gt;<br>
+    &lt;/ContentCard&gt;<br>
+  );<br>
+}<br>
+<br>
+function ReportDesignerView() {<br>
+  return (<br>
+    &lt;ContentCard title=&quot;Report Designer&quot;<br>
+                 description=&quot;Drag blocks to assemble charts and
+tables.&quot;<br>
+                 actions={&lt;button className=&quot;rounded-xl border px-3
+py-1.5 text-sm hover:bg-neutral-50
+dark:hover:bg-neutral-800&quot;&gt;Save&lt;/button&gt;}&gt;<br>
+      &lt;div className=&quot;grid grid-cols-1 md:grid-cols-3 gap-3&quot;&gt;<br>
+        &lt;div className=&quot;rounded-xl border border-dashed p-6 text-sm
+text-neutral-500&quot;&gt;Drop: Bar Chart&lt;/div&gt;<br>
+        &lt;div className=&quot;rounded-xl border border-dashed p-6 text-sm
+text-neutral-500&quot;&gt;Drop: Table&lt;/div&gt;<br>
+        &lt;div className=&quot;rounded-xl border border-dashed p-6 text-sm
+text-neutral-500&quot;&gt;Drop: KPI Tile&lt;/div&gt;<br>
+      &lt;/div&gt;<br>
+    &lt;/ContentCard&gt;<br>
+  );<br>
+}<br>
+<br>
+function NLQView() {<br>
+  return (<br>
+    &lt;ContentCard title=&quot;Natural Language Query&quot;<br>
+                 description=&quot;Ask questions in plain English; the system
+translates to SQL and renders results.&quot;&gt;<br>
+      &lt;div className=&quot;flex gap-2&quot;&gt;<br>
+        &lt;input className=&quot;flex-1 rounded-xl border px-3 py-2 text-sm
+border-neutral-200 dark:border-neutral-800 bg-white dark:bg-neutral-950&quot;<br>
+               placeholder=&quot;What were our top 10 products last
+month?&quot; /&gt;<br>
+        &lt;button className=&quot;rounded-xl border px-4 py-2 text-sm
+hover:bg-neutral-50 dark:hover:bg-neutral-800&quot;&gt;Ask&lt;/button&gt;<br>
+      &lt;/div&gt;<br>
+      &lt;div className=&quot;mt-4 text-sm text-neutral-500&quot;&gt;(Results
+placeholder)&lt;/div&gt;<br>
+    &lt;/ContentCard&gt;<br>
+  );<br>
+}<br>
+<br>
+function PlaceholderView({ group, sub }) {<br>
+  return (<br>
+    &lt;ContentCard title={`${group} · ${sub}`}<br>
+                 description=&quot;Interactive view placeholder. Hook up real
+data as modules mature.&quot;&gt;<br>
+      &lt;div className=&quot;text-sm text-neutral-500&quot;&gt;Design-ready
+surface for {sub}.&lt;/div&gt;<br>
+    &lt;/ContentCard&gt;<br>
+  );<br>
+}<br>
+<br>
+function MainContent({ active }) {<br>
+  const key = `${active.group}:${active.sub}`;<br>
+  if (key === &quot;Database Management:Connections&quot;) return
+&lt;ConnectionsView /&gt;;<br>
+  if (key === &quot;Database Management:Performance Monitoring&quot;) return
+&lt;MonitoringView /&gt;;<br>
+  if (key === &quot;Database Management:Query Runner&quot;) return
+&lt;QueryRunnerView /&gt;;<br>
+  if (key === &quot;Report Management:Report Designer&quot;) return
+&lt;ReportDesignerView /&gt;;<br>
+  if (key === &quot;Artificial Intelligence Access:Natural Language
+Query&quot;) return &lt;NLQView /&gt;;<br>
+  return &lt;PlaceholderView group={active.group} sub={active.sub} /&gt;;<br>
+}<br>
+<br>
+export default function EnterpriseConsolePrototype() {<br>
+  const [theme, setTheme] = useState(&quot;light&quot;);<br>
+  const [openGroups, setOpenGroups] = useState(() =&gt; {<br>
+    const initial = {};<br>
+    Object.keys(MODULES).forEach((t) =&gt; (initial[t] = t === &quot;Database
+Management&quot;));<br>
+    return initial;<br>
+  });<br>
+  const firstGroup = Object.keys(MODULES)[0];<br>
+  const firstSub = MODULES[firstGroup].items[0].key;<br>
+  const [active, setActive] = useState({ group: firstGroup, sub: firstSub });<br>
+<br>
+  const themeClasses = useMemo(() =&gt; (theme === &quot;dark&quot; ?
+&quot;dark bg-neutral-950 text-white&quot; : &quot;bg-neutral-50
+text-neutral-900&quot;), [theme]);<br>
+<br>
+  return (<br>
+    &lt;div className={themeClasses + &quot; min-h-screen&quot;}&gt;<br>
+      &lt;TopBar theme={theme} setTheme={setTheme} /&gt;<br>
+      &lt;div className=&quot;mx-auto max-w-[1400px] px-4&quot;&gt;<br>
+        &lt;div className=&quot;flex gap-4 py-4&quot;&gt;<br>
+          &lt;Sidebar openGroups={openGroups} setOpenGroups={setOpenGroups}
+active={active} setActive={setActive} /&gt;<br>
+          &lt;main className=&quot;min-h-[70vh] flex-1 space-y-4&quot;&gt;<br>
+            &lt;MainContent active={active} /&gt;<br>
+            &lt;div className=&quot;text-xs text-neutral-500 dark:text-neutral-400&quot;&gt;<br>
+              Hint: Click items in the left sidebar to navigate. Try Database
+&#8594; Query Runner or AI &#8594; Natural Language Query.<br>
+            &lt;/div&gt;<br>
+          &lt;/main&gt;<br>
+        &lt;/div&gt;<br>
+      &lt;/div&gt;<br>
+    &lt;/div&gt;<br>
+  );<br>
+}</span></p>
+
+</div>
+
+</body>
+
+</html>

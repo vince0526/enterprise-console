@@ -44,9 +44,12 @@
                 {{ __('Already registered?') }}
             </a>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
+            <div class="ms-4 flex items-center space-x-2">
+                <x-primary-button>
+                    {{ __('Register') }}
+                </x-primary-button>
+                <a href="{{ route('oauth.redirect','google') }}" class="inline-flex items-center px-3 py-2 bg-red-600 text-white rounded text-sm hover:opacity-90">Register with Google</a>
+            </div>
         </div>
     </form>
 </x-guest-layout>

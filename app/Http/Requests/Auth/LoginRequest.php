@@ -18,12 +18,23 @@ class LoginRequest extends FormRequest
      */
     protected function prepareForValidation(): void
     {
-        $email = $this->input('email', '');
-        $email = is_scalar($email) ? (string) $email : '';
+        // Support legacy 'email' input and new 'identifier' input.
+        $identifier = $this->input('identifier', $this->input('email', ''));
+        $identifier = is_scalar($identifier) ? (string) $identifier : '';
+
+        // normalize
+        $identifier = trim($identifier);
+
+        // if marked as encoded, attempt base64 decode
+        if ($this->boolean('use_encoded')) {
+            $decoded = @base64_decode($identifier, true);
+            if (is_string($decoded) && $decoded !== '') {
+                $identifier = $decoded;
+            }
+        }
 
         $this->merge([
-            // normalize to a real string, trimmed & lowercased
-            'email' => Str::lower(trim($email)),
+            'identifier' => $identifier,
         ]);
     }
 
@@ -43,7 +54,7 @@ class LoginRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', 'string', 'email'],
+            'identifier' => ['required', 'string'],
             'password' => ['required', 'string'],
         ];
     }
@@ -57,11 +68,32 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
+        // Determine credential field. If input looks like an email, try 'email', else try 'name' or 'email'.
+        $identifier = $this->input('identifier', '');
+        $credentials = ['password' => $this->input('password', '')];
+
+        $attempted = false;
+
+        if (filter_var($identifier, FILTER_VALIDATE_EMAIL)) {
+            $credentials['email'] = (string) $identifier;
+            $attempted = Auth::attempt($credentials, $this->boolean('remember'));
+        } else {
+            // try username (name) first, then email
+            $credentials['name'] = (string) $identifier;
+            $attempted = Auth::attempt($credentials, $this->boolean('remember'));
+
+            if (! $attempted) {
+                unset($credentials['name']);
+                $credentials['email'] = (string) $identifier;
+                $attempted = Auth::attempt($credentials, $this->boolean('remember'));
+            }
+        }
+
+        if (! $attempted) {
             RateLimiter::hit($this->throttleKey());
 
             throw ValidationException::withMessages([
-                'email' => trans('auth.failed'),
+                'identifier' => trans('auth.failed'),
             ]);
         }
 
@@ -96,14 +128,13 @@ class LoginRequest extends FormRequest
      */
     public function throttleKey(): string
     {
-        // email already normalized in prepareForValidation()
-        $emailRaw = $this->input('email', '');
-        $email = is_scalar($emailRaw) ? (string) $emailRaw : '';
+        $idRaw = $this->input('identifier', '');
+        $id = is_scalar($idRaw) ? (string) $idRaw : '';
 
         $ip = $this->ip();
         $ip = is_scalar($ip) ? (string) $ip : '';
 
-        $key = $email.'|'.$ip;
+        $key = $id.'|'.$ip;
 
         return (string) Str::transliterate($key);
     }
