@@ -1,11 +1,105 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Enterprise Management Console
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+A comprehensive Laravel-based enterprise management system with advanced database management capabilities.
+
+## 🚀 Quick Start
+
+### Option 1: Automated Setup (Recommended)
+
+**Windows:**
+```cmd
+git clone https://github.com/vince0526/enterprise-console.git
+cd enterprise-console
+setup.bat
+```
+
+**Linux/Mac:**
+```bash
+git clone https://github.com/vince0526/enterprise-console.git
+cd enterprise-console
+chmod +x setup.sh
+./setup.sh
+```
+
+### Option 2: Manual Setup
+
+See [SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md) for detailed manual setup instructions.
+
+## ✨ Features
+
+### 🗄️ Database Management Module
+- **Database Backup**: Complete backup and restore functionality
+- **Database Connections**: Connection management and monitoring
+- **Database Performance**: Performance metrics and optimization tools
+- **Database Query Tool**: Interactive SQL query interface
+- **Database Replication**: Replication setup and monitoring
+
+### 🔧 Core Features
+- Modern Laravel-based architecture
+- Responsive dashboard interface
+- User authentication and authorization
+- Development auto-login for testing
+- Code quality assurance (Pint, PHPStan)
+- Comprehensive error handling
+
+## 🌐 Access URLs
+
+After running `php artisan serve`:
+
+- **Main Dashboard**: http://localhost:8000
+- **EMC Interface**: http://localhost:8000/emc
+- **Database Module**: http://localhost:8000/emc/db
+- **User Profile**: http://localhost:8000/profile
+
+## 📋 Requirements
+
+- PHP 8.1+
+- Composer
+- MySQL/MariaDB or SQLite
+- Node.js & npm (optional, for frontend assets)
+
+## 🔧 Development
+
+### Code Quality
+```bash
+# Format code
+./vendor/bin/pint
+
+# Static analysis
+./vendor/bin/phpstan analyse
+
+# Run tests
+php artisan test
+```
+
+### Development Features
+- Set `DEV_AUTO_LOGIN=true` in `.env` for automatic authentication
+- Access `/dev-env-flag` to check development settings
+- View `/dev-users` to see available test users
+
+## 📚 Documentation
+
+- [Complete Setup Instructions](SETUP_INSTRUCTIONS.md)
+- [Laravel Documentation](https://laravel.com/docs)
+
+## 🤝 Support
+
+If you encounter issues:
+1. Check the [troubleshooting section](SETUP_INSTRUCTIONS.md#troubleshooting) in setup instructions
+2. Verify all requirements are met
+3. Check Laravel logs in `storage/logs/`
+
+## 📈 Version Info
+
+- **Current Version**: Production-ready EMC with Database Management
+- **Last Updated**: September 24, 2025
+- **Commit Hash**: `220942eede37102a1ed67bc78f5adf1a5e54cc74`
+
+---
+
+**Repository**: https://github.com/vince0526/enterprise-console  
+**License**: MIT  
+**Maintainer**: vince0526
 
 ## About Laravel
 
