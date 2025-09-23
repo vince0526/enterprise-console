@@ -125,4 +125,18 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Development Auto Login
+    |--------------------------------------------------------------------------
+    |
+    | These values control the development auto-login feature which allows
+    | bypassing authentication during development. This should only be used
+    | in non-production environments for development convenience.
+    |
+    */
+
+    'dev_auto_login' => env('DEV_AUTO_LOGIN', false),
+    'dev_auto_login_user_id' => env('DEV_AUTO_LOGIN_USER_ID', 1),
+
 ];

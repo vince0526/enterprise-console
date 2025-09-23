@@ -2,11 +2,16 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Auth\DevOverrideController;
+use App\Http\Controllers\Auth\ForgotUsernameController;
+use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Web\Database\CompanyUserController as WebCompanyUser;
 use App\Http\Controllers\Web\Database\UserRestrictionController as WebUserRestriction;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Web\Emc\EmcController;
+use App\Http\Middleware\EnsureDevOverrideEnabled;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Route;
 
 if (! app()->environment('production')) {
     // Auto-run the EMC first screen (DB) during development
@@ -16,7 +21,7 @@ if (! app()->environment('production')) {
 }
 
 // If dev auto login is enabled, expose dashboard without auth middleware.
-if (env('DEV_AUTO_LOGIN')) {
+if (config('app.dev_auto_login', false)) {
     Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
 } else {
     Route::get('/dashboard', fn () => view('dashboard'))
@@ -24,7 +29,7 @@ if (env('DEV_AUTO_LOGIN')) {
         ->name('dashboard');
 }
 
-Route::middleware(env('DEV_AUTO_LOGIN') ? [] : ['auth'])->group(function () {
+Route::middleware(config('app.dev_auto_login', false) ? [] : ['auth'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -40,12 +45,6 @@ Route::middleware(env('DEV_AUTO_LOGIN') ? [] : ['auth'])->group(function () {
 
 require __DIR__.'/auth.php';
 
-use App\Http\Controllers\Auth\DevOverrideController;
-use App\Http\Controllers\Auth\ForgotUsernameController;
-use App\Http\Controllers\Auth\OAuthController;
-use App\Http\Middleware\EnsureDevOverrideEnabled;
-use App\Http\Controllers\Web\Emc\EmcController;
-
 Route::post('/dev-override', DevOverrideController::class)
     ->middleware([EnsureDevOverrideEnabled::class, 'throttle:5,1'])
     ->name('dev.override');
@@ -59,15 +58,16 @@ Route::get('/oauth/callback/{provider}', [OAuthController::class, 'callback'])->
 if (! app()->environment('production')) {
     Route::get('/dev-env-flag', function () {
         return response()->json([
-            'DEV_AUTO_LOGIN' => env('DEV_AUTO_LOGIN'),
-            'DEV_AUTO_LOGIN_USER_ID' => env('DEV_AUTO_LOGIN_USER_ID'),
+            'DEV_AUTO_LOGIN' => config('app.dev_auto_login', false),
+            'DEV_AUTO_LOGIN_USER_ID' => config('app.dev_auto_login_user_id', 1),
             'auth_user_id' => Auth::id(),
             'is_authenticated' => Auth::check(),
-        ])->header('X-Dev-Auto-Login', env('DEV_AUTO_LOGIN') ? '1' : '0');
+        ])->header('X-Dev-Auto-Login', config('app.dev_auto_login', false) ? '1' : '0');
     });
 
     Route::get('/dev-users', function () {
-        $users = \App\Models\User::query()->orderBy('id')->limit(5)->get(['id','name','email','email_verified_at'])->toArray();
+        $users = \App\Models\User::query()->orderBy('id')->limit(5)->get(['id', 'name', 'email', 'email_verified_at'])->toArray();
+
         return response()->json([
             'count' => \App\Models\User::query()->count(),
             'sample' => $users,
@@ -79,7 +79,7 @@ if (! app()->environment('production')) {
     });
 
     Route::get('/dev-plain', function () {
-        return response('<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Dev Links</title><style>body{background:#111;color:#eee;font-family:system-ui,Arial,sans-serif;padding:2rem;} a{color:#7db3ff;text-decoration:none;} a:hover{text-decoration:underline;} h1{margin-top:0;} code{background:#222;padding:2px 4px;border-radius:4px;} .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;} .card{border:1px solid #333;padding:1rem;border-radius:8px;background:#1a1a1a;} ul{margin:0;padding-left:1.1rem;} li{margin:.25rem 0;} .warn{margin-top:2rem;font-size:.8rem;opacity:.75}</style></head><body><h1>Dev Links (Plain)</h1><p>Auth bypass flag: <strong>'.(env('DEV_AUTO_LOGIN')?'ON':'OFF').'</strong></p><div class="grid">
+        return response('<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Dev Links</title><style>body{background:#111;color:#eee;font-family:system-ui,Arial,sans-serif;padding:2rem;} a{color:#7db3ff;text-decoration:none;} a:hover{text-decoration:underline;} h1{margin-top:0;} code{background:#222;padding:2px 4px;border-radius:4px;} .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;} .card{border:1px solid #333;padding:1rem;border-radius:8px;background:#1a1a1a;} ul{margin:0;padding-left:1.1rem;} li{margin:.25rem 0;} .warn{margin-top:2rem;font-size:.8rem;opacity:.75}</style></head><body><h1>Dev Links (Plain)</h1><p>Auth bypass flag: <strong>'.(config('app.dev_auto_login', false) ? 'ON' : 'OFF').'</strong></p><div class="grid">
 <div class="card"><h2>Core</h2><ul><li><a href="/">Welcome</a></li><li><a href="/dashboard">Dashboard</a></li><li><a href="/profile">Profile Edit</a></li></ul></div>
 <div class="card"><h2>Database</h2><ul><li><a href="/database/company-users">Company Users</a></li><li><a href="/database/user-restrictions">User Restrictions</a></li></ul></div>
 <div class="card"><h2>Auth</h2><ul><li><a href="/login">Login</a></li><li><a href="/register">Register</a></li><li><a href="/forgot-password">Forgot Password</a></li></ul></div>
@@ -92,6 +92,7 @@ if (! app()->environment('production')) {
         Route::get('/model-html', function () {
             $path = base_path('docs/enterprise_management_console.model.html');
             abort_unless(file_exists($path), 404);
+
             return response()->file($path, [
                 'Content-Type' => 'text/html; charset=utf-8',
             ]);
@@ -100,6 +101,7 @@ if (! app()->environment('production')) {
         Route::get('/layout-html', function () {
             $path = base_path('docs/enterprise_management_console.layout.html');
             abort_unless(file_exists($path), 404);
+
             return response()->file($path, [
                 'Content-Type' => 'text/html; charset=utf-8',
             ]);

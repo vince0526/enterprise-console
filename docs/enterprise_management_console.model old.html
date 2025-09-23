@@ -1,0 +1,348 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Enterprise Management Console — Model</title>
+  <style>
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; }
+    .layout { display: grid; grid-template-columns: 280px 1fr; min-height: 100vh; }
+    nav { background: #0f172a; color: #e2e8f0; padding: 16px; overflow:auto; }
+    nav h1 { font-size: 16px; margin: 0 0 12px; }
+    nav a { color: #93c5fd; text-decoration: none; }
+    nav a:hover { text-decoration: underline; }
+    main { padding: 24px 32px; }
+    h1, h2, h3 { color: #0f172a; }
+    table { border-collapse: collapse; width: 100%; margin: 12px 0; }
+    th, td { border: 1px solid #e5e7eb; padding: 8px; text-align: left; }
+    thead th { background: #f3f4f6; }
+    .small { color: #64748b; font-size: 12px; }
+    .tag { display:inline-block; padding: 2px 6px; border-radius: 4px; background:#eef2ff; color:#3730a3; font-size:12px; margin-right:6px; }
+    .linkages table td:nth-child(1) { white-space: nowrap; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <nav>
+      <h1>EMC Spec</h1>
+      <div class="small">Generated from Markdown</div>
+      <hr style="border-color:#334155; margin:12px 0;"/>
+      <div id="toc"><h1 id="enterprise-management-console">Enterprise Management Console</h1>
+<p>This document captures the product requirements distilled from the Word source (DOCX). It organizes the modules, UI behavior, and key rules in a developer-friendly Markdown format. For full-fidelity layout and embedded content, see <code>docs/enterprise_management_console.mammoth.html</code>.</p>
+<h2 id="overview">Overview</h2>
+<p>The Enterprise Management Console is a database management system that maintains and controls various databases across different platforms. It provides Excel-like browsing, per-record CRUD via pop-up forms, and persistent per-table view settings.</p>
+<h2 id="navigation-and-layout">Navigation and Layout</h2>
+<ul>
+<li>Top menu modules: Database Management, Tables and Views, File Management, Report Management, Artificial Intelligence Access, Communications, User Management, Preferences and Settings, About.</li>
+<li>Submodule workspace: Each module opens a workspace with its own browsing/authoring screens.</li>
+<li>Activity Log: A panel that can be shown/hidden and pinned; shows recent user/system actions within the active submodule.</li>
+</ul>
+<h2 id="core-modules">Core Modules</h2>
+<h3 id="database-management">Database Management</h3>
+<ul>
+<li>Browse list of databases being managed.</li>
+<li>Add a new database connection via a pop-up form (CRUD) capturing: platform, host, username, password, connection string, and other best-practice metadata.</li>
+<li>Clicking a row opens a pop-up CRUD form to view/edit the selected database connection.</li>
+<li>When a database is selected, show a relational view including:<ul>
+<li>Database description</li>
+<li>Company users of the database</li>
+<li>User restrictions (allowed tables and allowed processes)</li>
+</ul>
+</li>
+<li>Indicative tables involved: <code>DATABASECONNECTIONS</code>, <code>COMPANYUSERS</code>, <code>COMPANYUSERRESTRICTIONS</code>, <code>FTPCONNECTIONS</code>.</li>
+</ul>
+<h3 id="tables-and-views">Tables and Views</h3>
+<ul>
+<li>Browse tables for the selected database; if no database is selected, the area remains blank.</li>
+<li>When a table is selected, show relevant details and actions (Create Table, Create Relations, Import Tables).</li>
+</ul>
+<h3 id="file-management">File Management</h3>
+<ul>
+<li>Windows Explorer–like interface over configured FTP connections.</li>
+<li>Actions include: Find Files, Create File, Create Folder.</li>
+</ul>
+<h3 id="user-management">User Management</h3>
+<ul>
+<li>Browse users and open a pop-up CRUD form when a row is clicked.</li>
+</ul>
+<h3 id="communications">Communications</h3>
+<ul>
+<li>Mailbox Management (Gmail-like interface). Configure mailboxes (connection info) and manage messages.</li>
+<li>Artificial Intelligence screen to access providers (e.g., ChatGPT, Copilot, Grok, Gemini, Meta) with provider selection.</li>
+<li>Video and Audio Chat within the system.</li>
+<li>Spreadsheet (Excel-like) and Document management areas.</li>
+</ul>
+<h3 id="report-management">Report Management</h3>
+<ul>
+<li>Report summaries and related browsing (details to be expanded based on report definitions).</li>
+</ul>
+<h3 id="preferences-and-settings">Preferences and Settings</h3>
+<ul>
+<li>Themes and screens customization; user can change colors/themes and other preferences.</li>
+</ul>
+<h2 id="global-browsing-behavior">Global Browsing Behavior</h2>
+<ul>
+<li>Excel-like browser in every module: sorting, filtering, checkbox selection.</li>
+<li>Clicking a row opens a pop-up form providing CRUD for that record.</li>
+<li>Numeric and other formatting functions similar to Excel.</li>
+<li>All settings are saved per table and can be reset to defaults.</li>
+</ul>
+<h2 id="filtering-logic-by-field-type">Filtering Logic by Field Type</h2>
+<p>The following tables formalize the filtering logic referenced in the DOCX.</p>
+<h3 id="text-fields">Text fields</h3>
+<p>| Filter Type | Equation / Logic | Example |
+| --- | --- | --- |
+| Equals | Field = "Value" | Name = "Vincent" |
+| Does Not Equal | Field &lt;&gt; "Value" | Department &lt;&gt; "Finance" |
+| Begins With | Field LIKE "Value%" | Name LIKE "Vin%" |
+| Ends With | Field LIKE "%Value" | Email LIKE "%@gmail.com" |
+| Contains | Field LIKE "%Value%" | Name LIKE "%cent%" |
+| Does Not Contain | Field NOT LIKE "%Value%" | Name NOT LIKE "%cent%" |
+| Is Blank / Is Not Blank | Field IS NULL / Field IS NOT NULL | Email IS NULL |</p>
+<h3 id="numeric-fields">Numeric fields</h3>
+<p>| Filter Type | Equation / Logic | Example |
+| --- | --- | --- |
+| Equals | Field = Value | Salary = 50000 |
+| Does Not Equal | Field &lt;&gt; Value | Age &lt;&gt; 30 |
+| Greater Than | Field &gt; Value | Score &gt; 75 |
+| Less Than | Field &lt; Value | Age &lt; 18 |
+| Greater Than or Equal | Field &gt;= Value | Price &gt;= 1000 |
+| Less Than or Equal | Field &lt;= Value | Quantity &lt;= 50 |
+| Between | Field BETWEEN Value1 AND Value2 | Age BETWEEN 18 AND 35 |
+| Top 10 / Bottom 10 | Excel-only: dynamic filter based on ranking | Top 10 items by Sales |
+| Is Blank / Is Not Blank | Field IS NULL / Field IS NOT NULL | Score IS NOT NULL |</p>
+<h2 id="activity-log">Activity Log</h2>
+<ul>
+<li>Each submodule workspace includes an Activity Log area.</li>
+<li>The Activity Log can be shown/hidden and pinned so it remains visible while working.</li>
+</ul>
+<h2 id="persistence-and-settings">Persistence and Settings</h2>
+<ul>
+<li>Per-table view/layout, formatting, and filtering settings are persisted.</li>
+<li>Users can reset settings to defaults when needed.</li>
+</ul>
+<h2 id="notes-and-source">Notes and Source</h2>
+<ul>
+<li>This Markdown is curated from <code>Enterprise Management Console.docx</code> and associated conversions.</li>
+<li>For raw conversion output, see:<ul>
+<li><code>docs/enterprise_management_console.mammoth.html</code> (full HTML)</li>
+<li><code>docs/enterprise_management_console.cleaned.md</code> (cleaned text extraction)</li>
+</ul>
+</li>
+</ul></div>
+    </nav>
+    <main>
+      <article>
+        <h1 id="enterprise-management-console">Enterprise Management Console</h1>
+<p>This document captures the product requirements distilled from the Word source (DOCX). It organizes the modules, UI behavior, and key rules in a developer-friendly Markdown format. For full-fidelity layout and embedded content, see <code>docs/enterprise_management_console.mammoth.html</code>.</p>
+<h2 id="overview">Overview</h2>
+<p>The Enterprise Management Console is a database management system that maintains and controls various databases across different platforms. It provides Excel-like browsing, per-record CRUD via pop-up forms, and persistent per-table view settings.</p>
+<h2 id="navigation-and-layout">Navigation and Layout</h2>
+<ul>
+<li>Top menu modules: Database Management, Tables and Views, File Management, Report Management, Artificial Intelligence Access, Communications, User Management, Preferences and Settings, About.</li>
+<li>Submodule workspace: Each module opens a workspace with its own browsing/authoring screens.</li>
+<li>Activity Log: A panel that can be shown/hidden and pinned; shows recent user/system actions within the active submodule.</li>
+</ul>
+<h2 id="core-modules">Core Modules</h2>
+<h3 id="database-management">Database Management</h3>
+<ul>
+<li>Browse list of databases being managed.</li>
+<li>Add a new database connection via a pop-up form (CRUD) capturing: platform, host, username, password, connection string, and other best-practice metadata.</li>
+<li>Clicking a row opens a pop-up CRUD form to view/edit the selected database connection.</li>
+<li>When a database is selected, show a relational view including:<ul>
+<li>Database description</li>
+<li>Company users of the database</li>
+<li>User restrictions (allowed tables and allowed processes)</li>
+</ul>
+</li>
+<li>Indicative tables involved: <code>DATABASECONNECTIONS</code>, <code>COMPANYUSERS</code>, <code>COMPANYUSERRESTRICTIONS</code>, <code>FTPCONNECTIONS</code>.</li>
+</ul>
+<h3 id="tables-and-views">Tables and Views</h3>
+<ul>
+<li>Browse tables for the selected database; if no database is selected, the area remains blank.</li>
+<li>When a table is selected, show relevant details and actions (Create Table, Create Relations, Import Tables).</li>
+</ul>
+<h3 id="file-management">File Management</h3>
+<ul>
+<li>Windows Explorer–like interface over configured FTP connections.</li>
+<li>Actions include: Find Files, Create File, Create Folder.</li>
+</ul>
+<h3 id="user-management">User Management</h3>
+<ul>
+<li>Browse users and open a pop-up CRUD form when a row is clicked.</li>
+</ul>
+<h3 id="communications">Communications</h3>
+<ul>
+<li>Mailbox Management (Gmail-like interface). Configure mailboxes (connection info) and manage messages.</li>
+<li>Artificial Intelligence screen to access providers (e.g., ChatGPT, Copilot, Grok, Gemini, Meta) with provider selection.</li>
+<li>Video and Audio Chat within the system.</li>
+<li>Spreadsheet (Excel-like) and Document management areas.</li>
+</ul>
+<h3 id="report-management">Report Management</h3>
+<ul>
+<li>Report summaries and related browsing (details to be expanded based on report definitions).</li>
+</ul>
+<h3 id="preferences-and-settings">Preferences and Settings</h3>
+<ul>
+<li>Themes and screens customization; user can change colors/themes and other preferences.</li>
+</ul>
+<h2 id="global-browsing-behavior">Global Browsing Behavior</h2>
+<ul>
+<li>Excel-like browser in every module: sorting, filtering, checkbox selection.</li>
+<li>Clicking a row opens a pop-up form providing CRUD for that record.</li>
+<li>Numeric and other formatting functions similar to Excel.</li>
+<li>All settings are saved per table and can be reset to defaults.</li>
+</ul>
+<h2 id="filtering-logic-by-field-type">Filtering Logic by Field Type</h2>
+<p>The following tables formalize the filtering logic referenced in the DOCX.</p>
+<h3 id="text-fields">Text fields</h3>
+<table>
+<thead>
+<tr>
+<th>Filter Type</th>
+<th>Equation / Logic</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Equals</td>
+<td>Field = "Value"</td>
+<td>Name = "Vincent"</td>
+</tr>
+<tr>
+<td>Does Not Equal</td>
+<td>Field &lt;&gt; "Value"</td>
+<td>Department &lt;&gt; "Finance"</td>
+</tr>
+<tr>
+<td>Begins With</td>
+<td>Field LIKE "Value%"</td>
+<td>Name LIKE "Vin%"</td>
+</tr>
+<tr>
+<td>Ends With</td>
+<td>Field LIKE "%Value"</td>
+<td>Email LIKE "%@gmail.com"</td>
+</tr>
+<tr>
+<td>Contains</td>
+<td>Field LIKE "%Value%"</td>
+<td>Name LIKE "%cent%"</td>
+</tr>
+<tr>
+<td>Does Not Contain</td>
+<td>Field NOT LIKE "%Value%"</td>
+<td>Name NOT LIKE "%cent%"</td>
+</tr>
+<tr>
+<td>Is Blank / Is Not Blank</td>
+<td>Field IS NULL / Field IS NOT NULL</td>
+<td>Email IS NULL</td>
+</tr>
+</tbody>
+</table>
+<h3 id="numeric-fields">Numeric fields</h3>
+<table>
+<thead>
+<tr>
+<th>Filter Type</th>
+<th>Equation / Logic</th>
+<th>Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Equals</td>
+<td>Field = Value</td>
+<td>Salary = 50000</td>
+</tr>
+<tr>
+<td>Does Not Equal</td>
+<td>Field &lt;&gt; Value</td>
+<td>Age &lt;&gt; 30</td>
+</tr>
+<tr>
+<td>Greater Than</td>
+<td>Field &gt; Value</td>
+<td>Score &gt; 75</td>
+</tr>
+<tr>
+<td>Less Than</td>
+<td>Field &lt; Value</td>
+<td>Age &lt; 18</td>
+</tr>
+<tr>
+<td>Greater Than or Equal</td>
+<td>Field &gt;= Value</td>
+<td>Price &gt;= 1000</td>
+</tr>
+<tr>
+<td>Less Than or Equal</td>
+<td>Field &lt;= Value</td>
+<td>Quantity &lt;= 50</td>
+</tr>
+<tr>
+<td>Between</td>
+<td>Field BETWEEN Value1 AND Value2</td>
+<td>Age BETWEEN 18 AND 35</td>
+</tr>
+<tr>
+<td>Top 10 / Bottom 10</td>
+<td>Excel-only: dynamic filter based on ranking</td>
+<td>Top 10 items by Sales</td>
+</tr>
+<tr>
+<td>Is Blank / Is Not Blank</td>
+<td>Field IS NULL / Field IS NOT NULL</td>
+<td>Score IS NOT NULL</td>
+</tr>
+</tbody>
+</table>
+<h2 id="activity-log">Activity Log</h2>
+<ul>
+<li>Each submodule workspace includes an Activity Log area.</li>
+<li>The Activity Log can be shown/hidden and pinned so it remains visible while working.</li>
+</ul>
+<h2 id="persistence-and-settings">Persistence and Settings</h2>
+<ul>
+<li>Per-table view/layout, formatting, and filtering settings are persisted.</li>
+<li>Users can reset settings to defaults when needed.</li>
+</ul>
+<h2 id="notes-and-source">Notes and Source</h2>
+<ul>
+<li>This Markdown is curated from <code>Enterprise Management Console.docx</code> and associated conversions.</li>
+<li>For raw conversion output, see:<ul>
+<li><code>docs/enterprise_management_console.mammoth.html</code> (full HTML)</li>
+<li><code>docs/enterprise_management_console.cleaned.md</code> (cleaned text extraction)</li>
+</ul>
+</li>
+</ul>
+        <hr />
+        <section class="linkages">
+          <h2 id="proposed-linkages">Proposed linkages (routes/modules)</h2>
+          <p class="small">These are suggested development paths and module route names derived from the spec. Adjust as needed.</p>
+          <table>
+            <thead>
+              <tr><th>Area</th><th>Route/Path</th><th>Notes</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Database Management</td><td><code>/db</code>, <code>/db/connections</code></td><td>CRUD for database connections; relational view</td></tr>
+              <tr><td>Tables & Views</td><td><code>/tables</code></td><td>Table browser for selected database</td></tr>
+              <tr><td>File Management</td><td><code>/files</code></td><td>FTP-backed explorer: find/create file/folder</td></tr>
+              <tr><td>User Management</td><td><code>/users</code></td><td>Browse users; row click -> CRUD popup</td></tr>
+              <tr><td>Report Management</td><td><code>/reports</code></td><td>Summaries and detail views</td></tr>
+              <tr><td>AI Access</td><td><code>/ai</code></td><td>Provider selection (ChatGPT, Copilot, Grok, Gemini, Meta)</td></tr>
+              <tr><td>Communications</td><td><code>/comms</code></td><td>Mailboxes, chat, spreadsheet, documents</td></tr>
+              <tr><td>Preferences</td><td><code>/settings</code></td><td>Themes, layout, persisted options</td></tr>
+              <tr><td>Activity Log</td><td><code>/activity</code></td><td>Pin-able panel; per-module feed</td></tr>
+              <tr><td>Filtering</td><td><code>/tables/:table/filters</code></td><td>Implements Text/Numeric filter logic</td></tr>
+            </tbody>
+          </table>
+        </section>
+      </article>
+    </main>
+  </div>
+</body>
+</html>

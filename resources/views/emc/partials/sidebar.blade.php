@@ -5,10 +5,19 @@
     @switch($route)
       @case('emc.db')
         <li class="sidebar__nav-item">
-          <a href="#" class="sidebar__nav-link sidebar__nav-link--active" aria-current="page">Connections</a>
+          <a href="{{ route('emc.db') }}" class="sidebar__nav-link {{ request()->is('emc/db') && !request()->has('submenu') ? 'sidebar__nav-link--active' : '' }}" aria-current="page">Connections</a>
         </li>
         <li class="sidebar__nav-item">
-          <a href="#" class="sidebar__nav-link">Relational View</a>
+          <a href="{{ route('emc.db', ['submenu' => 'backup']) }}" class="sidebar__nav-link {{ request()->get('submenu') === 'backup' ? 'sidebar__nav-link--active' : '' }}">Backup & Restore</a>
+        </li>
+        <li class="sidebar__nav-item">
+          <a href="{{ route('emc.db', ['submenu' => 'performance']) }}" class="sidebar__nav-link {{ request()->get('submenu') === 'performance' ? 'sidebar__nav-link--active' : '' }}">Performance Monitor</a>
+        </li>
+        <li class="sidebar__nav-item">
+          <a href="{{ route('emc.db', ['submenu' => 'query']) }}" class="sidebar__nav-link {{ request()->get('submenu') === 'query' ? 'sidebar__nav-link--active' : '' }}">Query Runner</a>
+        </li>
+        <li class="sidebar__nav-item">
+          <a href="{{ route('emc.db', ['submenu' => 'replication']) }}" class="sidebar__nav-link {{ request()->get('submenu') === 'replication' ? 'sidebar__nav-link--active' : '' }}">Replication & Clustering</a>
         </li>
         @break
       @case('emc.tables')

@@ -4,13 +4,10 @@ declare(strict_types=1);
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
-use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Config;
-use App\Models\User;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -43,6 +40,7 @@ class DevAutoLogin
         if ($active && method_exists($response, 'headers')) {
             $response->headers->set('X-Dev-Auto-Login', '1');
         }
+
         return $response;
     }
 
@@ -52,17 +50,18 @@ class DevAutoLogin
             return false; // safety: never in production
         }
 
-        return (bool) env('DEV_AUTO_LOGIN', false);
+        return (bool) config('app.dev_auto_login', false);
     }
 
     protected function ensureLoggedIn(): void
     {
         if (Auth::check()) {
             Log::debug('DevAutoLogin: user already authenticated', ['id' => Auth::id()]);
+
             return; // already logged in
         }
 
-        $userId = (int) env('DEV_AUTO_LOGIN_USER_ID', 1);
+        $userId = (int) config('app.dev_auto_login_user_id', 1);
         $attempts = [];
         $user = null;
 
