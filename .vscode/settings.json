@@ -13,9 +13,12 @@
   "tailwindCSS.experimental.classRegex": [
     ["class=\\\"([^\\\"]*)\\\"", "[1]"]
   ],
-  "terminal.integrated.shellIntegration.environmentReporting": true,
+  "terminal.integrated.shellIntegration.enabled": true,
+  "terminal.integrated.shellIntegration.showWelcome": false,
+  "terminal.integrated.shellIntegration.decorationsEnabled": "never",
   "terminal.integrated.suggest.enabled": true,
   "terminal.integrated.sendKeybindingsToShell": true,
+  "terminal.integrated.commandDetection.enabled": true,
   "terminal.integrated.windowsUseConptyDll": true,
   "chat.agent.maxRequests": 100
 }

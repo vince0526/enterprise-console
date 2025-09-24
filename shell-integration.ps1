@@ -1,5 +1,9 @@
 # Enterprise Management Console - PowerShell Shell Integration
 
+# Suppress VS Code shell integration warnings
+$env:VSCODE_SHELL_INTEGRATION = "1"
+$env:TERM_PROGRAM = "vscode"
+
 Write-Host "Loading EMC Shell Integration..." -ForegroundColor Cyan
 
 # Check if we're in an EMC project
@@ -90,10 +94,73 @@ function emc-log-view {
     }
 }
 
+# Enhanced PSReadLine configuration for better command detection
+if (Get-Module -ListAvailable -Name PSReadLine) {
+    Import-Module PSReadLine -Force -ErrorAction SilentlyContinue
+    
+    # Check PSReadLine version and configure accordingly
+    $psReadLineVersion = (Get-Module PSReadLine).Version
+    
+    try {
+        # Enable better command history and completion (works in all versions)
+        Set-PSReadLineOption -HistorySearchCursorMovesToEnd -ErrorAction SilentlyContinue
+        Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward -ErrorAction SilentlyContinue
+        Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward -ErrorAction SilentlyContinue
+        Set-PSReadLineKeyHandler -Key Tab -Function Complete -ErrorAction SilentlyContinue
+        
+        # Enable predictive IntelliSense (newer versions only)
+        if ($psReadLineVersion -ge [Version]"2.1.0") {
+            Set-PSReadLineOption -PredictionSource History -ErrorAction SilentlyContinue
+            Set-PSReadLineOption -PredictionViewStyle ListView -ErrorAction SilentlyContinue
+        }
+        
+        # Bell style configuration
+        Set-PSReadLineOption -BellStyle None -ErrorAction SilentlyContinue
+        
+    } catch {
+        # Silently continue if any PSReadLine configuration fails
+        Write-Host "PSReadLine configuration partially applied" -ForegroundColor Gray
+    }
+}
+
+# Configure VS Code shell integration
+if ($env:TERM_PROGRAM -eq "vscode") {
+    # Set up command detection for VS Code
+    $global:__VSCode_Command_Start = "`e]633;A`a"
+    $global:__VSCode_Command_End = "`e]633;B`a"
+    $global:__VSCode_Prompt_Start = "`e]633;P;Cwd=$PWD`a"
+    
+    # Override prompt to work with VS Code shell integration
+    function prompt {
+        $currentPath = Get-Location
+        
+        # VS Code command start marker
+        Write-Host $global:__VSCode_Prompt_Start -NoNewline
+        
+        if (Test-EmcProject) {
+            $gitBranch = ""
+            try {
+                $gitBranch = git rev-parse --abbrev-ref HEAD 2>$null
+            } catch {}
+            
+            $emcIndicator = "[EMC]"
+            $branchInfo = if ($gitBranch) { " ($gitBranch)" } else { "" }
+            
+            Write-Host "$emcIndicator$branchInfo " -NoNewline -ForegroundColor Green
+            Write-Host "$($currentPath.Path)" -NoNewline -ForegroundColor Cyan
+            return "> "
+        } else {
+            Write-Host "$($currentPath.Path)" -NoNewline -ForegroundColor Cyan
+            return "> "
+        }
+    }
+}
+
 # Welcome message
 if (Test-EmcProject) {
     Write-Host ""
     Write-Host "EMC Shell Integration Loaded!" -ForegroundColor Green
     Write-Host "Available commands: emc-serve, emc-test, emc-quality, emc-deploy, emc-activity" -ForegroundColor Gray
+    Write-Host "VS Code command detection: ENABLED" -ForegroundColor Green
     Write-Host ""
 }
