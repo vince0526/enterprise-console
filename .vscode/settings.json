@@ -16,9 +16,12 @@
   "terminal.integrated.shellIntegration.enabled": true,
   "terminal.integrated.shellIntegration.showWelcome": false,
   "terminal.integrated.shellIntegration.decorationsEnabled": "never",
+  "terminal.integrated.shellIntegration.suggestEnabled": true,
   "terminal.integrated.suggest.enabled": true,
   "terminal.integrated.sendKeybindingsToShell": true,
   "terminal.integrated.commandDetection.enabled": true,
+  "terminal.integrated.enablePersistentSessions": false,
+  "terminal.integrated.persistentSessionReviveProcess": "never",
   "terminal.integrated.windowsUseConptyDll": true,
   "chat.agent.maxRequests": 100
 }
