@@ -1,4 +1,6 @@
 *.log
+# Exception: Allow development tracking logs
+!logs/**/*.log
 .DS_Store
 .env
 .env.backup

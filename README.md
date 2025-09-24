@@ -1,5 +1,9 @@
 # Enterprise Management Console
 
+![Development Status](https://img.shields.io/badge/Status-Active%20Development-brightgreen)
+![Platform](https://img.shields.io/badge/Platform-Multi--Computer-blue)
+![Tracking](https://img.shields.io/badge/Tracking-Enabled-success)
+
 A comprehensive Laravel-based enterprise management system with advanced database management capabilities.
 
 ## 🚀 Quick Start
