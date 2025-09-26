@@ -1,5 +1,9 @@
-# ULTIMATE VS Code Shell Integration Fix
-# This script completely resolves the persistent shell integration warning
+# ULTI)
+
+Write-Host "🔧 ULTIMATE VS Code Shell Integration Fix" -ForegroundColor Cyan
+Write-Host "Implementing comprehensive solution..." -ForegroundColor Gray
+Write-Host "" Code Shell Integration Fix
+# This script completely eliminates the "Enable shell integration to improve command detection" warning
 
 param(
     [switch]$Force,
@@ -47,7 +51,8 @@ try {
             Write-Host "✅ PSReadLine configured for PowerShell 5.1" -ForegroundColor Green
         }
     }
-} catch {
+}
+catch {
     if (-not $Silent) {
         Write-Host "⚠️ PSReadLine configuration skipped (not critical)" -ForegroundColor Yellow
     }
@@ -69,11 +74,13 @@ function global:prompt {
             
             Write-Host "[EMC]$branchInfo " -NoNewline -ForegroundColor Green
             Write-Host "$($currentPath.Path)" -NoNewline -ForegroundColor Cyan
-        } catch {
+        }
+        catch {
             Write-Host "[EMC] " -NoNewline -ForegroundColor Green  
             Write-Host "$($currentPath.Path)" -NoNewline -ForegroundColor Cyan
         }
-    } else {
+    }
+    else {
         Write-Host "$($currentPath.Path)" -NoNewline -ForegroundColor Cyan
     }
     
@@ -99,7 +106,8 @@ if (Test-Path $vsCodeUserSettings) {
         if (-not $Silent) {
             Write-Host "✅ VS Code user settings updated" -ForegroundColor Green
         }
-    } catch {
+    }
+    catch {
         if (-not $Silent) {
             Write-Host "⚠️ Could not update VS Code user settings" -ForegroundColor Yellow
         }
@@ -134,7 +142,8 @@ if (Test-Path $PROFILE) {
             Write-Host "✅ PowerShell profile updated with permanent fix" -ForegroundColor Green
         }
     }
-} else {
+}
+else {
     # Create profile if it doesn't exist
     $profileDir = Split-Path $PROFILE
     if (-not (Test-Path $profileDir)) {

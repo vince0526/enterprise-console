@@ -79,7 +79,8 @@ function emc-activity {
     
     if (Test-Path "dev-log-tracker.ps1") {
         . .\dev-log-tracker.ps1 -Activity $Activity -Description $Description
-    } else {
+    }
+    else {
         Write-Host "Activity logger not found" -ForegroundColor Yellow
     }
 }
@@ -89,38 +90,26 @@ function emc-log-view {
     if (Test-Path $logFile) {
         Write-Host "Recent EMC Activity on $env:COMPUTERNAME" -ForegroundColor Cyan
         Get-Content $logFile | Select-Object -Last 10
-    } else {
+    }
+    else {
         Write-Host "No activity log found" -ForegroundColor Yellow
     }
 }
 
-# Enhanced PSReadLine configuration for better command detection
-if (Get-Module -ListAvailable -Name PSReadLine) {
-    Import-Module PSReadLine -Force -ErrorAction SilentlyContinue
-    
-    # Check PSReadLine version and configure accordingly
-    $psReadLineVersion = (Get-Module PSReadLine).Version
-    
-    try {
-        # Enable better command history and completion (works in all versions)
-        Set-PSReadLineOption -HistorySearchCursorMovesToEnd -ErrorAction SilentlyContinue
+# Enhanced PSReadLine configuration for better command detection (Fast loading)
+try {
+    if (Get-Module -ListAvailable -Name PSReadLine -ErrorAction SilentlyContinue) {
+        Import-Module PSReadLine -Force -ErrorAction SilentlyContinue -WarningAction SilentlyContinue
+        
+        # Quick configuration without version checks to prevent delays
+        Set-PSReadLineOption -BellStyle None -ErrorAction SilentlyContinue
         Set-PSReadLineKeyHandler -Key UpArrow -Function HistorySearchBackward -ErrorAction SilentlyContinue
         Set-PSReadLineKeyHandler -Key DownArrow -Function HistorySearchForward -ErrorAction SilentlyContinue
         Set-PSReadLineKeyHandler -Key Tab -Function Complete -ErrorAction SilentlyContinue
-        
-        # Enable predictive IntelliSense (newer versions only)
-        if ($psReadLineVersion -ge [Version]"2.1.0") {
-            Set-PSReadLineOption -PredictionSource History -ErrorAction SilentlyContinue
-            Set-PSReadLineOption -PredictionViewStyle ListView -ErrorAction SilentlyContinue
-        }
-        
-        # Bell style configuration
-        Set-PSReadLineOption -BellStyle None -ErrorAction SilentlyContinue
-        
-    } catch {
-        # Silently continue if any PSReadLine configuration fails
-        Write-Host "PSReadLine configuration partially applied" -ForegroundColor Gray
     }
+}
+catch {
+    # Skip PSReadLine configuration if it causes issues
 }
 
 # Configure VS Code shell integration
@@ -140,16 +129,29 @@ if ($env:TERM_PROGRAM -eq "vscode") {
         if (Test-EmcProject) {
             $gitBranch = ""
             try {
-                $gitBranch = git rev-parse --abbrev-ref HEAD 2>$null
-            } catch {}
+                # Simple, fast git branch detection without hanging
+                if (Test-Path ".git\HEAD") {
+                    $headContent = Get-Content ".git\HEAD" -ErrorAction SilentlyContinue
+                    if ($headContent -and $headContent -match "ref: refs/heads/(.+)") {
+                        $gitBranch = $matches[1]
+                    }
+                    else {
+                        $gitBranch = "main"
+                    }
+                }
+            }
+            catch {
+                $gitBranch = ""
+            }
             
             $emcIndicator = "[EMC]"
-            $branchInfo = if ($gitBranch) { " ($gitBranch)" } else { "" }
+            $branchInfo = if ($gitBranch -and $gitBranch.Trim()) { " ($($gitBranch.Trim()))" } else { "" }
             
             Write-Host "$emcIndicator$branchInfo " -NoNewline -ForegroundColor Green
             Write-Host "$($currentPath.Path)" -NoNewline -ForegroundColor Cyan
             return "> "
-        } else {
+        }
+        else {
             Write-Host "$($currentPath.Path)" -NoNewline -ForegroundColor Cyan
             return "> "
         }

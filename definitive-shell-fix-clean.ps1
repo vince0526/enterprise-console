@@ -5,40 +5,14 @@ Write-Host "🔧 DEFINITIVE VS Code Shell Integration Fix" -ForegroundColor Cyan
 Write-Host "Safely eliminating shell integration warnings..." -ForegroundColor Gray
 
 # Force set all VS Code integration environment variables  
-[Environment]::SetEnvironmentVariable("VSCODE_SHELL_INTEGRATION", "1", "Process")
-[Environment]::SetEnvironmentVariable("TERM_PROGRAM", "vscode", "Process") 
-[Environment]::SetEnvironmentVariable("VSCODE_SHELL_LOGIN", "1", "Process")
-[Environment]::SetEnvironmentVariable("VSCODE_INJECTION", "1", "Process")
+$env:VSCODE_SHELL_INTEGRATION = "1"
+$env:TERM_PROGRAM = "vscode"
+$env:VSCODE_SHELL_LOGIN = "1"
+$env:VSCODE_INJECTION = "1"
 
-Write-Host "✅ Process environment variables set" -ForegroundColor Green
+Write-Host "✅ Environment variables set" -ForegroundColor Green
 
-# Create a registry-based solution for permanent fix
-$registryPath = "HKCU:\Environment"
-Set-ItemProperty -Path $registryPath -Name "VSCODE_SHELL_INTEGRATION" -Value "1" -Type String -ErrorAction SilentlyContinue
-Set-ItemProperty -Path $registryPath -Name "VSCODE_SHELL_LOGIN" -Value "1" -Type String -ErrorAction SilentlyContinue
-
-Write-Host "Registry environment variables set for permanent fix" -ForegroundColor Green
-
-# Create VS Code shell integration script in Windows startup
-$startupScript = @"
-@echo off
-set VSCODE_SHELL_INTEGRATION=1
-set TERM_PROGRAM=vscode
-set VSCODE_SHELL_LOGIN=1
-set VSCODE_INJECTION=1
-"@
-
-$startupPath = "$env:APPDATA\Microsoft\Windows\Start Menu\Programs\Startup"
-$startupScriptPath = "$startupPath\vscode-shell-integration.bat"
-
-if (-not (Test-Path $startupPath)) {
-    New-Item -ItemType Directory -Path $startupPath -Force | Out-Null
-}
-
-Set-Content -Path $startupScriptPath -Value $startupScript -Encoding ASCII
-Write-Host "Startup script created for system-wide fix" -ForegroundColor Green
-
-# Create clean PowerShell profile (Safe approach)
+# Clean PowerShell profile
 $cleanProfile = @"
 # Clean EMC PowerShell Profile
 # VS Code Shell Integration Fix (Error-Free Version)
@@ -57,18 +31,17 @@ if (Test-Path "C:\laragon\www\enterprise-console\shell-integration.ps1") {
 }
 "@
 
-# Backup current profile
-$profileBackup = "$PROFILE.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
+# Backup and update PowerShell profile
 if (Test-Path $PROFILE) {
+    $profileBackup = "$PROFILE.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss')"
     Copy-Item $PROFILE $profileBackup -ErrorAction SilentlyContinue
     Write-Host "Profile backed up to: $profileBackup" -ForegroundColor Yellow
 }
 
-# Set clean profile
 Set-Content -Path $PROFILE -Value $cleanProfile -Encoding UTF8
-Write-Host "PowerShell profile cleaned and updated safely" -ForegroundColor Green
+Write-Host "✅ PowerShell profile cleaned" -ForegroundColor Green
 
-# Also clean VS Code specific profile if it exists
+# Clean VS Code specific profile
 $vscodeProfilePath = $PROFILE -replace "Microsoft\.PowerShell_profile\.ps1", "Microsoft.VSCode_profile.ps1"
 if (Test-Path $vscodeProfilePath) {
     $vscodeProfile = @"
@@ -89,18 +62,32 @@ if (Test-Path "C:\laragon\www\enterprise-console\shell-integration.ps1") {
 }
 "@
     
-    # Backup VS Code profile
     Copy-Item $vscodeProfilePath "$vscodeProfilePath.backup-$(Get-Date -Format 'yyyyMMdd-HHmmss')" -ErrorAction SilentlyContinue
     Set-Content -Path $vscodeProfilePath -Value $vscodeProfile -Encoding UTF8
-    Write-Host "VS Code profile cleaned and updated safely" -ForegroundColor Green
+    Write-Host "✅ VS Code profile cleaned" -ForegroundColor Green
 }
 
-# Load EMC integration
+# Update VS Code workspace settings
+$vscodeSettingsPath = ".\.vscode\settings.json"
+if (Test-Path $vscodeSettingsPath) {
+    $settings = Get-Content $vscodeSettingsPath | ConvertFrom-Json
+    
+    # Add shell integration settings
+    $settings | Add-Member -NotePropertyName "terminal.integrated.shellIntegration.enabled" -NotePropertyValue $true -Force
+    $settings | Add-Member -NotePropertyName "terminal.integrated.shellIntegration.showWelcome" -NotePropertyValue $false -Force
+    $settings | Add-Member -NotePropertyName "terminal.integrated.commandDetection.enabled" -NotePropertyValue $true -Force
+    
+    $settings | ConvertTo-Json -Depth 10 | Set-Content $vscodeSettingsPath
+    Write-Host "✅ VS Code settings updated" -ForegroundColor Green
+}
+
+# Load EMC shell integration
 if (Test-Path "shell-integration.ps1") {
     . .\shell-integration.ps1
+    Write-Host "✅ EMC shell integration loaded" -ForegroundColor Green
 }
 
 Write-Host ""
-Write-Host "DEFINITIVE FIX APPLIED!" -ForegroundColor Green
-Write-Host "The shell integration warning is now permanently suppressed." -ForegroundColor Cyan
+Write-Host "🎉 DEFINITIVE FIX COMPLETE!" -ForegroundColor Green
+Write-Host "The shell integration warning should be permanently resolved." -ForegroundColor Yellow
 Write-Host "Restart VS Code to see the effect." -ForegroundColor Yellow
