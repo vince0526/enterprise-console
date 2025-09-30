@@ -20,6 +20,9 @@ class CoreDatabaseLifecycleEvent extends Model
         'effective_date' => 'date',
     ];
 
+    /**
+     * @return BelongsTo<CoreDatabase, self>
+     */
     public function coreDatabase(): BelongsTo
     {
         return $this->belongsTo(CoreDatabase::class);

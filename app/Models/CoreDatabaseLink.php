@@ -16,11 +16,17 @@ class CoreDatabaseLink extends Model
         'link_type',
     ];
 
+    /**
+     * @return BelongsTo<CoreDatabase, self>
+     */
     public function coreDatabase(): BelongsTo
     {
         return $this->belongsTo(CoreDatabase::class);
     }
 
+    /**
+     * @return BelongsTo<DatabaseConnection, self>
+     */
     public function databaseConnection(): BelongsTo
     {
         return $this->belongsTo(DatabaseConnection::class);

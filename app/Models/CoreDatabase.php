@@ -21,16 +21,25 @@ class CoreDatabase extends Model
         'status',
     ];
 
+    /**
+     * @return HasMany<CoreDatabaseOwner, self>
+     */
     public function owners(): HasMany
     {
         return $this->hasMany(CoreDatabaseOwner::class);
     }
 
+    /**
+     * @return HasMany<CoreDatabaseLifecycleEvent, self>
+     */
     public function lifecycleEvents(): HasMany
     {
         return $this->hasMany(CoreDatabaseLifecycleEvent::class);
     }
 
+    /**
+     * @return HasMany<CoreDatabaseLink, self>
+     */
     public function links(): HasMany
     {
         return $this->hasMany(CoreDatabaseLink::class);

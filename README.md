@@ -48,6 +48,14 @@ See [SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md) for detailed manual setup ins
 - Code quality assurance (Pint, PHPStan)
 - Comprehensive error handling
 
+### 🧩 Core Databases Module (New)
+
+- Registry of core/system databases with metadata (environment, platform, owner, lifecycle, status)
+- Ownership submodule: track owners/roles with effective dates
+- Lifecycle submodule: record events (Created, Backup, Decommissioned, etc.)
+- Links submodule: link to Database Connections and policies with types (Primary/Replica/Policy)
+- Tabbed UI under `EMC → Core` to manage all of the above
+
 ## 🌐 Access URLs
 
 After running `php artisan serve`:
@@ -58,11 +66,18 @@ After running `php artisan serve`:
 - **Database Module**: <http://localhost:8000/emc/db>
 - **User Profile**: <http://localhost:8000/profile>
 
+Core Databases tabs can be navigated with `?tab=`:
+
+- Registry: `/emc/core?tab=registry`
+- Ownership: `/emc/core?tab=ownership`
+- Lifecycle: `/emc/core?tab=lifecycle`
+- Links: `/emc/core?tab=links`
+
 ## 📋 Requirements
 
-- PHP 8.1+
-- Composer
-- MySQL/MariaDB or SQLite
+ - PHP 8.1+
+ - Composer
+ - MySQL/MariaDB or SQLite
 ### MySQL .env Quick Start
 
 Set your local `.env` for MySQL (Laragon/XAMPP/WAMP):
@@ -82,6 +97,9 @@ Then bootstrap the schema and demo data:
 php artisan optimize:clear
 php artisan migrate --force
 php artisan db:seed --class="Database\\Seeders\\CoreDatabaseSeeder" --force
+
+# Optionally seed submodules examples
+php artisan db:seed --class="Database\\Seeders\\CoreSubmodulesSeeder" --force
 ```
 
 - Node.js & npm (optional, for frontend assets)
@@ -89,6 +107,7 @@ php artisan db:seed --class="Database\\Seeders\\CoreDatabaseSeeder" --force
 ## 🔧 Development
 
 ### Code Quality
+
 ```bash
 # Format code
 ./vendor/bin/pint
@@ -101,6 +120,7 @@ php artisan test
 ```
 
 ### Development Features
+
 - Set `DEV_AUTO_LOGIN=true` in `.env` for automatic authentication
 - Access `/dev-env-flag` to check development settings
 - View `/dev-users` to see available test users
@@ -113,13 +133,14 @@ php artisan test
 ## 🤝 Support
 
 If you encounter issues:
+
 1. Check the [troubleshooting section](SETUP_INSTRUCTIONS.md#troubleshooting) in setup instructions
 2. Verify all requirements are met
 3. Check Laravel logs in `storage/logs/`
 
 ## 📈 Version Info
 
-- **Current Version**: Production-ready EMC with Database Management
+- **Current Version**: EMC with Core Databases (Registry, Ownership, Lifecycle, Links)
 - **Last Updated**: September 24, 2025
 - **Commit Hash**: `220942eede37102a1ed67bc78f5adf1a5e54cc74`
 
@@ -129,17 +150,26 @@ If you encounter issues:
 **License**: MIT  
 **Maintainer**: vince0526
 
+## 🔎 Quick Endpoint Sweep (optional)
+
+On Windows, you can smoke-test key endpoints after starting the server:
+
+```powershell
+php artisan serve --host 127.0.0.1 --port 8000
+./scripts/emc-endpoint-sweep.ps1 -BaseUrl 'http://127.0.0.1:8000'
+```
+
 ## About Laravel
 
 Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
--   [Simple, fast routing engine](https://laravel.com/docs/routing).
--   [Powerful dependency injection container](https://laravel.com/docs/container).
--   Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
--   Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
--   Database agnostic [schema migrations](https://laravel.com/docs/migrations).
--   [Robust background job processing](https://laravel.com/docs/queues).
--   [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
 Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
@@ -153,7 +183,7 @@ Common tasks are available via Makefile (macOS/Linux) or PowerShell script (Wind
 
 Makefile examples:
 
-```
+```make
 make install      # composer install + npm install
 make dev          # concurrent dev (serve, queue, logs, vite)
 make qa-full      # pint + phpstan + tests
@@ -162,7 +192,7 @@ make docs         # regenerate DOCX docs
 
 PowerShell (Windows):
 
-```
+```powershell
 ./scripts/dev-tasks.ps1 install
 ./scripts/dev-tasks.ps1 dev
 ./scripts/dev-tasks.ps1 qa-full
@@ -174,17 +204,21 @@ PowerShell (Windows):
 To quickly preview the application UI without the login flow you can enable a development-only automatic login middleware.
 
 1. Add to your local `.env` (never commit this enabled):
-	```env
-	DEV_AUTO_LOGIN=true
-	DEV_AUTO_LOGIN_USER_ID=1   # adjust to an existing user id
-	```
-2. Clear config & cache (if previously cached):
-	```bash
-	php artisan optimize:clear
-	```
-3. Visit any protected route (e.g. /dashboard); you should be auto-authenticated as that user.
+
+```env
+DEV_AUTO_LOGIN=true
+DEV_AUTO_LOGIN_USER_ID=1   # adjust to an existing user id
+```
+
+1. Clear config & cache (if previously cached):
+
+```bash
+php artisan optimize:clear
+```
+1. Visit any protected route (e.g. /dashboard); you should be auto-authenticated as that user.
 
 Safety:
+
 - Middleware is skipped automatically in `production` environment.
 - Disable by removing the vars or setting `DEV_AUTO_LOGIN=false`.
 - Use only on local/dev; never push an enabled flag to shared environments.
@@ -194,9 +228,9 @@ Safety:
 
 Workflows regenerate DOCX outputs on markdown changes:
 
--   `regenerate-env-setup-docx.yml`
--   `regenerate-docx.yml`
--   `regenerate-all-docx.yml` (aggregate)
+- `regenerate-env-setup-docx.yml`
+- `regenerate-docx.yml`
+- `regenerate-all-docx.yml` (aggregate)
 
 ## Learning Laravel
 
@@ -216,10 +250,10 @@ We would like to extend our thanks to the following sponsors for funding Laravel
 -   **[Tighten Co.](https://tighten.co)**
 -   **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
 -   **[64 Robots](https://64robots.com)**
--   **[Curotec](https://www.curotec.com/services/technologies/laravel)**
--   **[DevSquad](https://devsquad.com/hire-laravel-developers)**
--   **[Redberry](https://redberry.international/laravel-development)**
--   **[Active Logic](https://activelogic.com)**
+- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
+- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
+- **[Redberry](https://redberry.international/laravel-development)**
+- **[Active Logic](https://activelogic.com)**
 
 ## Contributing
 

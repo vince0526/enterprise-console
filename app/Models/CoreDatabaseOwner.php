@@ -16,6 +16,9 @@ class CoreDatabaseOwner extends Model
         'effective_date',
     ];
 
+    /**
+     * @return BelongsTo<CoreDatabase, self>
+     */
     public function coreDatabase(): BelongsTo
     {
         return $this->belongsTo(CoreDatabase::class);
