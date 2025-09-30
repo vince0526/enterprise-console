@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "1fc9e2fa0a0028816a49b325ea9003c8",
+    "content-hash": "e96923e9c6d82893c6a061179075c0e7",
     "packages": [
         {
             "name": "brick/math",
@@ -2910,16 +2910,16 @@
         },
         {
             "name": "phiki/phiki",
-            "version": "v2.0.4",
+            "version": "v2.0.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/phikiphp/phiki.git",
-                "reference": "160785c50c01077780ab217e5808f00ab8f05a13"
+                "reference": "461f6dd7e91dc3a95463b42f549ac7d0aab4702f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/phikiphp/phiki/zipball/160785c50c01077780ab217e5808f00ab8f05a13",
-                "reference": "160785c50c01077780ab217e5808f00ab8f05a13",
+                "url": "https://api.github.com/repos/phikiphp/phiki/zipball/461f6dd7e91dc3a95463b42f549ac7d0aab4702f",
+                "reference": "461f6dd7e91dc3a95463b42f549ac7d0aab4702f",
                 "shasum": ""
             },
             "require": {
@@ -2965,7 +2965,7 @@
             "description": "Syntax highlighting using TextMate grammars in PHP.",
             "support": {
                 "issues": "https://github.com/phikiphp/phiki/issues",
-                "source": "https://github.com/phikiphp/phiki/tree/v2.0.4"
+                "source": "https://github.com/phikiphp/phiki/tree/v2.0.0"
             },
             "funding": [
                 {
@@ -2977,7 +2977,7 @@
                     "type": "other"
                 }
             ],
-            "time": "2025-09-20T17:21:02+00:00"
+            "time": "2025-08-28T18:20:27+00:00"
         },
         {
             "name": "phpoption/phpoption",
