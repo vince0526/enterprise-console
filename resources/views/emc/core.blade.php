@@ -7,24 +7,6 @@
 .tabs {
   margin-top: 0.5rem;
 }
-.tabs__nav {
-  display: flex;
-  border-bottom: 1px solid var(--color-border);
-  margin-bottom: 1.5rem;
-}
-.tabs__link {
-  padding: 0.5rem 1rem;
-  margin-bottom: -1px;
-  border: 1px solid transparent;
-  color: var(--color-text-secondary);
-  text-decoration: none;
-}
-.tabs__link--active {
-  color: var(--color-text-primary);
-  border-color: var(--color-border) var(--color-border) #fff var(--color-border);
-  border-top-left-radius: 4px;
-  border-top-right-radius: 4px;
-}
 .sub-section {
   margin-bottom: 2rem;
   padding: 1rem;
