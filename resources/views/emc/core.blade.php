@@ -54,12 +54,6 @@
 
 
     <div class="tabs">
-      <nav class="tabs__nav">
-        <a href="{{ route('emc.core.index') }}?tab=registry" class="tabs__link @if($activeTab === 'registry') tabs__link--active @endif">Registry</a>
-        <a href="{{ route('emc.core.index') }}?tab=ownership" class="tabs__link @if($activeTab === 'ownership') tabs__link--active @endif">Ownership</a>
-        <a href="{{ route('emc.core.index') }}?tab=lifecycle" class="tabs__link @if($activeTab === 'lifecycle') tabs__link--active @endif">Lifecycle</a>
-        <a href="{{ route('emc.core.index') }}?tab=links" class="tabs__link @if($activeTab === 'links') tabs__link--active @endif">Links</a>
-      </nav>
       <div class="tabs__content">
         @if($activeTab === 'registry')
           <div class="toolbar">
