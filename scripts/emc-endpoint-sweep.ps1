@@ -21,6 +21,7 @@ function Test-Ready {
 }
 
 $paths = @(
+    '/health',
     '/emc',
     '/css/emc.css',
     '/js/emc.js',
@@ -37,7 +38,7 @@ $paths = @(
 )
 
 Write-Output "Waiting for server at $BaseUrl ..."
-if (-not (Test-Ready -Url "$BaseUrl/emc")) {
+if (-not (Test-Ready -Url "$BaseUrl/health")) {
     Write-Output "WARN server not ready; proceeding anyway"
 }
 

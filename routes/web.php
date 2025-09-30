@@ -17,6 +17,16 @@ use App\Http\Middleware\EnsureDevOverrideEnabled;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
+// Lightweight health check endpoint for readiness/liveness probes
+Route::get('/health', function () {
+    return response()->json([
+        'status' => 'ok',
+        'app' => config('app.name'),
+        'env' => config('app.env'),
+        'time' => now()->toIso8601String(),
+    ]);
+})->name('health');
+
 // Make Core Databases the default entry across all environments
 Route::get('/', fn () => redirect('/emc/core'));
 
