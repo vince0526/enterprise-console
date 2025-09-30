@@ -5,7 +5,7 @@
 @section('content')
 <style>
 .tabs {
-  margin-top: 1.5rem;
+  margin-top: 0.5rem;
 }
 .tabs__nav {
   display: flex;
