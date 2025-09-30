@@ -1,5 +1,6 @@
 @php
   $map = [
+    'emc.core' => 'Core Databases',
     'emc.db' => 'Database Management',
     'emc.tables' => 'Tables and Views',
     'emc.files' => 'File Management',
@@ -11,8 +12,10 @@
     'emc.activity' => 'Activity Log',
     'emc.about' => 'About',
   ];
+  use Illuminate\Support\Str;
   $routeName = request()->route()?->getName();
-  $title = $map[$routeName] ?? 'Enterprise Management Console';
+  $base = $routeName ? Str::of($routeName)->explode('.') ->take(2)->implode('.') : null;
+  $title = $map[$base] ?? ($map[$routeName] ?? 'Enterprise Management Console');
 @endphp
 
 <div class="submodule-bar" role="navigation" aria-label="Submodule navigation">

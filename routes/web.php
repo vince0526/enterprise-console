@@ -9,16 +9,16 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Web\Database\CompanyUserController as WebCompanyUser;
 use App\Http\Controllers\Web\Database\UserRestrictionController as WebUserRestriction;
 use App\Http\Controllers\Web\Emc\EmcController;
+use App\Http\Controllers\Web\Emc\CoreDatabaseController;
+use App\Http\Controllers\Web\Emc\CoreDatabaseOwnerController;
+use App\Http\Controllers\Web\Emc\CoreDatabaseLifecycleEventController;
+use App\Http\Controllers\Web\Emc\CoreDatabaseLinkController;
 use App\Http\Middleware\EnsureDevOverrideEnabled;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
-if (! app()->environment('production')) {
-    // Auto-run the EMC first screen (DB) during development
-    Route::get('/', fn () => redirect()->route('emc.index'));
-} else {
-    Route::get('/', fn () => view('welcome'));
-}
+// Make Core Databases the default entry across all environments
+Route::get('/', fn () => redirect('/emc/core'));
 
 // If dev auto login is enabled, expose dashboard without auth middleware.
 if (config('app.dev_auto_login', false)) {
@@ -86,38 +86,57 @@ if (! app()->environment('production')) {
 </div><p class="warn">Remove route in <code>routes/web.php</code> before committing.</p></body></html>');
     });
 
-    // EMC prototype routes (model navigation)
-    Route::prefix('emc')->name('emc.')->group(function () {
-        // Serve model HTMLs directly (no auth)
-        Route::get('/model-html', function () {
-            $path = base_path('docs/enterprise_management_console.model.html');
-            abort_unless(file_exists($path), 404);
-
-            return response()->file($path, [
-                'Content-Type' => 'text/html; charset=utf-8',
-            ]);
-        })->name('model-html');
-
-        Route::get('/layout-html', function () {
-            $path = base_path('docs/enterprise_management_console.layout.html');
-            abort_unless(file_exists($path), 404);
-
-            return response()->file($path, [
-                'Content-Type' => 'text/html; charset=utf-8',
-            ]);
-        })->name('layout-html');
-
-        Route::get('/', [EmcController::class, 'index'])->name('index');
-        Route::get('/db', [EmcController::class, 'db'])->name('db');
-        Route::get('/tables', [EmcController::class, 'tables'])->name('tables');
-        Route::get('/files', [EmcController::class, 'files'])->name('files');
-        Route::get('/users', [EmcController::class, 'users'])->name('users');
-        Route::get('/reports', [EmcController::class, 'reports'])->name('reports');
-        Route::get('/ai', [EmcController::class, 'ai'])->name('ai');
-        Route::get('/comms', [EmcController::class, 'comms'])->name('comms');
-        Route::get('/settings', [EmcController::class, 'settings'])->name('settings');
-        Route::get('/activity', [EmcController::class, 'activity'])->name('activity');
-        Route::get('/about', [EmcController::class, 'about'])->name('about');
-        Route::get('/tables/{table}/filters', [EmcController::class, 'filters'])->name('filters');
-    });
+    // keep dev helper routes only in non-production
 }
+
+// EMC prototype routes (model navigation) - always available
+Route::prefix('emc')->name('emc.')->group(function () {
+    // Serve model HTMLs directly
+    Route::get('/model-html', function () {
+        $path = base_path('docs/enterprise_management_console.model.html');
+        abort_unless(file_exists($path), 404);
+
+        return response()->file($path, [
+            'Content-Type' => 'text/html; charset=utf-8',
+        ]);
+    })->name('model-html');
+
+    Route::get('/layout-html', function () {
+        $path = base_path('docs/enterprise_management_console.layout.html');
+        abort_unless(file_exists($path), 404);
+
+        return response()->file($path, [
+            'Content-Type' => 'text/html; charset=utf-8',
+        ]);
+    })->name('layout-html');
+
+    Route::get('/', function(){ return redirect('/emc/core'); })->name('index');
+    // Core Databases module (placed before Database Management in nav)
+    Route::prefix('core')->name('core.')->group(function () {
+        Route::get('/', [CoreDatabaseController::class, 'index'])->name('index');
+        Route::post('/', [CoreDatabaseController::class, 'store'])->name('store');
+        Route::patch('/{core_database}', [CoreDatabaseController::class, 'update'])->name('update');
+        Route::delete('/{core_database}', [CoreDatabaseController::class, 'destroy'])->name('destroy');
+
+        Route::post('owners', [CoreDatabaseOwnerController::class, 'store'])->name('owners.store');
+        Route::delete('owners/{owner}', [CoreDatabaseOwnerController::class, 'destroy'])->name('owners.destroy');
+
+        Route::post('lifecycle-events', [CoreDatabaseLifecycleEventController::class, 'store'])->name('lifecycle-events.store');
+        Route::delete('lifecycle-events/{event}', [CoreDatabaseLifecycleEventController::class, 'destroy'])->name('lifecycle-events.destroy');
+
+        Route::post('links', [CoreDatabaseLinkController::class, 'store'])->name('links.store');
+        Route::delete('links/{link}', [CoreDatabaseLinkController::class, 'destroy'])->name('links.destroy');
+    });
+
+    Route::get('/db', [EmcController::class, 'db'])->name('db');
+    Route::get('/tables', [EmcController::class, 'tables'])->name('tables');
+    Route::get('/files', [EmcController::class, 'files'])->name('files');
+    Route::get('/users', [EmcController::class, 'users'])->name('users');
+    Route::get('/reports', [EmcController::class, 'reports'])->name('reports');
+    Route::get('/ai', [EmcController::class, 'ai'])->name('ai');
+    Route::get('/comms', [EmcController::class, 'comms'])->name('comms');
+    Route::get('/settings', [EmcController::class, 'settings'])->name('settings');
+    Route::get('/activity', [EmcController::class, 'activity'])->name('activity');
+    Route::get('/about', [EmcController::class, 'about'])->name('about');
+    Route::get('/tables/{table}/filters', [EmcController::class, 'filters'])->name('filters');
+});

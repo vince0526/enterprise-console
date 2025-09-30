@@ -11,6 +11,7 @@ A comprehensive Laravel-based enterprise management system with advanced databas
 ### Option 1: Automated Setup (Recommended)
 
 **Windows:**
+
 ```cmd
 git clone https://github.com/vince0526/enterprise-console.git
 cd enterprise-console
@@ -18,6 +19,7 @@ setup.bat
 ```
 
 **Linux/Mac:**
+
 ```bash
 git clone https://github.com/vince0526/enterprise-console.git
 cd enterprise-console
@@ -50,16 +52,38 @@ See [SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md) for detailed manual setup ins
 
 After running `php artisan serve`:
 
-- **Main Dashboard**: http://localhost:8000
-- **EMC Interface**: http://localhost:8000/emc
-- **Database Module**: http://localhost:8000/emc/db
-- **User Profile**: http://localhost:8000/profile
+- Note: The Enterprise Console now defaults to the Core Databases module.
+- **Default Entry (Core Databases)**: <http://localhost:8000> → redirects to <http://localhost:8000/emc/core>
+- **EMC Index**: <http://localhost:8000/emc> → redirects to <http://localhost:8000/emc/core>
+- **Database Module**: <http://localhost:8000/emc/db>
+- **User Profile**: <http://localhost:8000/profile>
 
 ## 📋 Requirements
 
 - PHP 8.1+
 - Composer
 - MySQL/MariaDB or SQLite
+### MySQL .env Quick Start
+
+Set your local `.env` for MySQL (Laragon/XAMPP/WAMP):
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=enterprise_console
+DB_USERNAME=root
+DB_PASSWORD=
+```
+
+Then bootstrap the schema and demo data:
+
+```bash
+php artisan optimize:clear
+php artisan migrate --force
+php artisan db:seed --class="Database\\Seeders\\CoreDatabaseSeeder" --force
+```
+
 - Node.js & npm (optional, for frontend assets)
 
 ## 🔧 Development
@@ -101,7 +125,7 @@ If you encounter issues:
 
 ---
 
-**Repository**: https://github.com/vince0526/enterprise-console  
+**Repository**: <https://github.com/vince0526/enterprise-console>  
 **License**: MIT  
 **Maintainer**: vince0526
 

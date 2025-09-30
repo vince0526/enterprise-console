@@ -158,7 +158,10 @@ select {
 
     /* Component Specific */
     --header-height: 4rem;
-    --sidebar-width: 18rem;
+    --nav-height: 3.25rem; /* fixed height for main module nav */
+    /* Use fixed rails to prevent percentage distortion */
+    --sidebar-fixed: 260px; /* ~16.25rem */
+    --summary-fixed: 300px; /* closer to original right rail */
     --activity-width: 20rem;
 }
 
@@ -175,8 +178,9 @@ select {
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
-    border: 0;
 }
+
+/* Buttons are shown/hidden by JS based on overflow */
 
 .container {
     width: 100%;
@@ -229,20 +233,60 @@ select {
     color: var(--color-primary);
 }
 
+.header__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--space-sm);
+}
+
 /* Navigation Component */
 .nav {
     background-color: var(--color-background-secondary);
     border-bottom: 1px solid var(--color-border-primary);
+    /* Lock a stable height to prevent vertical jitter across mode switches */
+    height: var(--nav-height);
+    overflow-anchor: none; /* prevent scroll anchoring causing viewport jumps */
+    contain: layout paint; /* isolate layout to reduce reflow ripple */
+}
+
+/* Nav viewport to clip scroll and host overlay buttons */
+.nav__viewport {
+    position: relative;
+    overflow: hidden;
+    height: 100%;
 }
 
 .nav__list {
-    display: flex;
+    display: grid;
+    grid-auto-flow: column;
+    /* default: compact (natural) */
+    grid-auto-columns: max-content;
     list-style: none;
     margin: 0;
     padding: 0;
     overflow-x: auto;
     scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* Internet Explorer 10+ */
+    -ms-overflow-style: none; /* IE 10+ */
+    width: 100%;
+    height: 100%;
+    align-items: stretch; /* items fill the fixed nav height */
+}
+/* Wrap mode: multiple rows, wrapping labels */
+.nav.nav--wrap .nav__viewport {
+    overflow: visible; /* allow multi-row to show */
+}
+.nav.nav--wrap .nav__list {
+    display: grid;
+    grid-auto-flow: row;
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    row-gap: 4px;
+}
+.nav.nav--wrap .nav__link {
+    white-space: normal; /* allow wrapping */
+    text-align: left;
+}
+.nav.nav--wrap .nav__scroll {
+    display: none !important; /* no scroll buttons in wrap mode */
 }
 
 .nav__list::-webkit-scrollbar {
@@ -250,12 +294,15 @@ select {
 }
 
 .nav__item {
-    flex-shrink: 0;
+    min-width: 0;
 }
 
 .nav__link {
-    display: block;
-    padding: var(--space-md) var(--space-lg);
+    display: flex;
+    align-items: center;
+    height: 100%;
+    /* Horizontal padding only; vertical centering handled by flex */
+    padding-inline: clamp(0.75rem, 1.5vw, 1.5rem);
     color: var(--color-text-secondary);
     text-decoration: none;
     font-size: var(--font-size-sm);
@@ -263,6 +310,26 @@ select {
     border-bottom: 2px solid transparent;
     transition: all 0.2s ease-in-out;
     white-space: nowrap;
+    text-align: center; /* equal visual distribution */
+}
+
+/* Equal mode: distribute links evenly */
+.nav.nav--equal .nav__list {
+    grid-auto-columns: 1fr;
+}
+.nav.nav--equal .nav__link {
+    text-align: center;
+}
+
+/* Compact mode: natural widths with scroll */
+.nav.nav--compact .nav__list {
+    grid-auto-columns: max-content;
+}
+.nav.nav--compact .nav__link {
+    text-align: left;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: clamp(120px, 22vw, 240px);
 }
 
 .nav__link:hover {
@@ -274,6 +341,94 @@ select {
     color: var(--color-primary);
     border-bottom-color: var(--color-primary);
     background-color: var(--color-background-tertiary);
+}
+
+/* While resizing, kill transitions on links to avoid visual jitter */
+.nav__list.is-transitionless .nav__link {
+    transition: none !important;
+}
+
+/* Sliding active indicator */
+.nav__indicator {
+    position: absolute;
+    height: 2px;
+    background: var(--color-primary);
+    bottom: 0;
+    left: 0;
+    width: 0;
+    transition: transform 160ms ease, width 160ms ease;
+    transform: translate3d(0, 0, 0);
+    will-change: transform, width;
+}
+
+/* During active resize, freeze height and suppress transitions to avoid flicker */
+.nav.nav--resizing .nav__viewport {
+    min-height: calc(var(--header-height) * 0.75);
+}
+.nav.nav--resizing .nav__indicator {
+    transition: none !important;
+}
+
+/* Scroll buttons */
+.nav__scroll {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 32px;
+    height: 32px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border-primary);
+    background: var(--color-background-secondary);
+    color: var(--color-text-secondary);
+    display: none; /* shown when overflow */
+    align-items: center;
+    justify-content: center;
+    z-index: 2;
+}
+.nav__scroll--prev {
+    right: 64px;
+}
+.nav__scroll--next {
+    right: 24px;
+}
+.nav:hover ~ .nav__scroll,
+.nav__scroll:hover {
+    display: inline-flex;
+}
+
+/* Fade edges indicator (optional) */
+.nav__viewport::before,
+.nav__viewport::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 24px;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+.nav__viewport::before {
+    left: 0;
+    background: linear-gradient(
+        90deg,
+        var(--color-background-secondary),
+        transparent
+    );
+}
+.nav__viewport::after {
+    right: 0;
+    background: linear-gradient(
+        270deg,
+        var(--color-background-secondary),
+        transparent
+    );
+}
+
+/* Show edge fades only when overflow is present */
+.nav.nav--overflow .nav__viewport::before,
+.nav.nav--overflow .nav__viewport::after {
+    opacity: 1;
 }
 
 /* Submodule Bar Component */
@@ -316,8 +471,9 @@ select {
 /* Main Layout Grid */
 .layout {
     display: grid;
-    grid-template-areas: "sidebar content activity";
-    grid-template-columns: var(--sidebar-width) 1fr var(--activity-width);
+    grid-template-areas: "sidebar content summary";
+    /* Fixed rails prevent proportional distortion on wide screens */
+    grid-template-columns: var(--sidebar-fixed) 1fr var(--summary-fixed);
     min-height: calc(
         100vh - var(--header-height) - 4rem
     ); /* Account for nav and submodule */
@@ -391,6 +547,76 @@ select {
     border-radius: var(--radius-lg);
     padding: var(--space-xl);
     min-height: 600px;
+}
+
+/* Summary Panel Component (Right 10%) */
+.summary {
+    grid-area: summary;
+    background-color: var(--color-background-tertiary);
+    padding: var(--space-lg);
+    overflow-y: auto;
+    height: calc(100vh - var(--header-height) - 4rem);
+    position: sticky;
+    top: calc(var(--header-height) + 4rem);
+    border-left: 1px solid var(--color-border-primary);
+}
+
+.summary__title {
+    font-size: var(--font-size-sm);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: var(--space-md);
+    padding-bottom: var(--space-sm);
+    border-bottom: 1px solid var(--color-border-primary);
+}
+
+/* Responsive adjustments to mirror original layout behavior */
+@media (max-width: 1280px) {
+    .layout {
+        grid-template-columns: 220px 1fr 280px;
+    }
+}
+
+@media (max-width: 1024px) {
+    .layout {
+        grid-template-areas: "sidebar" "content";
+        grid-template-columns: 1fr;
+    }
+    .summary {
+        display: none; /* Hide summary on smaller screens like original */
+    }
+}
+
+@media (max-width: 640px) {
+    .sidebar {
+        display: none; /* Collapse sidebar on very small screens */
+    }
+    .layout {
+        grid-template-areas: "content";
+    }
+}
+
+.summary__metric {
+    margin-bottom: var(--space-md);
+    padding: var(--space-md);
+    background: var(--color-background-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+}
+
+.summary__metric-value {
+    font-size: 1.5rem;
+    font-weight: var(--font-weight-bold);
+    color: var(--color-primary);
+}
+
+.summary__metric-label {
+    font-size: var(--font-size-xs);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
 }
 
 /* Activity Panel Component */
@@ -474,7 +700,8 @@ select {
     .nav,
     .submodule-bar,
     .sidebar,
-    .activity {
+    .activity,
+    .summary {
         display: none;
     }
 
@@ -511,17 +738,25 @@ select {
 
 /* Small devices (landscape phones, 576px and up) */
 @media (max-width: 639px) {
+    .nav__item {
+        flex: 0 0 auto; /* allow scroll instead of squishing */
+    }
+
+    .nav__link {
+        text-align: left;
+        padding: var(--space-md) var(--space-md);
+    }
     .layout {
         grid-template-areas:
             "content"
-            "sidebar"
-            "activity";
+            "sidebar";
         grid-template-columns: 1fr;
-        grid-template-rows: auto auto auto;
+        grid-template-rows: auto auto;
     }
 
     .sidebar,
-    .activity {
+    .activity,
+    .summary {
         position: static;
         height: auto;
         border-right: none;
@@ -547,10 +782,11 @@ select {
 @media (min-width: 640px) and (max-width: 1023px) {
     .layout {
         grid-template-areas: "sidebar content";
-        grid-template-columns: var(--sidebar-width) 1fr;
+        grid-template-columns: var(--sidebar-fixed) 1fr;
     }
 
-    .activity {
+    .activity,
+    .summary {
         display: none;
     }
 
@@ -570,7 +806,8 @@ select {
     }
 
     .layout {
-        grid-template-columns: var(--sidebar-width) 1fr var(--activity-width);
+        /* Keep fixed rails on large screens to prevent distortion */
+        grid-template-columns: var(--sidebar-fixed) 1fr var(--summary-fixed);
     }
 }
 
@@ -974,4 +1211,157 @@ select {
 .success {
     border-color: var(--color-success);
     background-color: rgba(16, 185, 129, 0.1);
+}
+
+/* ==========================================================================
+   Activity Dropdown Component
+   ========================================================================== */
+
+.activity-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.activity-dropdown__toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    background: transparent;
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.activity-dropdown__toggle:hover {
+    background-color: var(--color-background-tertiary);
+    border-color: var(--color-primary);
+    color: var(--color-primary);
+}
+
+.activity-dropdown__toggle:focus-visible {
+    outline: 2px solid var(--color-primary);
+    outline-offset: 2px;
+}
+
+.activity-dropdown__toggle[aria-expanded="true"] {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+    color: white;
+}
+
+.activity-dropdown__menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 320px;
+    max-width: 400px;
+    background-color: var(--color-background-primary);
+    border: 1px solid var(--color-border-primary);
+    border-radius: var(--radius-md);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    z-index: var(--z-index-dropdown);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-8px);
+    transition: all 0.2s ease;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.activity-dropdown__menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.activity-dropdown__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-md);
+    border-bottom: 1px solid var(--color-border-primary);
+    background-color: var(--color-background-secondary);
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+}
+
+.activity-dropdown__header h3 {
+    margin: 0;
+    font-size: var(--font-size-md);
+    font-weight: var(--font-weight-semibold);
+    color: var(--color-text-primary);
+}
+
+.activity-dropdown__pin {
+    background: transparent;
+    border: none;
+    font-size: var(--font-size-md);
+    cursor: pointer;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.activity-dropdown__pin:hover {
+    background-color: var(--color-background-tertiary);
+}
+
+.activity-dropdown__pin.pinned {
+    background-color: var(--color-primary);
+    color: white;
+}
+
+.activity-dropdown__content {
+    padding: var(--space-md);
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.activity-dropdown__content ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.activity-dropdown__content li {
+    padding: var(--space-xs) 0;
+    font-size: var(--font-size-sm);
+    color: var(--color-text-secondary);
+    border-bottom: 1px solid var(--color-border-secondary);
+}
+
+.activity-dropdown__content li:last-child {
+    border-bottom: none;
+}
+
+.activity-dropdown__content li strong {
+    color: var(--color-text-primary);
+    font-weight: var(--font-weight-medium);
+}
+
+.activity-dropdown__footer {
+    margin-top: var(--space-md);
+    padding-top: var(--space-sm);
+    border-top: 1px solid var(--color-border-secondary);
+    text-align: center;
+}
+
+.activity-dropdown__footer small {
+    color: var(--color-text-tertiary);
+    font-size: var(--font-size-xs);
+}
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .nav__list {
+        grid-auto-columns: max-content;
+    }
+    .nav__link {
+        text-align: left;
+        padding: var(--space-md) var(--space-md);
+    }
+    display: none;
 }

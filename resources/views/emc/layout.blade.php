@@ -22,12 +22,62 @@
     <!-- Main Header -->
     <header class="header" role="banner">
         <div class="header__container">
-            <a href="{{ route('emc.db') }}" class="header__brand">
+            <a href="{{ 
+                \Illuminate\Support\Facades\Route::has('emc.core.index') 
+                ? route('emc.core.index') 
+                : route('emc.db') 
+            }}" class="header__brand">
                 Enterprise Database Management
             </a>
             
-            <!-- User actions could go here -->
+            <!-- User actions -->
             <div class="header__actions">
+                <!-- Activity Log Dropdown -->
+                <div class="activity-dropdown">
+                    <button class="activity-dropdown__toggle" 
+                            type="button" 
+                            id="activity-toggle"
+                            aria-expanded="false"
+                            aria-haspopup="true"
+                            title="View Activity Log">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14,2 14,8 20,8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10,9 9,9 8,9"></polyline>
+                        </svg>
+                        <span class="sr-only">Activity Log</span>
+                    </button>
+                    
+                    <div class="activity-dropdown__menu" 
+                         id="activity-menu"
+                         role="menu"
+                         aria-labelledby="activity-toggle">
+                        <div class="activity-dropdown__header">
+                            <h3>Activity Log</h3>
+                            <button class="activity-dropdown__pin" 
+                                    type="button"
+                                    title="Pin activity log" 
+                                    aria-label="Pin activity log">
+                                📌
+                            </button>
+                        </div>
+                        <div class="activity-dropdown__content">
+                            <ul role="list">
+                                <li><strong>Current Page:</strong> {{ request()->path() }}</li>
+                                <li><strong>Environment:</strong> {{ env('DEV_AUTO_LOGIN') ? 'Development' : 'Production' }}</li>
+                                <li><strong>Timestamp:</strong> {{ now()->format('Y-m-d H:i:s') }}</li>
+                                <li><strong>Browser:</strong> {{ request()->header('User-Agent') ? Str::limit(request()->header('User-Agent'), 50) : 'Unknown' }}</li>
+                                <li><strong>IP Address:</strong> {{ request()->ip() }}</li>
+                                <li><strong>Request Method:</strong> {{ request()->method() }}</li>
+                            </ul>
+                            <div class="activity-dropdown__footer">
+                                <small>Real-time activity monitoring</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <span class="sr-only">User menu</span>
             </div>
         </div>
@@ -35,7 +85,15 @@
     
     <!-- Primary Navigation -->
     <nav class="nav" role="navigation" aria-label="Primary navigation">
-        <ul class="nav__list" role="list">
+    <div class="nav__viewport" id="top-nav-viewport">
+    <ul class="nav__list" role="list">
+            <li class="nav__item">
+                <a href="{{ \Illuminate\Support\Facades\Route::has('emc.core.index') ? route('emc.core.index') : route('emc.db') }}" 
+                   class="nav__link {{ request()->routeIs('emc.core.*') ? 'nav__link--active' : '' }}"
+                   @if(request()->routeIs('emc.core.*')) aria-current="page" @endif>
+                    Core Databases
+                </a>
+            </li>
             <li class="nav__item">
                 <a href="{{ route('emc.db') }}" 
                    class="nav__link {{ request()->routeIs('emc.db') ? 'nav__link--active' : '' }}"
@@ -85,7 +143,11 @@
                     Preferences and Settings
                 </a>
             </li>
-        </ul>
+    </ul>
+    <div class="nav__indicator" id="nav-indicator" aria-hidden="true"></div>
+        </div>
+        <button class="nav__scroll nav__scroll--prev" type="button" aria-label="Scroll left" title="Scroll left" data-direction="-1">⟨</button>
+        <button class="nav__scroll nav__scroll--next" type="button" aria-label="Scroll right" title="Scroll right" data-direction="1">⟩</button>
     </nav>
     
     <!-- Submodule Navigation -->
@@ -105,9 +167,9 @@
             </div>
         </main>
         
-        <!-- Activity Panel -->
-        <aside class="activity" role="complementary" aria-label="Activity log">
-            @include('emc.partials.activity')
+        <!-- Right Summary Panel (10%) -->
+        <aside class="summary" role="complementary" aria-label="Summary panel">
+            @include('emc.partials.summary')
         </aside>
     </div>
     

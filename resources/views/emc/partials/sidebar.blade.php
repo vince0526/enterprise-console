@@ -3,6 +3,20 @@
   <ul class="sidebar__nav" role="list">
     @php($route = request()->route()?->getName())
     @switch($route)
+      @case('emc.core.index')
+        <li class="sidebar__nav-item">
+          <a href="{{ route('emc.core.index') }}" class="sidebar__nav-link {{ request('tab','registry')==='registry' ? 'sidebar__nav-link--active' : '' }}" aria-current="page">Registry</a>
+        </li>
+        <li class="sidebar__nav-item">
+          <a href="{{ route('emc.core.index', ['tab' => 'ownership']) }}" class="sidebar__nav-link {{ request('tab')==='ownership' ? 'sidebar__nav-link--active' : '' }}">Ownership</a>
+        </li>
+        <li class="sidebar__nav-item">
+          <a href="{{ route('emc.core.index', ['tab' => 'lifecycle']) }}" class="sidebar__nav-link {{ request('tab')==='lifecycle' ? 'sidebar__nav-link--active' : '' }}">Lifecycle</a>
+        </li>
+        <li class="sidebar__nav-item">
+          <a href="{{ route('emc.core.index', ['tab' => 'links']) }}" class="sidebar__nav-link {{ request('tab')==='links' ? 'sidebar__nav-link--active' : '' }}">Linked Connections</a>
+        </li>
+        @break
       @case('emc.db')
         <li class="sidebar__nav-item">
           <a href="{{ route('emc.db') }}" class="sidebar__nav-link {{ request()->is('emc/db') && !request()->has('submenu') ? 'sidebar__nav-link--active' : '' }}" aria-current="page">Connections</a>
