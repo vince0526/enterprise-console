@@ -22,7 +22,7 @@ class CoreDatabase extends Model
     ];
 
     /**
-     * @return HasMany<CoreDatabaseOwner, self>
+     * @return HasMany<CoreDatabaseOwner, $this>
      */
     public function owners(): HasMany
     {
@@ -30,7 +30,7 @@ class CoreDatabase extends Model
     }
 
     /**
-     * @return HasMany<CoreDatabaseLifecycleEvent, self>
+     * @return HasMany<CoreDatabaseLifecycleEvent, $this>
      */
     public function lifecycleEvents(): HasMany
     {
@@ -38,7 +38,7 @@ class CoreDatabase extends Model
     }
 
     /**
-     * @return HasMany<CoreDatabaseLink, self>
+     * @return HasMany<CoreDatabaseLink, $this>
      */
     public function links(): HasMany
     {

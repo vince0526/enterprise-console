@@ -17,7 +17,7 @@ class CoreDatabaseLink extends Model
     ];
 
     /**
-     * @return BelongsTo<CoreDatabase, self>
+     * @return BelongsTo<CoreDatabase, $this>
      */
     public function coreDatabase(): BelongsTo
     {
@@ -25,7 +25,7 @@ class CoreDatabaseLink extends Model
     }
 
     /**
-     * @return BelongsTo<DatabaseConnection, self>
+     * @return BelongsTo<DatabaseConnection, $this>
      */
     public function databaseConnection(): BelongsTo
     {

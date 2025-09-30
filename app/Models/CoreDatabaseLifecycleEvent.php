@@ -21,7 +21,7 @@ class CoreDatabaseLifecycleEvent extends Model
     ];
 
     /**
-     * @return BelongsTo<CoreDatabase, self>
+     * @return BelongsTo<CoreDatabase, $this>
      */
     public function coreDatabase(): BelongsTo
     {
