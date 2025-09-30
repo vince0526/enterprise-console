@@ -51,9 +51,7 @@
         {{ session('status') }}
       </div>
     @endif
-    
-    <h2>Core Databases</h2>
-    <p class="text-sm" style="color: var(--color-text-secondary); max-width: 70ch;">This module catalogs and manages the enterprise's core/system databases across environments. Use this screen to register core databases, set ownership and lifecycle metadata, and link to operational policies before Database Management tasks.</p>
+
 
     <div class="tabs">
       <nav class="tabs__nav">
