@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Artisan;
 use App\Models\CoreDatabase;
-use App\Models\CoreDatabaseOwner;
 use App\Models\CoreDatabaseLifecycleEvent;
 use App\Models\CoreDatabaseLink;
+use App\Models\CoreDatabaseOwner;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Artisan;
 
 uses(RefreshDatabase::class);
 

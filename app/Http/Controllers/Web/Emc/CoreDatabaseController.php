@@ -5,13 +5,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Emc;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\CoreDatabaseRequest;
 use App\Models\CoreDatabase;
 use App\Models\DatabaseConnection;
-use App\Http\Requests\CoreDatabaseRequest;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\View\View;
 
 class CoreDatabaseController extends Controller
 {
@@ -20,7 +20,7 @@ class CoreDatabaseController extends Controller
         $activeTab = $request->query('tab', 'registry');
 
         $coreDbs = CoreDatabase::query()
-            ->with(['owners', 'lifecycleEvents' => fn($q) => $q->latest('effective_date'), 'links.databaseConnection'])
+            ->with(['owners', 'lifecycleEvents' => fn ($q) => $q->latest('effective_date'), 'links.databaseConnection'])
             ->orderBy('name')
             ->get();
 

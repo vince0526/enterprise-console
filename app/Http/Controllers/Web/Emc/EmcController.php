@@ -15,9 +15,9 @@ class EmcController extends Controller
         $route = \Illuminate\Support\Facades\Route::has('emc.core.index')
             ? 'emc.core.index'
             : (\Illuminate\Support\Facades\Route::has('emc.db') ? 'emc.db' : 'dashboard');
+
         return redirect()->route($route);
     }
-
 
     public function db(): View
     {

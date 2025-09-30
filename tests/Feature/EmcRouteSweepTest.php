@@ -3,12 +3,10 @@
 declare(strict_types=1);
 
 use Illuminate\Testing\TestResponse;
-use Illuminate\Support\Str;
 
 /**
  * EMC endpoints and core assets should be reachable in non-production env.
  */
-
 dataset('emc_endpoints', function () {
     return [
         '/emc',
@@ -38,9 +36,9 @@ it('responds OK for EMC sweep endpoints', function (string $path) {
     }
 })->with('emc_endpoints');
 
-it('has core static assets available on disk', function(){
+it('has core static assets available on disk', function () {
     $css = public_path('css/emc.css');
-    $js  = public_path('js/emc.js');
+    $js = public_path('js/emc.js');
     expect(is_file($css))->toBeTrue();
     expect(is_file($js))->toBeTrue();
     expect(filesize($css))->toBeGreaterThan(1000);

@@ -8,11 +8,11 @@ use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Web\Database\CompanyUserController as WebCompanyUser;
 use App\Http\Controllers\Web\Database\UserRestrictionController as WebUserRestriction;
-use App\Http\Controllers\Web\Emc\EmcController;
 use App\Http\Controllers\Web\Emc\CoreDatabaseController;
-use App\Http\Controllers\Web\Emc\CoreDatabaseOwnerController;
 use App\Http\Controllers\Web\Emc\CoreDatabaseLifecycleEventController;
 use App\Http\Controllers\Web\Emc\CoreDatabaseLinkController;
+use App\Http\Controllers\Web\Emc\CoreDatabaseOwnerController;
+use App\Http\Controllers\Web\Emc\EmcController;
 use App\Http\Middleware\EnsureDevOverrideEnabled;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
@@ -110,7 +110,9 @@ Route::prefix('emc')->name('emc.')->group(function () {
         ]);
     })->name('layout-html');
 
-    Route::get('/', function(){ return redirect('/emc/core'); })->name('index');
+    Route::get('/', function () {
+        return redirect('/emc/core');
+    })->name('index');
     // Core Databases module (placed before Database Management in nav)
     Route::prefix('core')->name('core.')->group(function () {
         Route::get('/', [CoreDatabaseController::class, 'index'])->name('index');

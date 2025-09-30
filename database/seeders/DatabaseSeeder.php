@@ -14,7 +14,7 @@ class DatabaseSeeder extends Seeder
             RoleSeeder::class,
             CoreDatabaseSeeder::class,
             // ExampleSeed::class,
-                CoreSubmodulesSeeder::class,
-            ]);
+            CoreSubmodulesSeeder::class,
+        ]);
     }
 }
