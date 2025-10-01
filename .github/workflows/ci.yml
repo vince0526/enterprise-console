@@ -3,12 +3,45 @@ name: CI
 on:
   push:
     branches: [main]
-    paths-ignore:
-      - "docs/**"
-      - ".github/workflows/**"
-      - "**/*.md"
+    paths:
+      - "app/**"
+      - "bootstrap/**"
+      - "config/**"
+      - "database/**"
+      - "public/**"
+      - "resources/**"
+      - "routes/**"
+      - "scripts/**"
+      - "tests/**"
+      - "artisan"
+      - "composer.json"
+      - "composer.lock"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "vite.config.js"
+      - "phpunit.xml"
   pull_request:
     branches: [main]
+    paths:
+      - "app/**"
+      - "bootstrap/**"
+      - "config/**"
+      - "database/**"
+      - "public/**"
+      - "resources/**"
+      - "routes/**"
+      - "scripts/**"
+      - "tests/**"
+      - "artisan"
+      - "composer.json"
+      - "composer.lock"
+      - "package.json"
+      - "package-lock.json"
+      - "pnpm-lock.yaml"
+      - "vite.config.js"
+      - "phpunit.xml"
+  workflow_dispatch: {}
 
 permissions:
   contents: read
