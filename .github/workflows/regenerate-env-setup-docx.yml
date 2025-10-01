@@ -2,11 +2,18 @@ name: Regenerate Environment Setup DOCX
 
 on:
   push:
-    branches: [ main, feat/pr-migration-checker ]
+    branches: [main, feat/pr-migration-checker]
     paths:
-      - 'docs/environment-setup.md'
-      - 'scripts/env_setup_md_to_docx.py'
+      - "docs/environment-setup.md"
+      - "scripts/env_setup_md_to_docx.py"
   workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: regenerate-env-setup-docx-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   build:
@@ -18,7 +25,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: '3.11'
+          python-version: "3.11"
 
       - name: Install python-docx
         run: |
