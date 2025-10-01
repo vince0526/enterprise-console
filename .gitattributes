@@ -1,4 +1,4 @@
-﻿# Normalize line endings to LF in repo; let Git handle checkout
+﻿# Normalize line endings to LF in repo - let Git handle checkout
 * text=auto
 
 # Force LF for source/config
