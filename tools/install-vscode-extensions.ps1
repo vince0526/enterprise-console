@@ -5,8 +5,8 @@ Install recommended VS Code extensions from .vscode/extensions.json using `code`
 param()
 
 $ErrorActionPreference = 'Stop'
-function Info($m){ Write-Host "[vscode-ext] $m" -ForegroundColor Cyan }
-function Warn($m){ Write-Host "[vscode-ext] $m" -ForegroundColor Yellow }
+function Info($m) { Write-Host "[vscode-ext] $m" -ForegroundColor Cyan }
+function Warn($m) { Write-Host "[vscode-ext] $m" -ForegroundColor Yellow }
 
 if (-not (Get-Command code -ErrorAction SilentlyContinue)) { Warn 'VS Code `code` CLI not found; skipping'; return }
 
@@ -20,6 +20,10 @@ foreach ($id in $json.recommendations) {
   try {
     Info "Installing $id"
     code --install-extension $id --force | Out-Null
-  } catch { Warn "Failed to install $id: $($($_.Exception.Message))" }
+  }
+  catch {
+    $msg = $_.Exception.Message
+    Warn ("Failed to install {0}: {1}" -f $id, $msg)
+  }
 }
 Info "VS Code extension installation complete"
