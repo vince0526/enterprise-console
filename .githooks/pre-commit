@@ -18,9 +18,14 @@ cd "$REPO_ROOT"
 PINT="vendor/bin/pint"
 PHPSTAN="vendor/bin/phpstan"
 
-echo "[pre-commit] Running Pint..."
+echo "[pre-commit] Running Pint (staged files only if possible)..."
 if [ -x "$PINT" ]; then
-  "$PINT" -v
+  STAGED=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\.(php|blade\.php)$' || true)
+  if [ -n "$STAGED" ]; then
+    echo "$STAGED" | xargs -r "$PINT" -v --
+  else
+    "$PINT" -v
+  fi
 else
   echo "Pint not found; skipping" >&2
 fi

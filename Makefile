@@ -22,6 +22,9 @@ qa: ## Run lint + static analysis
 qa-full: ## Run full quality gate (pint + phpstan + tests)
 	$(COMPOSER) run check-all
 
+quality: ## Alias for full quality gate
+	$(COMPOSER) run quality
+
 test: ## Run test suite
 	$(PHP) artisan test
 
@@ -30,6 +33,9 @@ coverage: ## Run tests with coverage (Xdebug required)
 
 build: ## Production asset build
 	$(NPM) run build
+
+bootstrap: ## Run bootstrap script
+	powershell -NoProfile -ExecutionPolicy Bypass -File ./tools/bootstrap.ps1
 
 docs: ## Regenerate DOCX docs (modules + env setup)
 	python scripts/env_setup_md_to_docx.py || true
