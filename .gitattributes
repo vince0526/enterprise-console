@@ -13,3 +13,8 @@
 *.yaml  text eol=lf
 *.neon  text eol=lf
 *.md    text eol=lf
+
+# Ensure Git hooks and scripts keep LF to remain executable across environments
+.githooks/* text eol=lf
+*.sh       text eol=lf
+*.ps1      text eol=lf

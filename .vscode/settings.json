@@ -1,38 +1,27 @@
 {
-  // Editor
-  "editor.formatOnSave": true,
-  "files.eol": "\n",
-  "editor.codeActionsOnSave": {
-    "source.organizeImports": "explicit"
-  },
-
-  // PHP
-  "php.validate.executablePath": "C:/laragon/bin/php/php-8.3.x/php.exe",
-
-  // Blade & Tailwind
-  "bladeFormatter.format.indentSize": 4,
-  "bladeFormatter.format.wrapLineLength": 140,
-  "tailwindCSS.includeLanguages": {
-    "blade": "html"
-  },
-  "tailwindCSS.experimental.classRegex": [
-    ["class=\\\"([^\\\"]*)\\\"", "[1]"]
-  ],
-
-  // Terminal shell integration (fixes VS Code command detection warning)
-  "terminal.integrated.shellIntegration.enabled": true,
   "terminal.integrated.shellIntegration.showWelcome": false,
-  "terminal.integrated.shellIntegration.decorationsEnabled": "never",
-  "terminal.integrated.shellIntegration.suggestEnabled": true,
   "terminal.integrated.commandDetection.enabled": true,
-  "terminal.integrated.scrollback": 1000,
-  "terminal.integrated.suggest.enabled": true,
-  "terminal.integrated.sendKeybindingsToShell": true,
-  "terminal.integrated.enablePersistentSessions": false,
-  "terminal.integrated.persistentSessionReviveProcess": "never",
-  "terminal.integrated.inheritEnv": true,
-  "terminal.integrated.windowsUseConptyDll": true,
+  "terminal.integrated.shellIntegration.enabled": true,
 
-  // Chat/agents
-  "chat.agent.maxRequests": 100
+  // Editor consistency
+  "files.eol": "\n",
+  "files.insertFinalNewline": true,
+  "files.trimFinalNewlines": true,
+  "files.trimTrailingWhitespace": true,
+  "editor.formatOnSave": true,
+
+  // Language-specific helpers
+  "[php]": {
+    "editor.defaultFormatter": "bmewburn.vscode-intelephense-client"
+  },
+  "[blade]": {
+    "editor.defaultFormatter": "shufo.vscode-blade-formatter",
+    "editor.formatOnSave": true
+  },
+  "[json]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[jsonc]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }

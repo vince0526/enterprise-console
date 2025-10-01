@@ -83,6 +83,10 @@ function ec-test { Push-Location $script:RepoRoot; try { php artisan test } fina
 function ec-build { Push-Location $script:RepoRoot; try { npm run build } finally { Pop-Location } }
 function ec-dev { Push-Location $script:RepoRoot; try { composer run dev } finally { Pop-Location } }
 
+# Composite helpers
+function ec-quality { Push-Location $script:RepoRoot; try { composer run check-all } finally { Pop-Location } }
+function ec-fresh { Push-Location $script:RepoRoot; try { php artisan migrate:fresh --seed } finally { Pop-Location } }
+
 # End of integration helpers
 
 # Reload helper to pick up changes without opening a new terminal
