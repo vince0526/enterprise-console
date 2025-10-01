@@ -1,5 +1,7 @@
 # Enterprise Management Console
 
+![CI](https://github.com/vince0526/enterprise-console/actions/workflows/ci.yml/badge.svg)
+![Docs Lint](https://github.com/vince0526/enterprise-console/actions/workflows/docs.yml/badge.svg)
 ![Development Status](https://img.shields.io/badge/Status-Active%20Development-brightgreen)
 ![Platform](https://img.shields.io/badge/Platform-Multi--Computer-blue)
 ![Tracking](https://img.shields.io/badge/Tracking-Enabled-success)
@@ -146,8 +148,8 @@ If you encounter issues:
 
 ---
 
-**Repository**: <https://github.com/vince0526/enterprise-console>  
-**License**: MIT  
+**Repository**: <https://github.com/vince0526/enterprise-console>
+**License**: MIT
 **Maintainer**: vince0526
 
 ## 🔎 Quick Endpoint Sweep (optional)

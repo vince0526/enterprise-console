@@ -13,6 +13,7 @@
 *.yaml  text eol=lf
 *.neon  text eol=lf
 *.md    text eol=lf
+Makefile text eol=lf
 
 # Ensure Git hooks and scripts keep LF to remain executable across environments
 .githooks/* text eol=lf
