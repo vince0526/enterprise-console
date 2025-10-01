@@ -1,10 +1,15 @@
 {
+  // Editor
   "editor.formatOnSave": true,
   "files.eol": "\n",
-  "php.validate.executablePath": "C:/laragon/bin/php/php-8.3.x/php.exe",
   "editor.codeActionsOnSave": {
     "source.organizeImports": "explicit"
   },
+
+  // PHP
+  "php.validate.executablePath": "C:/laragon/bin/php/php-8.3.x/php.exe",
+
+  // Blade & Tailwind
   "bladeFormatter.format.indentSize": 4,
   "bladeFormatter.format.wrapLineLength": 140,
   "tailwindCSS.includeLanguages": {
@@ -13,17 +18,21 @@
   "tailwindCSS.experimental.classRegex": [
     ["class=\\\"([^\\\"]*)\\\"", "[1]"]
   ],
+
+  // Terminal shell integration (fixes VS Code command detection warning)
   "terminal.integrated.shellIntegration.enabled": true,
   "terminal.integrated.shellIntegration.showWelcome": false,
   "terminal.integrated.shellIntegration.decorationsEnabled": "never",
   "terminal.integrated.shellIntegration.suggestEnabled": true,
+  "terminal.integrated.commandDetection.enabled": true,
   "terminal.integrated.scrollback": 1000,
   "terminal.integrated.suggest.enabled": true,
   "terminal.integrated.sendKeybindingsToShell": true,
-  "terminal.integrated.commandDetection.enabled": true,
   "terminal.integrated.enablePersistentSessions": false,
   "terminal.integrated.persistentSessionReviveProcess": "never",
   "terminal.integrated.inheritEnv": true,
   "terminal.integrated.windowsUseConptyDll": true,
+
+  // Chat/agents
   "chat.agent.maxRequests": 100
 }
