@@ -30,3 +30,53 @@ function emc-activity {
 if (Test-EmcProject) {
     Write-Host "EMC Shell Integration: READY" -ForegroundColor Green
 }
+
+# Determine repository root (directory of this script)
+$script:RepoRoot = $PSScriptRoot
+
+function Invoke-InRepo {
+    param(
+        [Parameter(Mandatory = $true)]
+        [ScriptBlock]$Script
+    )
+    Push-Location $script:RepoRoot
+    try { & $Script } finally { Pop-Location }
+}
+
+# Composite helpers
+function emc-quality {
+    Invoke-InRepo {
+        if (Test-Path "vendor/bin/pint") { vendor/bin/pint -v } else { Write-Host "Pint not found" -ForegroundColor Yellow }
+        if (Test-Path "vendor/bin/phpstan") { vendor/bin/phpstan analyse -c phpstan.neon.dist --no-progress --memory-limit=1G } else { Write-Host "PHPStan not found" -ForegroundColor Yellow }
+        php artisan test --parallel --recreate-databases
+    }
+}
+
+function emc-fresh {
+    Invoke-InRepo { php artisan migrate:fresh --seed }
+}
+
+function emc-build {
+    Invoke-InRepo {
+        if (Test-Path "package.json") {
+            if (Get-Command npm -ErrorAction SilentlyContinue) { npm run build } else { Write-Host "npm not available" -ForegroundColor Yellow }
+        }
+        else { Write-Host "No package.json found" -ForegroundColor Yellow }
+    }
+}
+
+function emc-dev {
+    Invoke-InRepo {
+        if (Test-Path "package.json") {
+            if (Get-Command npm -ErrorAction SilentlyContinue) { npm run dev } else { Write-Host "npm not available" -ForegroundColor Yellow }
+        }
+        else { Write-Host "No package.json found" -ForegroundColor Yellow }
+    }
+}
+
+function emc-deploy {
+    Write-Host "[emc-deploy] Running quality checks and build (placeholder)" -ForegroundColor Cyan
+    emc-quality
+    emc-build
+    Write-Host "[emc-deploy] Done" -ForegroundColor Green
+}
