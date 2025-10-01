@@ -2,21 +2,21 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
-    services:
-      sqlite:
-        image: nouchka/sqlite3
-        options: >-
-          --health-cmd "echo 'ok'"
-          --health-interval 5s
-          --health-timeout 5s
-          --health-retries 5
+    env:
+      APP_ENV: testing
+      DB_CONNECTION: sqlite
+      DB_DATABASE: database/database.sqlite
+      MAIL_MAILER: array
+      CACHE_DRIVER: array
+      SESSION_DRIVER: array
+      QUEUE_CONNECTION: sync
 
     steps:
       - name: Checkout
@@ -25,8 +25,9 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.3'
-          extensions: mbstring, intl, sqlite3, pdo_sqlite
+          php-version: "8.3"
+          extensions: mbstring, dom, fileinfo, intl, curl, sqlite3, pdo_sqlite
+          coverage: xdebug
           tools: composer
 
       - name: Cache Composer
@@ -34,6 +35,8 @@ jobs:
         with:
           path: vendor
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-php-
 
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress
@@ -41,8 +44,8 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
-          node-version: '22'
-          cache: 'npm'
+          node-version: "22"
+          cache: "npm"
 
       - name: Install Node dependencies
         run: npm ci
@@ -53,6 +56,7 @@ jobs:
       - name: Prepare app env
         run: |
           cp .env.example .env || true
+          mkdir -p database
           php -r "file_put_contents('database/database.sqlite','');"
           php artisan key:generate
           php artisan config:clear
@@ -63,57 +67,20 @@ jobs:
       - name: Run PHPStan
         run: vendor/bin/phpstan analyse -c phpstan.neon.dist --no-progress --memory-limit=1G
 
-      - name: Run PHPUnit
-        run: php artisan test --parallel --recreate-databases
-name: CI
+      - name: Run PHPUnit with coverage
+        run: |
+          mkdir -p coverage
+          php artisan test --coverage-clover coverage/clover.xml --coverage-text --colors=always
 
-on:
-  push:
-  pull_request:
-
-jobs:
-  laravel:
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v5
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: Upload coverage artifact
+        uses: actions/upload-artifact@v4
         with:
-          php-version: '8.3'
-          extensions: mbstring, dom, fileinfo, sqlite3, intl, curl
-          coverage: xdebug
-          tools: composer
+          name: coverage
+          path: coverage/
 
-      - name: Cache Composer
-        uses: actions/cache@v4
+      - name: Upload to Codecov (optional)
+        if: ${{ secrets.CODECOV_TOKEN != '' }}
+        uses: codecov/codecov-action@v4
         with:
-          path: vendor
-          key: composer-${{ runner.os }}-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            composer-${{ runner.os }}-
-
-      - name: Install deps
-        run: composer install --no-interaction --prefer-dist --no-progress
-
-      - name: Check for duplicate migrations
-        run: php ./scripts/check-migration-duplicates.php
-
-      - name: Pint (format check)
-        run: vendor/bin/pint --test
-
-      - name: PHPStan
-        run: vendor/bin/phpstan analyse --memory-limit=512M
-
-      - name: Tests (with coverage)
-        env:
-          APP_ENV: testing
-          APP_KEY: base64:$(php -r 'echo base64_encode(random_bytes(32));')
-          DB_CONNECTION: sqlite
-          DB_DATABASE: ':memory:'
-          MAIL_MAILER: array
-          CACHE_DRIVER: array
-          SESSION_DRIVER: array
-          QUEUE_CONNECTION: sync
-        run: php artisan test --coverage-text --colors=always
+          files: coverage/clover.xml
+          token: ${{ secrets.CODECOV_TOKEN }}
