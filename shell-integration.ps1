@@ -13,7 +13,7 @@ $script:RepoRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 
 # Hint VS Code to enable shell integration & command detection markers
 $env:VSCODE_SHELL_INTEGRATION = "1"
-$env:TERM_PROGRAM = $env:TERM_PROGRAM ?? "vscode"
+if (-not $env:TERM_PROGRAM) { $env:TERM_PROGRAM = "vscode" }
 
 # If a fast integration script exists, dot-source it first for richer commands
 $fast = Join-Path $script:RepoRoot 'shell-integration-fast.ps1'
