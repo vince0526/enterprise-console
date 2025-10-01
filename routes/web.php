@@ -152,3 +152,5 @@ Route::prefix('emc')->name('emc.')->group(function () {
     Route::get('/about', [EmcController::class, 'about'])->name('about');
     Route::get('/tables/{table}/filters', [EmcController::class, 'filters'])->name('filters');
 });
+
+    // CI smoke trigger: non-functional change to verify workflow runs on code path updates
