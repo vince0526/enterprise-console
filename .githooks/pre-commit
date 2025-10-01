@@ -30,6 +30,23 @@ else
   echo "Pint not found; skipping" >&2
 fi
 
+# Lint staged Markdown files with markdownlint (if available)
+echo "[pre-commit] Linting Markdown (staged files)..."
+STAGED_MD=$(git diff --cached --name-only --diff-filter=ACM | grep -E '\\.md$' || true)
+if [ -n "$STAGED_MD" ]; then
+  MDL_BIN="./node_modules/.bin/markdownlint"
+  if [ -x "$MDL_BIN" ]; then
+    echo "$STAGED_MD" | xargs -r "$MDL_BIN" -c .markdownlint.jsonc --
+  elif command -v npx >/dev/null 2>&1; then
+    # Use npx to run markdownlint-cli without a local install
+    echo "$STAGED_MD" | xargs -r npx --yes markdownlint-cli -c .markdownlint.jsonc --
+  else
+    echo "markdownlint not available; skipping Markdown lint" >&2
+  fi
+else
+  echo "[pre-commit] No staged Markdown files."
+fi
+
 echo "[pre-commit] Running PHPStan..."
 if [ -x "$PHPSTAN" ]; then
   "$PHPSTAN" analyse -c phpstan.neon.dist --no-progress --memory-limit=1G
