@@ -37,6 +37,9 @@ build: ## Production asset build
 bootstrap: ## Run bootstrap script
 	powershell -NoProfile -ExecutionPolicy Bypass -File ./tools/bootstrap.ps1
 
+lint-md: ## Lint Markdown files
+	npx markdownlint --config ./.markdownlint.jsonc --ignore node_modules --ignore vendor "**/*.md"
+
 docs: ## Regenerate DOCX docs (modules + env setup)
 	python scripts/env_setup_md_to_docx.py || true
 	python scripts/md_to_docx.py || true

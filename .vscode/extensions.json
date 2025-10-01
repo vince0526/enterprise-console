@@ -18,6 +18,7 @@
     "usernamehw.errorlens",
     "christian-kohler.path-intellisense",
     "yzhang.markdown-all-in-one",
-    "xdebug.php-debug"
+    "xdebug.php-debug",
+    "DavidAnson.vscode-markdownlint"
   ]
 }
