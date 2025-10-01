@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Run workspace bootstrap after merges/pulls to ensure deps and env are up to date
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+if command -v pwsh >/dev/null 2>&1; then
+  pwsh -NoProfile -ExecutionPolicy Bypass -File tools/bootstrap.ps1 || true
+elif command -v powershell >/dev/null 2>&1; then
+  powershell -NoProfile -ExecutionPolicy Bypass -File tools/bootstrap.ps1 || true
+else
+  echo "No PowerShell found; skipping bootstrap" >&2
+fi
