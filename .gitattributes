@@ -18,3 +18,14 @@
 .githooks/* text eol=lf
 *.sh       text eol=lf
 *.ps1      text eol=lf
+
+# Treat common binary assets and Office docs as binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.pdf binary
+*.docx binary
+*.xlsx binary
+*.pptx binary

@@ -17,6 +17,7 @@
     "mikestead.dotenv",
     "usernamehw.errorlens",
     "christian-kohler.path-intellisense",
-    "yzhang.markdown-all-in-one"
+    "yzhang.markdown-all-in-one",
+    "xdebug.php-debug"
   ]
 }

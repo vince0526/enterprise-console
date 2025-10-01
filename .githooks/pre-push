@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+echo "[pre-push] Running quick quality checks..."
+
+if command -v php >/dev/null 2>&1; then
+  if [ -x "vendor/bin/pint" ]; then vendor/bin/pint -q || true; fi
+  if [ -x "vendor/bin/phpstan" ]; then vendor/bin/phpstan analyse -c phpstan.neon.dist --no-progress --memory-limit=1G || exit 1; fi
+  php artisan test --parallel --recreate-databases || exit 1
+else
+  echo "PHP not available; skipping checks" >&2
+fi
+
+echo "[pre-push] Quality checks passed."
