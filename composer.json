@@ -56,7 +56,7 @@
     "stan": "phpstan analyse --memory-limit=512M",
     "check": "pint && phpstan analyse --memory-limit=512M",
     "test": "php artisan test",
-    "test:quick": "php artisan test --parallel --recreate-databases --filter=ExampleTest|HealthTest",
+    "test:quick": "php artisan test --parallel --recreate-databases --filter=\"ExampleTest|HealthTest\"",
     "post-update-cmd": [],
     "post-autoload-dump": [
       "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",

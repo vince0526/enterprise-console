@@ -1,0 +1,88 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Policies;
+
+use App\Models\CoreDatabase;
+use App\Models\User;
+
+class CoreDatabasePolicy
+{
+    private function allowAll(): bool
+    {
+        return app()->environment('testing') || (bool) config('app.dev_auto_login', false);
+    }
+
+    public function viewAny(?User $user): bool
+    {
+        if ($this->allowAll()) {
+            return true;
+        }
+
+        return $user->can('core.view');
+    }
+
+    public function view(?User $user, CoreDatabase $db): bool
+    {
+        if ($this->allowAll()) {
+            return true;
+        }
+
+        return $user->can('core.view');
+    }
+
+    public function create(?User $user): bool
+    {
+        if ($this->allowAll()) {
+            return true;
+        }
+
+        return $user->can('core.create');
+    }
+
+    public function update(?User $user, CoreDatabase $db): bool
+    {
+        if ($this->allowAll()) {
+            return true;
+        }
+
+        return $user->can('core.update');
+    }
+
+    public function delete(?User $user, CoreDatabase $db): bool
+    {
+        if ($this->allowAll()) {
+            return true;
+        }
+
+        return $user->can('core.delete');
+    }
+
+    public function manageOwners(?User $user, CoreDatabase $db): bool
+    {
+        if ($this->allowAll()) {
+            return true;
+        }
+
+        return $user->can('core.manage-owners');
+    }
+
+    public function manageLifecycle(?User $user, CoreDatabase $db): bool
+    {
+        if ($this->allowAll()) {
+            return true;
+        }
+
+        return $user->can('core.manage-lifecycle');
+    }
+
+    public function manageLinks(?User $user, CoreDatabase $db): bool
+    {
+        if ($this->allowAll()) {
+            return true;
+        }
+
+        return $user->can('core.manage-links');
+    }
+}

@@ -130,6 +130,10 @@ Route::prefix('emc')->name('emc.')->group(function () {
         Route::patch('/{core_database}', [CoreDatabaseController::class, 'update'])->name('update');
         Route::delete('/{core_database}', [CoreDatabaseController::class, 'destroy'])->name('destroy');
 
+        // Tools
+        Route::get('/export/csv', [CoreDatabaseController::class, 'exportCsv'])->name('export.csv');
+        Route::post('/ddl', [CoreDatabaseController::class, 'generateDdl'])->name('ddl');
+
         Route::post('owners', [CoreDatabaseOwnerController::class, 'store'])->name('owners.store');
         Route::delete('owners/{owner}', [CoreDatabaseOwnerController::class, 'destroy'])->name('owners.destroy');
 
