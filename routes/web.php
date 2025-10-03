@@ -28,13 +28,13 @@ Route::get('/health', function () {
 })->name('health');
 
 // Make Core Databases the default entry across all environments
-Route::get('/', fn () => redirect('/emc/core'));
+Route::get('/', fn() => redirect('/emc/core'));
 
 // If dev auto login is enabled, expose dashboard without auth middleware.
 if (config('app.dev_auto_login', false)) {
-    Route::get('/dashboard', fn () => view('dashboard'))->name('dashboard');
+    Route::get('/dashboard', fn() => view('dashboard'))->name('dashboard');
 } else {
-    Route::get('/dashboard', fn () => view('dashboard'))
+    Route::get('/dashboard', fn() => view('dashboard'))
         ->middleware(['auth', 'verified'])
         ->name('dashboard');
 }
@@ -53,7 +53,7 @@ Route::middleware(config('app.dev_auto_login', false) ? [] : ['auth'])->group(fu
         ->names('user-restrictions');
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 Route::post('/dev-override', DevOverrideController::class)
     ->middleware([EnsureDevOverrideEnabled::class, 'throttle:5,1'])
@@ -89,7 +89,7 @@ if (! app()->environment('production')) {
     });
 
     Route::get('/dev-plain', function () {
-        return response('<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Dev Links</title><style>body{background:#111;color:#eee;font-family:system-ui,Arial,sans-serif;padding:2rem;} a{color:#7db3ff;text-decoration:none;} a:hover{text-decoration:underline;} h1{margin-top:0;} code{background:#222;padding:2px 4px;border-radius:4px;} .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;} .card{border:1px solid #333;padding:1rem;border-radius:8px;background:#1a1a1a;} ul{margin:0;padding-left:1.1rem;} li{margin:.25rem 0;} .warn{margin-top:2rem;font-size:.8rem;opacity:.75}</style></head><body><h1>Dev Links (Plain)</h1><p>Auth bypass flag: <strong>'.(config('app.dev_auto_login', false) ? 'ON' : 'OFF').'</strong></p><div class="grid">
+        return response('<!DOCTYPE html><html><head><meta charset="utf-8"/><title>Dev Links</title><style>body{background:#111;color:#eee;font-family:system-ui,Arial,sans-serif;padding:2rem;} a{color:#7db3ff;text-decoration:none;} a:hover{text-decoration:underline;} h1{margin-top:0;} code{background:#222;padding:2px 4px;border-radius:4px;} .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem;} .card{border:1px solid #333;padding:1rem;border-radius:8px;background:#1a1a1a;} ul{margin:0;padding-left:1.1rem;} li{margin:.25rem 0;} .warn{margin-top:2rem;font-size:.8rem;opacity:.75}</style></head><body><h1>Dev Links (Plain)</h1><p>Auth bypass flag: <strong>' . (config('app.dev_auto_login', false) ? 'ON' : 'OFF') . '</strong></p><div class="grid">
 <div class="card"><h2>Core</h2><ul><li><a href="/">Welcome</a></li><li><a href="/dashboard">Dashboard</a></li><li><a href="/profile">Profile Edit</a></li></ul></div>
 <div class="card"><h2>Database</h2><ul><li><a href="/database/company-users">Company Users</a></li><li><a href="/database/user-restrictions">User Restrictions</a></li></ul></div>
 <div class="card"><h2>Auth</h2><ul><li><a href="/login">Login</a></li><li><a href="/register">Register</a></li><li><a href="/forgot-password">Forgot Password</a></li></ul></div>
@@ -152,5 +152,10 @@ Route::prefix('emc')->name('emc.')->group(function () {
     Route::get('/about', [EmcController::class, 'about'])->name('about');
     Route::get('/tables/{table}/filters', [EmcController::class, 'filters'])->name('filters');
 });
+
+// Tools: Core Databases Workbench (React mount)
+Route::get('/tools/core-workbench', function () {
+    return view('tools.workbench');
+})->name('tools.core-workbench');
 
 // CI smoke trigger: non-functional change to verify workflow runs on code path updates
