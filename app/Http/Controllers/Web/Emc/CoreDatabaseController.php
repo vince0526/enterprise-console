@@ -15,11 +15,31 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\View\View;
 
+/**
+ * CoreDatabaseController
+ *
+ * Purpose: Web controller for the EMC Core Databases Workbench UI.
+ *
+ * Key responsibilities:
+ * - Render the registry with filters/sorting (index)
+ * - Persist records via CRUD (store/update/destroy)
+ * - CSV export of the registry (exportCsv)
+ * - Generate DDL based on engine + functional scopes (generateDdl)
+ *
+ * Where to customize safely:
+ * - Filters/sorting: see the index() query ->when(...) and the allowed sort fields
+ * - CSV columns/order: adjust $headers and the mapped values in exportCsv()
+ * - DDL behavior: prefer changing App\Services\CoreDatabaseDdlGenerator to keep controller slim
+ * - Authorization: see policy (App\Policies\CoreDatabasePolicy) and calls to $this->authorize(...)
+ */
 class CoreDatabaseController extends Controller
 {
     public function index(Request $request): View
     {
+        // Authorization for listing/registry view. Policy maps to roles/permissions.
         $this->authorize('viewAny', CoreDatabase::class);
+
+        // UI state and filter inputs from query string.
         $activeTab = $request->query('tab', 'registry');
         $q = trim((string) $request->query('q', ''));
         $tier = $request->query('tier');
@@ -27,9 +47,11 @@ class CoreDatabaseController extends Controller
         $engine = $request->query('engine');
         $env = $request->query('env');
         $scopes = (array) $request->query('scopes', []);
+        // Only allow sorting by a whitelisted set of columns to prevent SQL injection.
         $sortBy = in_array($request->query('sortBy'), ['name', 'engine', 'env', 'tier', 'owner', 'status', 'updated_at'], true) ? $request->query('sortBy') : 'name';
         $sortDir = $request->query('sortDir') === 'desc' ? 'desc' : 'asc';
 
+        // The registry query: extend or add filters via ->when(...) blocks.
         $coreDbs = CoreDatabase::query()
             ->with(['owners', 'lifecycleEvents' => fn ($q) => $q->latest('effective_date'), 'links.databaseConnection'])
             ->when($tier, fn ($qb) => $qb->where('tier', $tier))
@@ -54,7 +76,8 @@ class CoreDatabaseController extends Controller
             ->orderBy($sortBy, $sortDir)
             ->get();
 
-        // Optional: map linked_connection (by name) to existing DatabaseConnection IDs for linking
+        // Optional: map linked_connection (by name) to existing DatabaseConnection IDs for linking.
+        // If you introduce a different linking strategy, modify this map or remove it entirely.
         $names = $coreDbs->pluck('linked_connection')->filter()->unique()->values();
         $connectionByName = collect();
         if ($names->isNotEmpty() && Schema::hasTable('database_connections')) {
@@ -69,6 +92,7 @@ class CoreDatabaseController extends Controller
 
     public function store(CoreDatabaseRequest $request): RedirectResponse
     {
+        // Creation requires policy permission; validation handled by CoreDatabaseRequest.
         $this->authorize('create', CoreDatabase::class);
         $data = $request->validated();
 
@@ -79,6 +103,7 @@ class CoreDatabaseController extends Controller
 
     public function destroy(CoreDatabase $core): RedirectResponse
     {
+        // Soft-delete vs hard-delete: switch to $core->update(['status' => 'archived']) if needed.
         $this->authorize('delete', $core);
         $core->delete();
 
@@ -87,6 +112,7 @@ class CoreDatabaseController extends Controller
 
     public function update(CoreDatabaseRequest $request, CoreDatabase $core): RedirectResponse
     {
+        // Update specific fields by whitelisting in the FormRequest rules/fillable model fields.
         $this->authorize('update', $core);
         $core->update($request->validated());
 
@@ -95,6 +121,7 @@ class CoreDatabaseController extends Controller
 
     public function exportCsv(Request $request): Response
     {
+        // To customize CSV: edit $headers and the mapped row values below.
         $this->authorize('viewAny', CoreDatabase::class);
         $rows = CoreDatabase::query()->orderBy('name')->get();
         $headers = ['id', 'name', 'engine', 'env', 'tier', 'tax_path', 'owner', 'status', 'updated_at'];
@@ -121,6 +148,7 @@ class CoreDatabaseController extends Controller
 
     public function generateDdl(Request $request, CoreDatabaseDdlGenerator $generator): Response
     {
+        // Generate engine-specific DDL from functional scopes via dedicated service.
         $this->authorize('viewAny', CoreDatabase::class);
         $engine = (string) $request->input('engine', 'PostgreSQL');
         $functionalScopes = (array) $request->input('functional_scopes', []);

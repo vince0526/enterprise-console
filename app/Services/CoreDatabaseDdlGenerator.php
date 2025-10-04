@@ -4,6 +4,17 @@ declare(strict_types=1);
 
 namespace App\Services;
 
+/**
+ * CoreDatabaseDdlGenerator
+ *
+ * Purpose: Encapsulates engine-specific SQL DDL generation for the Core Databases module
+ * based on selected functional scopes.
+ *
+ * How to extend:
+ * - To support a new engine, add cases to $createSchema and $createTable match() blocks.
+ * - To add new functional scopes, add new if (isset($wants['YourScope'])) blocks mapping to schema/table pairs.
+ * - For production-grade DDL (PK/FK/indexes), expand the table definitions and split into multiple statements.
+ */
 final class CoreDatabaseDdlGenerator
 {
     /**
@@ -33,11 +44,13 @@ final class CoreDatabaseDdlGenerator
             };
         };
 
+        // Ensure all known schemas (or name prefixes) are created for the chosen engine.
         foreach ($schemas as $s) {
             $out[] = $createSchema($engine, $s);
         }
 
         $wants = array_flip($functionalScopes);
+        // Map functional scopes to representative tables per schema/prefix.
         if (isset($wants['Accounting'])) {
             $out[] = $createTable($engine, 'acc_', 'ledger');
         }

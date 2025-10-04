@@ -1,9 +1,27 @@
+{{--
+    Core Databases Workbench View (Blade)
+
+    Sections:
+    - Registry: filters, saved views, sortable table, quick view panel
+    - Create: stage-first wizard, cross enablers, scope suggestions, DDL preview
+    - Guide: reference text for tiers/stages/scopes
+    - Ownership/Lifecycle/Links: submodules CRUD panels
+
+    Customize safely:
+    - Filters and Saved Views: modify the <form> in the registry tab; keep names aligned with controller query params.
+    - Table columns: adjust header and row cells; update aria-sort attributes if you add new sort options.
+    - Wizard lists: see VC_STACK, STAGE_TO_VC_MAP, VC and CROSS_ENABLERS in the script section.
+    - DDL preview buttons: the routes and POST body are built in previewDDL()/downloadDDL().
+    - Quick View: markup under #quickviewWrapper and logic in openQuickView()/closeQuickView().
+--}}
 @extends('emc.layout')
 
 @section('title', 'Core Databases - EMC')
 
 @section('content')
     <style>
+        /* TIP: Prefer moving repeated styles into resources/css/emc.css.
+           Keep inline styles here only for small page-specific tweaks. */
         /* Layout polish */
         .page-header {
             display: flex;
@@ -197,6 +215,7 @@
                 </div>
                 <div class="tabs__content">
                     @if ($activeTab === 'registry')
+                        {{-- Registry Filters: add/remove filters here and mirror in controller index() query. --}}
                         <form method="GET" class="sub-section mt-3">
                             <input type="hidden" name="tab" value="registry" />
                             <div class="registry-filters">
@@ -324,6 +343,7 @@
                             </div>
                         </div>
 
+                        {{-- Registry Table: update columns and aria-sort attributes as needed. --}}
                         <div class="table-container" id="coreDbsTable">
                             <table class="table">
                                 <thead class="table__header">
@@ -401,7 +421,7 @@
                                 </tbody>
                             </table>
                         </div>
-                        <!-- Quick View Slide-over -->
+                        <!-- Quick View Slide-over: accessible panel with backdrop and focus handling. -->
                         <div id="quickviewWrapper" aria-hidden="true">
                             <div class="quickview__backdrop" id="qvBackdrop" onclick="closeQuickView()"
                                 aria-hidden="true"></div>
