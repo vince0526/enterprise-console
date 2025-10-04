@@ -76,6 +76,6 @@ final class CoreDatabaseDdlGenerator
             $out[] = $createTable($engine, 'fin_', 'institution_license');
         }
 
-        return implode("\n", $out)."\n";
+        return implode("\n", $out) . "\n";
     }
 }

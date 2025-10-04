@@ -274,9 +274,24 @@
 /* Filters */
 .registry-filters {
   display: grid;
-  grid-template-columns: 2fr 1fr 1fr 1fr 1fr 2fr;
+  /* Responsive, balanced columns */
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   gap: 0.75rem;
   align-items: end;
+}
+/* Make wide groups (like Functional Scopes) span full width */
+.registry-filters .filter-group--scopes {
+  grid-column: 1 / -1;
+}
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+.form__checkbox {
+  display: flex;
+  gap: 0.25rem;
+  align-items: center;
 }
 .saved-views {
   display: flex;
@@ -284,6 +299,9 @@
   flex-wrap: wrap;
   align-items: center;
   margin-top: 0.5rem;
+}
+.saved-views .form__label {
+  margin: 0;
 }
 .applied-filters {
   margin-top: 0.5rem;

@@ -21,7 +21,7 @@
 @section('content')
     <style>
         /* TIP: Prefer moving repeated styles into resources/css/emc.css.
-           Keep inline styles here only for small page-specific tweaks. */
+                   Keep inline styles here only for small page-specific tweaks. */
         /* Layout polish */
         .page-header {
             display: flex;
@@ -265,13 +265,12 @@
                                         @endforeach
                                     </select>
                                 </div>
-                                <div>
+                                <div class="filter-group--scopes">
                                     <label class="form__label">Functional Scopes</label>
                                     @php($selectedScopes = (array) request('scopes', []))
-                                    <div class="flex gap-2" style="flex-wrap:wrap;">
+                                    <div class="checkbox-group">
                                         @foreach (['Accounting', 'Inventory', 'Manufacturing', 'HRM', 'Logistics', 'Compliance', 'MediaSpecific', 'FinanceSpecific'] as $s)
-                                            <label class="form__checkbox"
-                                                style="display:flex; gap:.25rem; align-items:center;">
+                                            <label class="form__checkbox">
                                                 <input type="checkbox" name="scopes[]" value="{{ $s }}"
                                                     @checked(in_array($s, $selectedScopes, true)) />
                                                 <span>{{ $s }}</span>
@@ -300,7 +299,7 @@
                                 </select>
                             </div>
                             <div class="saved-views">
-                                <label class="form__label" style="margin:0;">Saved Views</label>
+                                <label class="form__label">Saved Views</label>
                                 <a class="btn btn--tiny btn--secondary"
                                     href="{{ route('emc.core.index', ['tab' => 'registry', 'env' => 'Prod']) }}">All
                                     Prod</a>
