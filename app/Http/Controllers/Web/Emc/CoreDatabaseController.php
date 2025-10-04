@@ -53,11 +53,11 @@ class CoreDatabaseController extends Controller
 
         // The registry query: extend or add filters via ->when(...) blocks.
         $coreDbs = CoreDatabase::query()
-            ->with(['owners', 'lifecycleEvents' => fn($q) => $q->latest('effective_date'), 'links.databaseConnection'])
-            ->when($tier, fn($qb) => $qb->where('tier', $tier))
-            ->when($engine, fn($qb) => $qb->where('engine', $engine))
-            ->when($env, fn($qb) => $qb->where('env', $env))
-            ->when($vcStage, fn($qb) => $qb->where('vc_stage', $vcStage))
+            ->with(['owners', 'lifecycleEvents' => fn ($q) => $q->latest('effective_date'), 'links.databaseConnection'])
+            ->when($tier, fn ($qb) => $qb->where('tier', $tier))
+            ->when($engine, fn ($qb) => $qb->where('engine', $engine))
+            ->when($env, fn ($qb) => $qb->where('env', $env))
+            ->when($vcStage, fn ($qb) => $qb->where('vc_stage', $vcStage))
             ->when(! empty($scopes), function ($qb) use ($scopes) {
                 foreach ($scopes as $s) {
                     $qb->whereJsonContains('functional_scopes', $s);
@@ -125,9 +125,9 @@ class CoreDatabaseController extends Controller
         $this->authorize('viewAny', CoreDatabase::class);
         $rows = CoreDatabase::query()->orderBy('name')->get();
         $headers = ['id', 'name', 'engine', 'env', 'tier', 'tax_path', 'owner', 'status', 'updated_at'];
-        $csv = implode(',', $headers) . "\n";
+        $csv = implode(',', $headers)."\n";
         foreach ($rows as $r) {
-            $csv .= implode(',', array_map(fn($v) => '"' . str_replace('"', '""', (string) ($v ?? '')) . '"', [
+            $csv .= implode(',', array_map(fn ($v) => '"'.str_replace('"', '""', (string) ($v ?? '')).'"', [
                 $r->id,
                 $r->name,
                 $r->engine,
@@ -137,7 +137,7 @@ class CoreDatabaseController extends Controller
                 $r->owner,
                 $r->status,
                 $r->updated_at,
-            ])) . "\n";
+            ]))."\n";
         }
 
         return response($csv, 200, [
