@@ -19,7 +19,7 @@
     "laravel-vite-plugin": "^2.0.1",
     "postcss": "^8.4.47",
     "tailwindcss": "^4.1.14",
-    "vite": "^7.1.7",
+    "vite": "^7.1.9",
     "markdownlint-cli": "^0.42.0",
     "prettier": "^3.3.3",
     "husky": "^9.1.6",
