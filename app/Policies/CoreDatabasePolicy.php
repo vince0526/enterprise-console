@@ -20,7 +20,7 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return $user->can('core.view');
+        return (bool) ($user?->can('core.view') ?? false);
     }
 
     public function view(?User $user, CoreDatabase $db): bool
@@ -29,7 +29,7 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return $user->can('core.view');
+        return (bool) ($user?->can('core.view') ?? false);
     }
 
     public function create(?User $user): bool
@@ -38,7 +38,7 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return $user->can('core.create');
+        return (bool) ($user?->can('core.create') ?? false);
     }
 
     public function update(?User $user, CoreDatabase $db): bool
@@ -47,7 +47,7 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return $user->can('core.update');
+        return (bool) ($user?->can('core.update') ?? false);
     }
 
     public function delete(?User $user, CoreDatabase $db): bool
@@ -56,7 +56,7 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return $user->can('core.delete');
+        return (bool) ($user?->can('core.delete') ?? false);
     }
 
     public function manageOwners(?User $user, CoreDatabase $db): bool
@@ -65,7 +65,7 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return $user->can('core.manage-owners');
+        return (bool) ($user?->can('core.manage-owners') ?? false);
     }
 
     public function manageLifecycle(?User $user, CoreDatabase $db): bool
@@ -74,7 +74,7 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return $user->can('core.manage-lifecycle');
+        return (bool) ($user?->can('core.manage-lifecycle') ?? false);
     }
 
     public function manageLinks(?User $user, CoreDatabase $db): bool
@@ -83,6 +83,6 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return $user->can('core.manage-links');
+        return (bool) ($user?->can('core.manage-links') ?? false);
     }
 }

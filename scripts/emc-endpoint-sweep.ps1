@@ -22,7 +22,11 @@ function Test-Ready {
 
 $paths = @(
     '/health',
+    '/dev-env-flag',
+    '/',
     '/emc',
+    '/emc/core',
+    '/build/manifest.json',
     '/css/emc.css',
     '/js/emc.js',
     '/emc/db',
@@ -54,6 +58,10 @@ foreach ($p in $paths) {
             $len = if ($r.Headers['Content-Length']) { [int]$r.Headers['Content-Length'] } else { [int]$r.RawContentLength }
             Write-Output ("PASS {0} {1} size={2}" -f $p, $code, $len)
         }
+        elseif ($p -eq '/build/manifest.json') {
+            $len = if ($r.Headers['Content-Length']) { [int]$r.Headers['Content-Length'] } else { [int]$r.RawContentLength }
+            Write-Output ("PASS {0} {1} size={2}" -f $p, $code, $len)
+        }
         else {
             Write-Output ("PASS {0} {1}" -f $p, $code)
         }
@@ -62,7 +70,8 @@ foreach ($p in $paths) {
     catch {
         $resp = $_.Exception.Response
         $code = if ($resp) { [int]$resp.StatusCode } else { 0 }
-        Write-Output ("FAIL {0} {1}" -f $p, $code)
+        $msg = $_.Exception.Message
+        Write-Output ("FAIL {0} {1} {2}" -f $p, $code, $msg)
         $fail++
     }
 }
