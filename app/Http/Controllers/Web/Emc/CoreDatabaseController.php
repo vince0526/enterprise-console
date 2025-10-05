@@ -50,8 +50,12 @@ class CoreDatabaseController extends Controller
         $env = $request->query('env');
         $scopes = (array) $request->query('scopes', []);
         // Only allow sorting by a whitelisted set of columns to prevent SQL injection.
-        $sortBy = in_array($request->query('sortBy'), ['name', 'engine', 'env', 'tier', 'owner', 'status', 'updated_at'], true) ? $request->query('sortBy') : 'name';
-        $sortDir = $request->query('sortDir') === 'desc' ? 'desc' : 'asc';
+        // Backward-compat: accept legacy 'sort'/'direction' alongside 'sortBy'/'sortDir'.
+        $allowedSorts = ['name', 'engine', 'env', 'tier', 'owner', 'status', 'updated_at'];
+        $sortQuery = $request->query('sortBy', $request->query('sort', 'name'));
+        $dirQuery = $request->query('sortDir', $request->query('direction', 'asc'));
+        $sortBy = in_array($sortQuery, $allowedSorts, true) ? $sortQuery : 'name';
+        $sortDir = $dirQuery === 'desc' ? 'desc' : 'asc';
 
         // The registry query: extend or add filters via ->when(...) blocks.
         $coreDbs = CoreDatabase::query()
