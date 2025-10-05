@@ -23,8 +23,10 @@ param(
     [string]$PhpDir,
     [switch]$Seed,
     [switch]$Serve,
+    [switch]$ServeBackground,
     [switch]$SkipNpm,
     [switch]$ResetCaches,
+    [switch]$StopServe,
     [string]$BindHost = '127.0.0.1',
     [int]$Port = 8000,
     [switch]$Sweep
@@ -82,6 +84,18 @@ function PortInUse([int]$p) {
         return ($null -ne $conns)
     }
     catch { return $false }
+}
+
+function Wait-HttpReady([string]$Url, [int]$Attempts = 40, [int]$DelayMs = 250) {
+    for ($i = 0; $i -lt $Attempts; $i++) {
+        try {
+            $r = Invoke-WebRequest -Uri $Url -UseBasicParsing -TimeoutSec 2
+            if ($r.StatusCode -ge 200) { return $true }
+        }
+        catch {}
+        Start-Sleep -Milliseconds $DelayMs
+    }
+    return $false
 }
 
 try {
@@ -237,7 +251,12 @@ try {
         else { Info 'node_modules/ present or no package.json (skipping install)' }
         if (Get-Command npm -ErrorAction SilentlyContinue) { npm run build } else { Warn 'npm not found; skipping build' }
     }
-    else { Info 'SkipNpm specified; skipping npm install/build' }
+    else {
+        Info 'SkipNpm specified; skipping npm install/build'
+        if (-not (Test-Path 'public/build/manifest.json')) {
+            Warn 'SkipNpm used but public/build/manifest.json is missing. Assets may not load. Run npm install && npm run build.'
+        }
+    }
 
     Step 'Run migrations'
     php artisan migrate --force
@@ -252,6 +271,15 @@ try {
 
     Ok 'Setup complete'
 
+    if ($StopServe) {
+        Step 'Attempting to stop running php artisan serve processes'
+        try {
+            Get-CimInstance Win32_Process -Filter "CommandLine LIKE '%artisan serve%'" | ForEach-Object { Stop-Process -Id $_.ProcessId -Force -ErrorAction SilentlyContinue }
+            Ok 'Stopped serve processes if any existed'
+        }
+        catch { Warn 'Could not enumerate/stop serve processes (requires permissions)'; }
+    }
+
     if ($Serve) {
         if (PortInUse -p $Port) {
             Warn "Requested port $Port is in use; attempting next available port"
@@ -261,6 +289,24 @@ try {
         }
         Step "Starting dev server at http://${BindHost}:${Port}"
         php artisan serve --host $BindHost --port $Port
+    }
+
+    if ($ServeBackground) {
+        if (PortInUse -p $Port) {
+            Warn "Requested port $Port is in use; attempting next available port"
+            for ($p = $Port + 1; $p -le ($Port + 20); $p++) {
+                if (-not (PortInUse -p $p)) { $Port = $p; break }
+            }
+        }
+        $base = "http://${BindHost}:${Port}"
+        Step "Starting dev server in background at $base"
+        $serveProc = Start-Process -FilePath 'php' -ArgumentList @('artisan', 'serve', '--host', $BindHost, '--port', $Port) -PassThru -WindowStyle Hidden
+        Info "Serve PID: $($serveProc.Id)"
+        if (Wait-HttpReady -Url "$base/health") { Ok "Server is ready at $base" } else { Warn 'Server did not become ready in time' }
+        if ($Sweep) {
+            Step 'Running endpoint sweep'
+            & pwsh -NoProfile -ExecutionPolicy Bypass -File "scripts/emc-endpoint-sweep.ps1" -BaseUrl $base
+        }
     }
 
     if ($Sweep -and -not $Serve) {

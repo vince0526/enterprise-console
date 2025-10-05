@@ -19,6 +19,10 @@
     "christian-kohler.path-intellisense",
     "yzhang.markdown-all-in-one",
     "xdebug.php-debug",
-    "DavidAnson.vscode-markdownlint"
+    "DavidAnson.vscode-markdownlint",
+    "ms-azuretools.vscode-docker",
+    "dbaeumer.vscode-eslint",
+    "streetsidesoftware.code-spell-checker",
+    "xdebug.php-pack"
   ]
 }

@@ -30,3 +30,9 @@ Makefile text eol=lf
 *.docx binary
 *.xlsx binary
 *.pptx binary
+
+# Omit dev-only folders from `git archive`
+/.github export-ignore
+/.vscode export-ignore
+/tests export-ignore
+/scripts export-ignore

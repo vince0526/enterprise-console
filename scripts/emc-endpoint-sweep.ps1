@@ -55,11 +55,29 @@ foreach ($p in $paths) {
         $r = Invoke-WebRequest -Uri $u -UseBasicParsing -TimeoutSec 8
         $code = if ($r.StatusCode) { [int]$r.StatusCode } else { 200 }
         if ($p -eq '/css/emc.css' -or $p -eq '/js/emc.js') {
-            $len = if ($r.Headers['Content-Length']) { [int]$r.Headers['Content-Length'] } else { [int]$r.RawContentLength }
+            $h = $r.Headers['Content-Length']
+            if ($h) {
+                $len = [int](@($h)[0])
+            }
+            elseif ($r.RawContentLength -gt 0) {
+                $len = [int]$r.RawContentLength
+            }
+            else {
+                $len = ([string]$r.Content).Length
+            }
             Write-Output ("PASS {0} {1} size={2}" -f $p, $code, $len)
         }
         elseif ($p -eq '/build/manifest.json') {
-            $len = if ($r.Headers['Content-Length']) { [int]$r.Headers['Content-Length'] } else { [int]$r.RawContentLength }
+            $h = $r.Headers['Content-Length']
+            if ($h) {
+                $len = [int](@($h)[0])
+            }
+            elseif ($r.RawContentLength -gt 0) {
+                $len = [int]$r.RawContentLength
+            }
+            else {
+                $len = ([string]$r.Content).Length
+            }
             Write-Output ("PASS {0} {1} size={2}" -f $p, $code, $len)
         }
         else {

@@ -20,3 +20,7 @@ trim_trailing_whitespace = false
 
 [Makefile]
 indent_style = tab
+
+[*.ps1]
+indent_size = 2
+end_of_line = lf

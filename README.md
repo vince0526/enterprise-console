@@ -108,6 +108,34 @@ php artisan db:seed --class="Database\\Seeders\\CoreSubmodulesSeeder" --force
 
 ## 🔧 Development
 
+### Dev Quick Start (Windows)
+
+1) One-shot setup + background serve + sweep
+
+Run this to configure .env, ensure sqlite DB, clear caches, start the PHP server in the background, and verify endpoints.
+
+```powershell
+./scripts/setup-windows.ps1 `
+	-PhpDir 'C:\\laragon\\bin\\php\\php-8.3.16-Win32-vs16-x64' `
+	-ResetCaches -SkipNpm -ServeBackground -Sweep
+```
+
+Notes:
+- Omit `-SkipNpm` if you need to rebuild assets (requires Node 20.19+ or 22.12+).
+- Use `-StopServe` to kill any prior `php artisan serve` processes.
+
+2) Start PHP + Vite together
+
+```powershell
+./scripts/dev-up.ps1
+```
+
+3) Quick health test
+
+```powershell
+php artisan test --filter=HealthRouteTest --stop-on-failure
+```
+
 ### Code Quality
 
 ```bash
