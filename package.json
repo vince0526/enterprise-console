@@ -39,7 +39,7 @@
       "prettier --write"
     ],
     "*.php": [
-      "vendor/bin/pint --dirty"
+      "php ./vendor/bin/pint --dirty"
     ]
   }
 }

@@ -19,9 +19,14 @@
 @section('title', 'Core Databases - EMC')
 
 @section('content')
+    @push('head')
+        <!-- PrismJS for SQL syntax highlighting -->
+        <link rel="preload" href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" as="style">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css">
+    @endpush
     <style>
         /* TIP: Prefer moving repeated styles into resources/css/emc.css.
-                   Keep inline styles here only for small page-specific tweaks. */
+                       Keep inline styles here only for small page-specific tweaks. */
         /* Layout polish */
         .page-header {
             display: flex;
@@ -300,6 +305,7 @@
                             </div>
                             <div class="saved-views">
                                 <label class="form__label">Saved Views</label>
+                                <button type="button" class="btn btn--tiny" id="btnSaveView" title="Save current filters as a named view">Save view</button>
                                 <a class="btn btn--tiny btn--secondary"
                                     href="{{ route('emc.core.index', ['tab' => 'registry', 'env' => 'Prod']) }}">All
                                     Prod</a>
@@ -309,6 +315,8 @@
                                 <a class="btn btn--tiny btn--secondary"
                                     href="{{ route('emc.core.index', ['tab' => 'registry', 'tier' => 'Public Goods & Governance']) }}">Public
                                     Goods</a>
+                                <!-- Managed saved views (client-side) -->
+                                <div id="savedViewsManaged" class="flex gap-2" aria-live="polite"></div>
                             </div>
                             @php($hasFilters = request()->hasAny(['q', 'tier', 'engine', 'env', 'scopes', 'vc_stage']))
                             @if ($hasFilters)
@@ -347,21 +355,21 @@
                             <table class="table">
                                 <thead class="table__header">
                                     <tr>
-                                        <th class="table__header-cell"
+                                        <th class="table__header-cell table__header-cell--sortable" data-sort="name" role="button" tabindex="0"
                                             aria-sort="{{ request('sort', 'name') === 'name' ? (request('direction', 'asc') === 'asc' ? 'ascending' : 'descending') : 'none' }}">
                                             Name</th>
-                                        <th class="table__header-cell"
+                                        <th class="table__header-cell table__header-cell--sortable" data-sort="environment" role="button" tabindex="0"
                                             aria-sort="{{ request('sort') === 'environment' ? (request('direction', 'asc') === 'asc' ? 'ascending' : 'descending') : 'none' }}">
                                             Environment</th>
-                                        <th class="table__header-cell"
+                                        <th class="table__header-cell table__header-cell--sortable" data-sort="platform" role="button" tabindex="0"
                                             aria-sort="{{ request('sort') === 'platform' ? (request('direction', 'asc') === 'asc' ? 'ascending' : 'descending') : 'none' }}">
                                             Platform</th>
-                                        <th class="table__header-cell"
+                                        <th class="table__header-cell table__header-cell--sortable" data-sort="owner" role="button" tabindex="0"
                                             aria-sort="{{ request('sort') === 'owner' ? (request('direction', 'asc') === 'asc' ? 'ascending' : 'descending') : 'none' }}">
                                             Owner</th>
                                         <th class="table__header-cell" aria-sort="none">Lifecycle</th>
                                         <th class="table__header-cell" aria-sort="none">Linked Connection</th>
-                                        <th class="table__header-cell"
+                                        <th class="table__header-cell table__header-cell--sortable" data-sort="status" role="button" tabindex="0"
                                             aria-sort="{{ request('sort') === 'status' ? (request('direction', 'asc') === 'asc' ? 'ascending' : 'descending') : 'none' }}">
                                             Status</th>
                                         <th class="table__header-cell">Actions</th>
@@ -428,7 +436,8 @@
                                 aria-labelledby="qvTitle">
                                 <header class="quickview__header">
                                     <h4 class="quickview__title" id="qvTitle">Details</h4>
-                                    <button class="modal__close" aria-label="Close" onclick="closeQuickView()">×</button>
+                                    <button id="qvClose" class="modal__close" aria-label="Close"
+                                        onclick="closeQuickView()">×</button>
                                 </header>
                                 <section class="quickview__body">
                                     <div id="qvBody" class="text-muted">Select a row to see details.</div>
@@ -436,7 +445,8 @@
                                 <footer class="quickview__footer">
                                     <a id="qvOpenLink" class="btn btn--secondary" href="#" target="_blank"
                                         rel="noopener">Open Connection</a>
-                                    <button class="btn btn--primary" onclick="closeQuickView()">Close</button>
+                                    <button id="qvPrimaryClose" class="btn btn--primary"
+                                        onclick="closeQuickView()">Close</button>
                                 </footer>
                             </aside>
                         </div>
@@ -472,11 +482,11 @@
                                         </select>
                                     </div>
                                 </div>
-                                <div class="wizard-grid-3" style="margin-top:1rem;">
+                                <div class="wizard-grid-3 mt-4">
                                     <div>
                                         <label class="form__label">Value-Chain Stage</label>
                                         <select class="form__select" id="w_stage"></select>
-                                        <div class="text-muted" style="font-size:.75rem; margin-top:.25rem;">Order: Stage
+                                        <div class="text-muted text-xs mt-2">Order: Stage
                                             → Industry → Subindustry</div>
                                     </div>
                                     <div>
@@ -488,14 +498,14 @@
                                         <select class="form__select" id="w_subindustry" disabled></select>
                                     </div>
                                 </div>
-                                <div class="sub-section" style="margin-top:1rem;">
-                                    <h5 class="sub-section__title" style="margin-bottom:.5rem;">Cross-Cutting Enablers
+                                <div class="sub-section mt-4">
+                                    <h5 class="sub-section__title mb-2">Cross-Cutting Enablers
                                     </h5>
                                     <div id="w_enablers" class="enablers-grid">
                                     </div>
                                 </div>
-                                <div class="sub-section" style="margin-top:1rem;">
-                                    <h5 class="sub-section__title" style="margin-bottom:.5rem;">Functional Scopes</h5>
+                                <div class="sub-section mt-4">
+                                    <h5 class="sub-section__title mb-2">Functional Scopes</h5>
                                     <div id="w_scopes_group" class="scopes-grid">
                                         @foreach (['Accounting', 'Inventory', 'Manufacturing', 'HRM', 'Logistics', 'Compliance', 'MediaSpecific', 'FinanceSpecific'] as $s)
                                             <label class="enabler">
@@ -506,14 +516,14 @@
                                     </div>
                                     <div class="text-muted suggested-text" id="w_suggested">
                                     </div>
-                                    <div style="margin-top:.5rem; display:flex; gap:.5rem;">
+                                    <div class="mt-3 flex gap-2">
                                         <button type="button" class="btn btn--secondary"
                                             onclick="applySuggestedScopes()">Add Suggested</button>
                                         <button type="button" class="btn btn--secondary" onclick="clearScopes()">Clear
                                             All</button>
                                     </div>
                                 </div>
-                                <div class="wizard-grid-2" style="margin-top:1rem;">
+                                <div class="wizard-grid-2 mt-4">
                                     <div>
                                         <label class="form__label">Name</label>
                                         <input class="form__input" id="w_name"
@@ -524,10 +534,10 @@
                                         <input class="form__input" id="w_owner_email" placeholder="owner@example.com" />
                                     </div>
                                 </div>
-                                <div class="sub-section" style="margin-top:1rem;">
-                                    <h5 class="sub-section__title" style="margin-bottom:.5rem;">DDL Preview</h5>
-                                    <pre id="w_ddl" class="code-pre">(select engine & scopes and click Preview)</pre>
-                                    <div style="display:flex; gap:.5rem;">
+                                <div class="sub-section mt-4">
+                                    <h5 class="sub-section__title mb-2">DDL Preview</h5>
+                                    <pre class="code-pre"><code id="w_ddl" class="language-sql">(select engine & scopes and click Preview)</code></pre>
+                                    <div class="flex gap-2">
                                         <button type="button" class="btn btn--secondary"
                                             onclick="previewDDL()">Preview</button>
                                         <button type="button" class="btn" onclick="downloadDDL()">Download
@@ -536,7 +546,7 @@
                                             onclick="copyDDL()">Copy</button>
                                     </div>
                                 </div>
-                                <div style="display:flex; gap:.5rem; justify-content:flex-end;">
+                                <div class="flex gap-2" style="justify-content:flex-end;">
                                     <button type="submit" class="btn btn--primary">Generate</button>
                                 </div>
                             </form>
@@ -1131,7 +1141,11 @@
             const primaryClose = document.getElementById('qvPrimaryClose');
             const focusables = [closeBtn, document.getElementById('qvOpenLink'), primaryClose].filter(Boolean);
             if (closeBtn) closeBtn.focus();
-            pane.addEventListener('keydown', function(e) {
+            // Remove previous handler if any
+            if (window.__qvKeyHandler) {
+                pane.removeEventListener('keydown', window.__qvKeyHandler);
+            }
+            window.__qvKeyHandler = function(e) {
                 if (e.key === 'Tab' && focusables.length) {
                     const idx = focusables.indexOf(document.activeElement);
                     if (e.shiftKey) {
@@ -1146,15 +1160,20 @@
                         }
                     }
                 }
-            }, {
-                once: true
-            });
+            };
+            pane.addEventListener('keydown', window.__qvKeyHandler);
         }
 
         function closeQuickView() {
             document.documentElement.classList.remove('quickview--open');
             const wrap = document.getElementById('quickviewWrapper');
             if (wrap) wrap.setAttribute('aria-hidden', 'true');
+            // Remove key handler
+            const pane = document.getElementById('quickview');
+            if (pane && window.__qvKeyHandler) {
+                pane.removeEventListener('keydown', window.__qvKeyHandler);
+                window.__qvKeyHandler = null;
+            }
             // Restore focus to the last trigger if available
             if (window.__qvLastTrigger && typeof window.__qvLastTrigger.focus === 'function') {
                 window.__qvLastTrigger.focus();
@@ -1245,12 +1264,7 @@
             if (enWrap) {
                 CROSS_ENABLERS.forEach(e => {
                     const label = document.createElement('label');
-                    label.style.display = 'flex';
-                    label.style.gap = '.5rem';
-                    label.style.alignItems = 'center';
-                    label.style.border = '1px solid var(--color-border-light)';
-                    label.style.padding = '.5rem';
-                    label.style.borderRadius = '6px';
+                    label.className = 'enabler';
                     const cb = document.createElement('input');
                     cb.type = 'checkbox';
                     cb.value = e;
@@ -1354,7 +1368,11 @@
                 body
             });
             const sql = await res.text();
-            document.getElementById('w_ddl').textContent = sql;
+            const code = document.getElementById('w_ddl');
+            code.textContent = sql;
+            if (window.Prism && typeof window.Prism.highlightElement === 'function') {
+                window.Prism.highlightElement(code);
+            }
         }
 
         function downloadDDL() {
@@ -1439,4 +1457,108 @@
             return false;
         }
     </script>
+    @push('scripts')
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-sql.min.js"></script>
+        <script>
+            // Saved Views (client-side, localStorage)
+            const SAVED_VIEWS_KEY = 'emc.core.savedViews.v1';
+            function loadSavedViews() {
+                try { return JSON.parse(localStorage.getItem(SAVED_VIEWS_KEY) || '[]'); } catch { return []; }
+            }
+            function saveSavedViews(list) {
+                try { localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(list)); } catch {}
+            }
+            function currentFiltersFromForm(form) {
+                const data = new FormData(form);
+                const obj = {};
+                for (const [k, v] of data.entries()) {
+                    if (k.endsWith('[]')) {
+                        const key = k.slice(0, -2);
+                        obj[key] = obj[key] || [];
+                        obj[key].push(v);
+                    } else {
+                        obj[k] = v;
+                    }
+                }
+                return obj;
+            }
+            function renderSavedViews(container, form) {
+                const views = loadSavedViews();
+                container.innerHTML = '';
+                views.forEach((v, idx) => {
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.className = 'btn btn--tiny btn--secondary';
+                    btn.textContent = v.name;
+                    btn.title = 'Apply saved view';
+                    btn.addEventListener('click', () => {
+                        // apply filters to form inputs then submit
+                        Object.entries(v.filters || {}).forEach(([k, val]) => {
+                            const input = form.querySelector(`[name="${k}"]`);
+                            const multi = form.querySelectorAll(`[name="${k}[]"]`);
+                            if (multi && multi.length) {
+                                // scopes[] etc.
+                                multi.forEach(cb => {
+                                    cb.checked = Array.isArray(val) ? val.includes(cb.value) : false;
+                                });
+                            } else if (input) {
+                                input.value = val;
+                            }
+                        });
+                        form.requestSubmit();
+                    });
+                    const del = document.createElement('button');
+                    del.type = 'button'; del.className = 'btn btn--tiny'; del.textContent = '×';
+                    del.title = 'Delete saved view';
+                    del.addEventListener('click', () => {
+                        const list = loadSavedViews();
+                        list.splice(idx, 1); saveSavedViews(list); renderSavedViews(container, form);
+                    });
+                    const wrap = document.createElement('span');
+                    wrap.className = 'flex gap-2';
+                    wrap.appendChild(btn); wrap.appendChild(del);
+                    container.appendChild(wrap);
+                });
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                // Clickable sortable headers (also keyboard accessible)
+                const form = document.getElementById('filtersForm') || document.querySelector('form[action*="emc/core"]');
+                const sortSel = form?.querySelector('select[name="sort"]');
+                const dirSel = form?.querySelector('select[name="direction"]');
+                document.querySelectorAll('.table__header-cell--sortable').forEach(th => {
+                    const key = th.getAttribute('data-sort');
+                    const handler = () => {
+                        if (!form || !sortSel || !dirSel) return;
+                        if (sortSel.value === key) {
+                            dirSel.value = (dirSel.value === 'asc') ? 'desc' : 'asc';
+                        } else {
+                            sortSel.value = key; dirSel.value = 'asc';
+                        }
+                        form.requestSubmit();
+                    };
+                    th.addEventListener('click', handler);
+                    th.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(); }
+                    });
+                });
+
+                // Saved views
+                const container = document.getElementById('savedViewsManaged');
+                const saveBtn = document.getElementById('btnSaveView');
+                if (container && form) renderSavedViews(container, form);
+                if (saveBtn && form) {
+                    saveBtn.addEventListener('click', () => {
+                        const name = prompt('Name this view');
+                        if (!name) return;
+                        const filters = currentFiltersFromForm(form);
+                        const list = loadSavedViews();
+                        list.push({ name, filters });
+                        saveSavedViews(list);
+                        renderSavedViews(container, form);
+                    });
+                }
+            });
+        </script>
+    @endpush
 @endsection
