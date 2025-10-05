@@ -255,6 +255,9 @@
 .gap-4 {
   gap: 1rem;
 }
+.justify-end {
+  justify-content: flex-end;
+}
 .w-auto {
   width: auto;
 }

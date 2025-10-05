@@ -222,7 +222,7 @@
                 <div class="tabs__content">
                     @if ($activeTab === 'registry')
                         {{-- Registry Filters: add/remove filters here and mirror in controller index() query. --}}
-                        <form method="GET" class="sub-section mt-3">
+                        <form id="filtersForm" method="GET" class="sub-section mt-3">
                             <input type="hidden" name="tab" value="registry" />
                             <div class="registry-filters">
                                 <div>
@@ -554,7 +554,7 @@
                                             onclick="copyDDL()">Copy</button>
                                     </div>
                                 </div>
-                                <div class="flex gap-2" style="justify-content:flex-end;">
+                                <div class="flex gap-2 justify-end">
                                     <button type="submit" class="btn btn--primary">Generate</button>
                                 </div>
                             </form>
