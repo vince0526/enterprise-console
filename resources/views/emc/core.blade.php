@@ -26,7 +26,7 @@
     @endpush
     <style>
         /* TIP: Prefer moving repeated styles into resources/css/emc.css.
-                       Keep inline styles here only for small page-specific tweaks. */
+                           Keep inline styles here only for small page-specific tweaks. */
         /* Layout polish */
         .page-header {
             display: flex;
@@ -203,7 +203,8 @@
                     <p class="page-header__subtitle">Workbench for registry, creation wizard, submodules, and DDL tools</p>
                 </div>
                 @if ($activeTab === 'registry')
-                    <a class="btn btn--small" href="{{ route('emc.core.export.csv') }}" title="Export registry as CSV">Export
+                    <a class="btn btn--small" href="{{ route('emc.core.export.csv') }}"
+                        title="Export registry as CSV">Export
                         CSV</a>
                 @endif
             </div>
@@ -305,7 +306,8 @@
                             </div>
                             <div class="saved-views">
                                 <label class="form__label">Saved Views</label>
-                                <button type="button" class="btn btn--tiny" id="btnSaveView" title="Save current filters as a named view">Save view</button>
+                                <button type="button" class="btn btn--tiny" id="btnSaveView"
+                                    title="Save current filters as a named view">Save view</button>
                                 <a class="btn btn--tiny btn--secondary"
                                     href="{{ route('emc.core.index', ['tab' => 'registry', 'env' => 'Prod']) }}">All
                                     Prod</a>
@@ -344,7 +346,8 @@
                                 </h3>
                             </div>
                             <div class="toolbar__right">
-                                <button class="btn btn--primary" onclick="resetCoreDbForm(); openModal('coreDbModal')">+ Add
+                                <button class="btn btn--primary" onclick="resetCoreDbForm(); openModal('coreDbModal')">+
+                                    Add
                                     Core Database</button>
                                 <button class="btn btn--secondary" onclick="refreshCoreDbs()">↻ Refresh</button>
                             </div>
@@ -355,21 +358,26 @@
                             <table class="table">
                                 <thead class="table__header">
                                     <tr>
-                                        <th class="table__header-cell table__header-cell--sortable" data-sort="name" role="button" tabindex="0"
+                                        <th class="table__header-cell table__header-cell--sortable" data-sort="name"
+                                            role="button" tabindex="0"
                                             aria-sort="{{ request('sort', 'name') === 'name' ? (request('direction', 'asc') === 'asc' ? 'ascending' : 'descending') : 'none' }}">
                                             Name</th>
-                                        <th class="table__header-cell table__header-cell--sortable" data-sort="environment" role="button" tabindex="0"
+                                        <th class="table__header-cell table__header-cell--sortable"
+                                            data-sort="environment" role="button" tabindex="0"
                                             aria-sort="{{ request('sort') === 'environment' ? (request('direction', 'asc') === 'asc' ? 'ascending' : 'descending') : 'none' }}">
                                             Environment</th>
-                                        <th class="table__header-cell table__header-cell--sortable" data-sort="platform" role="button" tabindex="0"
+                                        <th class="table__header-cell table__header-cell--sortable" data-sort="platform"
+                                            role="button" tabindex="0"
                                             aria-sort="{{ request('sort') === 'platform' ? (request('direction', 'asc') === 'asc' ? 'ascending' : 'descending') : 'none' }}">
                                             Platform</th>
-                                        <th class="table__header-cell table__header-cell--sortable" data-sort="owner" role="button" tabindex="0"
+                                        <th class="table__header-cell table__header-cell--sortable" data-sort="owner"
+                                            role="button" tabindex="0"
                                             aria-sort="{{ request('sort') === 'owner' ? (request('direction', 'asc') === 'asc' ? 'ascending' : 'descending') : 'none' }}">
                                             Owner</th>
                                         <th class="table__header-cell" aria-sort="none">Lifecycle</th>
                                         <th class="table__header-cell" aria-sort="none">Linked Connection</th>
-                                        <th class="table__header-cell table__header-cell--sortable" data-sort="status" role="button" tabindex="0"
+                                        <th class="table__header-cell table__header-cell--sortable" data-sort="status"
+                                            role="button" tabindex="0"
                                             aria-sort="{{ request('sort') === 'status' ? (request('direction', 'asc') === 'asc' ? 'ascending' : 'descending') : 'none' }}">
                                             Status</th>
                                         <th class="table__header-cell">Actions</th>
@@ -1463,12 +1471,21 @@
         <script>
             // Saved Views (client-side, localStorage)
             const SAVED_VIEWS_KEY = 'emc.core.savedViews.v1';
+
             function loadSavedViews() {
-                try { return JSON.parse(localStorage.getItem(SAVED_VIEWS_KEY) || '[]'); } catch { return []; }
+                try {
+                    return JSON.parse(localStorage.getItem(SAVED_VIEWS_KEY) || '[]');
+                } catch {
+                    return [];
+                }
             }
+
             function saveSavedViews(list) {
-                try { localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(list)); } catch {}
+                try {
+                    localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(list));
+                } catch {}
             }
+
             function currentFiltersFromForm(form) {
                 const data = new FormData(form);
                 const obj = {};
@@ -1483,6 +1500,7 @@
                 }
                 return obj;
             }
+
             function renderSavedViews(container, form) {
                 const views = loadSavedViews();
                 container.innerHTML = '';
@@ -1500,7 +1518,8 @@
                             if (multi && multi.length) {
                                 // scopes[] etc.
                                 multi.forEach(cb => {
-                                    cb.checked = Array.isArray(val) ? val.includes(cb.value) : false;
+                                    cb.checked = Array.isArray(val) ? val.includes(cb.value) :
+                                        false;
                                 });
                             } else if (input) {
                                 input.value = val;
@@ -1509,21 +1528,27 @@
                         form.requestSubmit();
                     });
                     const del = document.createElement('button');
-                    del.type = 'button'; del.className = 'btn btn--tiny'; del.textContent = '×';
+                    del.type = 'button';
+                    del.className = 'btn btn--tiny';
+                    del.textContent = '×';
                     del.title = 'Delete saved view';
                     del.addEventListener('click', () => {
                         const list = loadSavedViews();
-                        list.splice(idx, 1); saveSavedViews(list); renderSavedViews(container, form);
+                        list.splice(idx, 1);
+                        saveSavedViews(list);
+                        renderSavedViews(container, form);
                     });
                     const wrap = document.createElement('span');
                     wrap.className = 'flex gap-2';
-                    wrap.appendChild(btn); wrap.appendChild(del);
+                    wrap.appendChild(btn);
+                    wrap.appendChild(del);
                     container.appendChild(wrap);
                 });
             }
             document.addEventListener('DOMContentLoaded', function() {
                 // Clickable sortable headers (also keyboard accessible)
-                const form = document.getElementById('filtersForm') || document.querySelector('form[action*="emc/core"]');
+                const form = document.getElementById('filtersForm') || document.querySelector(
+                    'form[action*="emc/core"]');
                 const sortSel = form?.querySelector('select[name="sort"]');
                 const dirSel = form?.querySelector('select[name="direction"]');
                 document.querySelectorAll('.table__header-cell--sortable').forEach(th => {
@@ -1533,13 +1558,17 @@
                         if (sortSel.value === key) {
                             dirSel.value = (dirSel.value === 'asc') ? 'desc' : 'asc';
                         } else {
-                            sortSel.value = key; dirSel.value = 'asc';
+                            sortSel.value = key;
+                            dirSel.value = 'asc';
                         }
                         form.requestSubmit();
                     };
                     th.addEventListener('click', handler);
                     th.addEventListener('keydown', (e) => {
-                        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); handler(); }
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            handler();
+                        }
                     });
                 });
 
@@ -1553,7 +1582,10 @@
                         if (!name) return;
                         const filters = currentFiltersFromForm(form);
                         const list = loadSavedViews();
-                        list.push({ name, filters });
+                        list.push({
+                            name,
+                            filters
+                        });
                         saveSavedViews(list);
                         renderSavedViews(container, form);
                     });
