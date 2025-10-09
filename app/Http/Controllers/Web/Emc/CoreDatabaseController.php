@@ -86,6 +86,8 @@ class CoreDatabaseController extends Controller
                 });
             })
             ->orderBy($sortBy, $sortDir)
+            // Provide deterministic secondary ordering to stabilize tests (especially for engine/env sorts)
+            ->when(in_array($sortBy, ['engine', 'env'], true), fn ($qb) => $qb->orderBy('name'))
             ->get();
 
         // Optional: map linked_connection (by name) to existing DatabaseConnection IDs for linking.

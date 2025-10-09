@@ -54,12 +54,24 @@ class CoreDatabaseSortAliasTest extends TestCase
         // false negatives. Limit our search scope to the registry table container so ordering
         // reflects the actual sorted result set.
         $tableStart = strpos($html, 'id="coreDbsTable"');
-        $scoped = $tableStart !== false ? substr($html, $tableStart) : $html; // fallback to full HTML if marker missing
+        $scoped = $tableStart !== false ? substr($html, $tableStart) : $html;
+        // Further narrow to tbody content to avoid filter selects containing engine names.
+        $tbodyStart = strpos($scoped, '<tbody');
+        if ($tbodyStart !== false) {
+            $tbodyFragment = substr($scoped, $tbodyStart);
+            $tbodyEnd = strpos($tbodyFragment, '</tbody>');
+            if ($tbodyEnd !== false) {
+                $scoped = substr($tbodyFragment, 0, $tbodyEnd);
+            } else {
+                $scoped = $tbodyFragment;
+            }
+        }
 
-        $mysqlPos = strpos($scoped, 'MySQL');
-        $pgPos = strpos($scoped, 'PostgreSQL');
+        // Use row name markers to reduce risk of picking up engine names from other columns
+        $mysqlPos = strpos($scoped, 'db_mysql');
+        $pgPos = strpos($scoped, 'db_pg');
         $this->assertIsInt($mysqlPos);
         $this->assertIsInt($pgPos);
-        $this->assertTrue($mysqlPos < $pgPos, 'Expected MySQL to appear before PostgreSQL when sorting by platform asc within registry table');
+        $this->assertTrue($mysqlPos < $pgPos, 'Expected db_mysql row to appear before db_pg when sorting by platform asc within registry table');
     }
 }

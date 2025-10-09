@@ -20,9 +20,7 @@
 
 @section('content')
     @push('head')
-        <!-- PrismJS for SQL syntax highlighting -->
-        <link rel="preload" href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css" as="style">
-        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/prismjs@1/themes/prism.min.css">
+    <!-- PrismJS theme bundled via app.css -->
     @endpush
     <style>
         /* TIP: Prefer moving repeated styles into resources/css/emc.css.
@@ -1378,8 +1376,8 @@
             const sql = await res.text();
             const code = document.getElementById('w_ddl');
             code.textContent = sql;
-            if (window.Prism && typeof window.Prism.highlightElement === 'function') {
-                window.Prism.highlightElement(code);
+            if (window.PrismHighlight) {
+                window.PrismHighlight(code);
             }
         }
 
@@ -1466,24 +1464,51 @@
         }
     </script>
     @push('scripts')
-        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-core.min.js"></script>
-        <script src="https://cdn.jsdelivr.net/npm/prismjs@1/components/prism-sql.min.js"></script>
+    <!-- Prism is loaded via app.js bundle -->
         <script>
-            // Saved Views (client-side, localStorage)
+            // Saved Views (persisted via API with localStorage fallback)
             const SAVED_VIEWS_KEY = 'emc.core.savedViews.v1';
+            const SAVED_VIEWS_API = "{{ route('emc.core.saved-views.index') }}";
 
-            function loadSavedViews() {
+            async function apiList() {
                 try {
-                    return JSON.parse(localStorage.getItem(SAVED_VIEWS_KEY) || '[]');
-                } catch {
-                    return [];
-                }
+                    const r = await fetch(SAVED_VIEWS_API);
+                    if (!r.ok) throw new Error();
+                    return await r.json();
+                } catch { return null; }
             }
-
-            function saveSavedViews(list) {
+            async function apiSave(view) {
                 try {
-                    localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(list));
-                } catch {}
+                    const r = await fetch(SAVED_VIEWS_API, { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'}, body: JSON.stringify(view) });
+                    if (!r.ok) throw new Error();
+                    return await r.json();
+                } catch { return null; }
+            }
+            async function apiDelete(id) {
+                try { await fetch(`${SAVED_VIEWS_API}/${id}`, { method:'DELETE', headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}'} }); } catch {}
+            }
+            function lsLoad() { try { return JSON.parse(localStorage.getItem(SAVED_VIEWS_KEY) || '[]'); } catch { return []; } }
+            function lsSave(list) { try { localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(list)); } catch {} }
+            async function loadSavedViews() {
+                const api = await apiList();
+                return api ?? lsLoad();
+            }
+            async function saveSavedView(entry) {
+                const api = await apiSave(entry);
+                if (api) return api;
+                // fallback merge
+                const list = lsLoad();
+                const existing = list.findIndex(v => v.name === entry.name);
+                if (existing >= 0) list[existing] = entry; else list.push(entry);
+                lsSave(list);
+                return entry;
+            }
+            async function deleteSavedView(entry) {
+                if (entry.id) await apiDelete(entry.id); else {
+                    const list = lsLoad();
+                    const idx = list.findIndex(v => v.name === entry.name);
+                    if (idx >= 0) { list.splice(idx,1); lsSave(list); }
+                }
             }
 
             function currentFiltersFromForm(form) {
@@ -1501,10 +1526,10 @@
                 return obj;
             }
 
-            function renderSavedViews(container, form) {
-                const views = loadSavedViews();
+            async function renderSavedViews(container, form) {
+                const views = await loadSavedViews();
                 container.innerHTML = '';
-                views.forEach((v, idx) => {
+                views.forEach((v) => {
                     const btn = document.createElement('button');
                     btn.type = 'button';
                     btn.className = 'btn btn--tiny btn--secondary';
@@ -1533,10 +1558,8 @@
                     del.textContent = '×';
                     del.title = 'Delete saved view';
                     del.addEventListener('click', () => {
-                        const list = loadSavedViews();
-                        list.splice(idx, 1);
-                        saveSavedViews(list);
-                        renderSavedViews(container, form);
+                        await deleteSavedView(v);
+                        await renderSavedViews(container, form);
                     });
                     const wrap = document.createElement('span');
                     wrap.className = 'flex gap-2';
@@ -1581,13 +1604,8 @@
                         const name = prompt('Name this view');
                         if (!name) return;
                         const filters = currentFiltersFromForm(form);
-                        const list = loadSavedViews();
-                        list.push({
-                            name,
-                            filters
-                        });
-                        saveSavedViews(list);
-                        renderSavedViews(container, form);
+                        await saveSavedView({ name, context: 'core_databases', filters });
+                        await renderSavedViews(container, form);
                     });
                 }
             });
