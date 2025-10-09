@@ -24,7 +24,7 @@
     @endpush
     <style>
         /* TIP: Prefer moving repeated styles into resources/css/emc.css.
-                                           Keep inline styles here only for small page-specific tweaks. */
+                                               Keep inline styles here only for small page-specific tweaks. */
         /* Layout polish */
         .page-header {
             display: flex;
@@ -184,6 +184,18 @@
             font-size: 1.1rem;
             font-weight: 600;
         }
+
+        /* Saved Views compact mode */
+        #savedViewsManaged.sv-compact .btn {
+            padding: .1rem .3rem;
+            font-size: .72rem;
+        }
+
+        #savedViewsPager .form__select {
+            min-width: auto;
+            padding: 0 .25rem;
+            height: 28px;
+        }
     </style>
 
     <div class="content-frame">
@@ -321,6 +333,17 @@
                                     <button type="button" id="svPrev" class="btn btn--tiny" disabled>◀ Prev</button>
                                     <span id="svMeta" class="text-muted text-xs"></span>
                                     <button type="button" id="svNext" class="btn btn--tiny" disabled>Next ▶</button>
+                                    <label class="text-xs text-muted" for="svPageSize">Page size</label>
+                                    <select id="svPageSize" class="form__select w-auto">
+                                        <option>5</option>
+                                        <option selected>10</option>
+                                        <option>20</option>
+                                        <option>50</option>
+                                        <option>100</option>
+                                    </select>
+                                    <label class="text-xs text-muted" for="svCompact">
+                                        <input type="checkbox" id="svCompact" /> Compact
+                                    </label>
                                 </div>
                             </div>
                             @php($hasFilters = request()->hasAny(['q', 'tier', 'engine', 'env', 'scopes', 'vc_stage']))
@@ -1478,7 +1501,9 @@
                 limit: 10,
                 total: 0,
                 next: null,
-                prev: null
+                prev: null,
+                nextOffset: null,
+                prevOffset: null
             };
 
             function parseLinkHeader(linkHeader) {
@@ -1570,7 +1595,16 @@
                     offset: SV_STATE.offset,
                     limit: SV_STATE.limit
                 });
-                return api ?? lsLoad();
+                if (api) return api;
+                // Fallback: localStorage pagination
+                const list = lsLoad();
+                SV_STATE.total = list.length;
+                SV_STATE.prev = SV_STATE.offset > 0 ? 'local:prev' : null;
+                SV_STATE.next = (SV_STATE.offset + SV_STATE.limit < list.length) ? 'local:next' : null;
+                SV_STATE.prevOffset = SV_STATE.offset > 0 ? Math.max(0, SV_STATE.offset - SV_STATE.limit) : null;
+                SV_STATE.nextOffset = (SV_STATE.offset + SV_STATE.limit < list.length) ? (SV_STATE.offset + SV_STATE
+                    .limit) : null;
+                return list.slice(SV_STATE.offset, SV_STATE.offset + SV_STATE.limit);
             }
             async function saveSavedView(entry) {
                 const api = await apiSave(entry);
@@ -1705,6 +1739,46 @@
                 // Saved views
                 const container = document.getElementById('savedViewsManaged');
                 const saveBtn = document.getElementById('btnSaveView');
+                // Restore preferences
+                try {
+                    const savedLimit = parseInt(localStorage.getItem('emc.core.savedViews.pageSize') || '10', 10);
+                    if (!Number.isNaN(savedLimit)) SV_STATE.limit = savedLimit;
+                } catch {}
+                const ps = document.getElementById('svPageSize');
+                if (ps) {
+                    ps.value = String(SV_STATE.limit);
+                    ps.addEventListener('change', async () => {
+                        const v = parseInt(ps.value, 10);
+                        if (!Number.isNaN(v) && v > 0) {
+                            SV_STATE.limit = v;
+                            SV_STATE.offset = 0;
+                            try {
+                                localStorage.setItem('emc.core.savedViews.pageSize', String(v));
+                            } catch {}
+                            await renderSavedViews(container, form);
+                        }
+                    });
+                }
+                const compactCb = document.getElementById('svCompact');
+                const applyCompact = (on) => {
+                    if (!container) return;
+                    container.classList.toggle('sv-compact', !!on);
+                };
+                try {
+                    const compactPref = (localStorage.getItem('emc.core.savedViews.compact') || 'false') === 'true';
+                    if (compactCb) compactCb.checked = compactPref;
+                    applyCompact(compactPref);
+                } catch {}
+                if (compactCb) {
+                    compactCb.addEventListener('change', () => {
+                        applyCompact(compactCb.checked);
+                        try {
+                            localStorage.setItem('emc.core.savedViews.compact', compactCb.checked ? 'true' :
+                                'false');
+                        } catch {}
+                    });
+                }
+
                 if (container && form) renderSavedViews(container, form);
                 if (saveBtn && form) {
                     saveBtn.addEventListener('click', async () => {
@@ -1719,6 +1793,27 @@
                         await renderSavedViews(container, form);
                     });
                 }
+
+                // Keyboard shortcuts for paging: Alt+Left / Alt+Right
+                document.addEventListener('keydown', async (e) => {
+                    const tag = (e.target && e.target.tagName) ? e.target.tagName.toLowerCase() : '';
+                    if (tag === 'input' || tag === 'textarea' || tag === 'select' || e.ctrlKey || e
+                        .metaKey || e.shiftKey) return;
+                    if (!e.altKey) return;
+                    const prevBtn = document.getElementById('svPrev');
+                    const nextBtn = document.getElementById('svNext');
+                    if (e.key === 'ArrowLeft' && prevBtn && !prevBtn.disabled) {
+                        e.preventDefault();
+                        SV_STATE.offset = SV_STATE.prevOffset ?? Math.max(0, SV_STATE.offset - SV_STATE
+                            .limit);
+                        await renderSavedViews(container, form);
+                    }
+                    if (e.key === 'ArrowRight' && nextBtn && !nextBtn.disabled) {
+                        e.preventDefault();
+                        SV_STATE.offset = SV_STATE.nextOffset ?? (SV_STATE.offset + SV_STATE.limit);
+                        await renderSavedViews(container, form);
+                    }
+                });
             });
         </script>
     @endpush
