@@ -24,7 +24,7 @@
     @endpush
     <style>
         /* TIP: Prefer moving repeated styles into resources/css/emc.css.
-                                                   Keep inline styles here only for small page-specific tweaks. */
+                                                       Keep inline styles here only for small page-specific tweaks. */
         /* Layout polish */
         .page-header {
             display: flex;
@@ -883,6 +883,9 @@
         </div>
     </div>
 
+    <!-- Toasts -->
+    <div id="toastContainer" aria-live="polite" aria-atomic="true" style="position: fixed; right: 1rem; bottom: 1rem; display:flex; flex-direction:column; gap:.5rem; z-index: 9999;"></div>
+
     <script>
         const VC_STACK = [
             'Resource Extraction (Primary)',
@@ -1497,6 +1500,21 @@
     @push('scripts')
         <!-- Prism is loaded via app.js bundle -->
         <script>
+            // Toast helpers
+            function showToast(msg, type = 'info', timeout = 2600) {
+                const container = document.getElementById('toastContainer');
+                if (!container) return;
+                const el = document.createElement('div');
+                el.className = 'toast';
+                el.role = 'status';
+                el.style.cssText = 'min-width:220px; max-width: 420px; padding:.5rem .75rem; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,.15); color:#0b1b28; background:#e7f1ff; border:1px solid #cfe2ff;';
+                if (type === 'error') el.style.cssText = 'min-width:220px; max-width: 420px; padding:.5rem .75rem; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,.15); color:#842029; background:#f8d7da; border:1px solid #f5c2c7;';
+                if (type === 'success') el.style.cssText = 'min-width:220px; max-width: 420px; padding:.5rem .75rem; border-radius:8px; box-shadow:0 4px 16px rgba(0,0,0,.15); color:#0f5132; background:#d1e7dd; border:1px solid #badbcc;';
+                el.textContent = String(msg || '');
+                container.appendChild(el);
+                setTimeout(() => { el.style.opacity = '0'; el.style.transition = 'opacity .3s'; }, timeout - 300);
+                setTimeout(() => { container.removeChild(el); }, timeout);
+            }
             // Saved Views (persisted via API with localStorage fallback)
             const SAVED_VIEWS_KEY = 'emc.core.savedViews.v1';
             const SAVED_VIEWS_API = "{{ route('emc.core.saved-views.index') }}";
@@ -1696,22 +1714,32 @@
                         if (v.id) {
                             const resp = await fetch(`${SAVED_VIEWS_API}/${v.id}`, {
                                 method: 'PATCH',
-                                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                                body: JSON.stringify({ name: trimmed })
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    name: trimmed
+                                })
                             });
                             if (resp.status === 422) {
-                                try { const j = await resp.json(); alert(j.message || 'Duplicate name.'); } catch { alert('Duplicate name.'); }
+                                try { const j = await resp.json(); showToast(j.message || 'Duplicate name.', 'error'); } catch { showToast('Duplicate name.', 'error'); }
                                 return false;
                             }
-                            if (!resp.ok) { alert('Rename failed.'); return false; }
+                            if (!resp.ok) { showToast('Rename failed.', 'error'); return false; }
                         } else {
                             const list = lsLoad();
                             const idx = list.findIndex(x => x.name === v.name);
-                            if (idx >= 0) { list[idx].name = trimmed; lsSave(list); }
+                            if (idx >= 0) {
+                                list[idx].name = trimmed;
+                                lsSave(list);
+                            }
                         }
                         v.name = trimmed;
+                        showToast('Saved view renamed', 'success');
                         return true;
                     }
+
                     function startInlineRename() {
                         if (renaming || !nameSpan) return;
                         renaming = true;
@@ -1731,37 +1759,92 @@
                             nameSpan.removeEventListener('keydown', onKey);
                             nameSpan.contentEditable = 'false';
                             renaming = false;
-                            if (!accept) { nameSpan.textContent = prev; return; }
+                            if (!accept) {
+                                nameSpan.textContent = prev;
+                                return;
+                            }
                             const ok = await commitRename(nameSpan.textContent);
                             if (!ok) nameSpan.textContent = prev;
                             await renderSavedViews(container, form);
                         };
                         const onBlur = () => endEdit(true);
                         const onKey = (e) => {
-                            if (e.key === 'Enter') { e.preventDefault(); endEdit(true); }
-                            if (e.key === 'Escape') { e.preventDefault(); endEdit(false); }
+                            if (e.key === 'Enter') {
+                                e.preventDefault();
+                                endEdit(true);
+                            }
+                            if (e.key === 'Escape') {
+                                e.preventDefault();
+                                endEdit(false);
+                            }
                         };
                         nameSpan.addEventListener('blur', onBlur);
                         nameSpan.addEventListener('keydown', onKey);
                     }
-                    renameBtn.addEventListener('click', (e) => { e.stopPropagation(); startInlineRename(); });
+                    renameBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        startInlineRename();
+                    });
 
                     dupBtn.addEventListener('click', async (e) => {
                         e.stopPropagation();
                         const defaultName = `${v.name} (copy)`;
-                        let copyName = prompt('Duplicate as', defaultName);
-                        if (!copyName) return;
+                        // Inline duplicate input instead of prompt
+                        const temp = document.createElement('input');
+                        temp.type = 'text';
+                        temp.value = defaultName;
+                        temp.className = 'form__input';
+                        temp.style.cssText = 'margin-left:.25rem; height:22px; font-size:.75rem; width: 180px;';
+                        actions.insertBefore(temp, delBtn);
+                        temp.focus();
+                        const cancel = () => { temp.remove(); };
+                        const submit = async () => {
+                            const copyName = (temp.value || '').trim();
+                            if (!copyName) { cancel(); return; }
+                            if (v.id) {
+                                const r = await fetch(`${SAVED_VIEWS_API}/${v.id}/duplicate`, {
+                                    method: 'POST',
+                                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                                    body: JSON.stringify({ name: copyName })
+                                });
+                                if (r.status === 422) { showToast('Duplicate name.', 'error'); cancel(); return; }
+                            } else {
+                                const list = lsLoad();
+                                list.push({ name: copyName, filters: v.filters, context: 'core_databases' });
+                                lsSave(list);
+                            }
+                            cancel();
+                            showToast('Saved view duplicated', 'success');
+                            await renderSavedViews(container, form);
+                        };
+                        temp.addEventListener('keydown', (e) => {
+                            if (e.key === 'Enter') { e.preventDefault(); submit(); }
+                            if (e.key === 'Escape') { e.preventDefault(); cancel(); }
+                        });
+                        temp.addEventListener('blur', submit);
                         copyName = copyName.trim();
                         if (v.id) {
                             const r = await fetch(`${SAVED_VIEWS_API}/${v.id}/duplicate`, {
                                 method: 'POST',
-                                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                                body: JSON.stringify({ name: copyName })
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    name: copyName
+                                })
                             });
-                            if (r.status === 422) { alert('Duplicate name.'); return; }
+                            if (r.status === 422) {
+                                alert('Duplicate name.');
+                                return;
+                            }
                         } else {
                             const list = lsLoad();
-                            list.push({ name: copyName, filters: v.filters, context: 'core_databases' });
+                            list.push({
+                                name: copyName,
+                                filters: v.filters,
+                                context: 'core_databases'
+                            });
                             lsSave(list);
                         }
                         await renderSavedViews(container, form);
@@ -1770,6 +1853,7 @@
                         e.stopPropagation();
                         if (!confirm('Delete this saved view?')) return;
                         await deleteSavedView(v);
+                        showToast('Saved view deleted', 'success');
                         await renderSavedViews(container, form);
                     });
                     btn.appendChild(actions);
