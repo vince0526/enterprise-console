@@ -26,7 +26,7 @@
     @endpush
     <style>
         /* TIP: Prefer moving repeated styles into resources/css/emc.css.
-                           Keep inline styles here only for small page-specific tweaks. */
+                               Keep inline styles here only for small page-specific tweaks. */
         /* Layout polish */
         .page-header {
             display: flex;
