@@ -24,9 +24,11 @@ class SavedViewController extends Controller
         $this->authorize('viewAny', SavedView::class);
         $context = $request->query('context', 'core_databases');
         $q = trim((string) $request->query('q', ''));
-        $limitParam = $request->query('limit', '50');
-        $limit = (int) (is_array($limitParam) ? 50 : $limitParam);
-        $limit = $limit > 0 ? min($limit, 100) : 50; // cap
+        $defaultLimit = (int) config('emc.saved_views.default_limit', 50);
+        $limitCap = (int) config('emc.saved_views.limit_cap', 100);
+        $limitParam = $request->query('limit', (string) $defaultLimit);
+        $limit = (int) (is_array($limitParam) ? $defaultLimit : $limitParam);
+        $limit = $limit > 0 ? min($limit, $limitCap) : $defaultLimit; // cap
         $offsetParam = $request->query('offset', '0');
         $offset = (int) (is_array($offsetParam) ? 0 : $offsetParam);
         $offset = max(0, $offset);

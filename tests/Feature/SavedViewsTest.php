@@ -233,4 +233,55 @@ class SavedViewsTest extends TestCase
         $this->assertContains('Renamed', $names);
         $this->assertContains('Renamed (copy)', $names);
     }
+
+    public function test_rename_conflict_and_duplicate_conflict_returns_422(): void
+    {
+        /** @var User&\Illuminate\Contracts\Auth\Authenticatable $user */
+        $user = User::factory()->create();
+        // Create two views
+        $first = $this->actingAs($user)
+            ->postJson(route('emc.core.saved-views.store'), [
+                'name' => 'A',
+                'filters' => ['env' => 'Prod'],
+            ])->assertCreated()->json();
+        $second = $this->actingAs($user)
+            ->postJson(route('emc.core.saved-views.store'), [
+                'name' => 'B',
+                'filters' => ['env' => 'Dev'],
+            ])->assertCreated()->json();
+
+        // Renaming B to A should 422
+        $this->actingAs($user)
+            ->patchJson(route('emc.core.saved-views.update', $second['id']), [
+                'name' => 'A',
+            ])->assertStatus(422);
+
+        // Duplicating A as A should 422
+        $this->actingAs($user)
+            ->postJson(route('emc.core.saved-views.duplicate', $first['id']), [
+                'name' => 'A',
+            ])->assertStatus(422);
+    }
+
+    public function test_limit_cap_from_config_is_applied(): void
+    {
+        /** @var User&\Illuminate\Contracts\Auth\Authenticatable $user */
+        $user = User::factory()->create();
+        // Set config to a low cap
+        config()->set('emc.saved_views.limit_cap', 30);
+        config()->set('emc.saved_views.default_limit', 7);
+        // Seed 100 views
+        SavedView::factory()->count(100)->create(['user_id' => $user->id]);
+        // Request an overly large limit; expect cap 30
+        $resp = $this->actingAs($user)
+            ->getJson(route('emc.core.saved-views.index', ['limit' => 999]));
+        $resp->assertOk()->assertJsonCount(30);
+        $resp->assertHeader('X-SavedViews-Limit', '30');
+
+        // Negative limit uses default_limit (7)
+        $resp2 = $this->actingAs($user)
+            ->getJson(route('emc.core.saved-views.index', ['limit' => -5]));
+        $resp2->assertOk()->assertJsonCount(7);
+        $resp2->assertHeader('X-SavedViews-Limit', '7');
+    }
 }

@@ -24,7 +24,7 @@
     @endpush
     <style>
         /* TIP: Prefer moving repeated styles into resources/css/emc.css.
-                                               Keep inline styles here only for small page-specific tweaks. */
+                                                   Keep inline styles here only for small page-specific tweaks. */
         /* Layout polish */
         .page-header {
             display: flex;
@@ -328,7 +328,8 @@
                                     Goods</a>
                                 <!-- Managed saved views (client-side) -->
                                 <div class="flex items-center gap-2">
-                                    <input type="search" id="svSearch" class="form__input w-auto" placeholder="Search saved views" style="min-width: 200px;" />
+                                    <input type="search" id="svSearch" class="form__input w-auto"
+                                        placeholder="Search saved views" style="min-width: 200px;" />
                                     <div id="savedViewsManaged" class="flex gap-2" aria-live="polite"></div>
                                 </div>
                                 <!-- Saved Views pagination controls -->
@@ -1665,7 +1666,10 @@
                             const input = form.querySelector(`[name="${k}"]`);
                             const multi = form.querySelectorAll(`[name="${k}[]"]`);
                             if (multi && multi.length) {
-                                multi.forEach(cb => { cb.checked = Array.isArray(val) ? val.includes(cb.value) : false; });
+                                multi.forEach(cb => {
+                                    cb.checked = Array.isArray(val) ? val.includes(cb
+                                        .value) : false;
+                                });
                             } else if (input) {
                                 input.value = val;
                             }
@@ -1689,14 +1693,22 @@
                         if (v.id) {
                             await fetch(`${SAVED_VIEWS_API}/${v.id}`, {
                                 method: 'PATCH',
-                                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                                body: JSON.stringify({ name })
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    name
+                                })
                             });
                         } else {
                             // local fallback: rename
                             const list = lsLoad();
                             const idx = list.findIndex(x => x.name === v.name);
-                            if (idx >= 0) { list[idx].name = name; lsSave(list); }
+                            if (idx >= 0) {
+                                list[idx].name = name;
+                                lsSave(list);
+                            }
                         }
                         await renderSavedViews(container, form);
                     });
@@ -1707,12 +1719,21 @@
                         if (v.id) {
                             await fetch(`${SAVED_VIEWS_API}/${v.id}/duplicate`, {
                                 method: 'POST',
-                                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
-                                body: JSON.stringify({ name })
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                },
+                                body: JSON.stringify({
+                                    name
+                                })
                             });
                         } else {
                             const list = lsLoad();
-                            list.push({ name, filters: v.filters, context: 'core_databases' });
+                            list.push({
+                                name,
+                                filters: v.filters,
+                                context: 'core_databases'
+                            });
                             lsSave(list);
                         }
                         await renderSavedViews(container, form);
@@ -1869,7 +1890,9 @@
                         t = setTimeout(async () => {
                             SV_STATE.q = searchInput.value.trim();
                             SV_STATE.offset = 0;
-                            try { localStorage.setItem('emc.core.savedViews.search', SV_STATE.q); } catch {}
+                            try {
+                                localStorage.setItem('emc.core.savedViews.search', SV_STATE.q);
+                            } catch {}
                             await renderSavedViews(container, form);
                         }, 200);
                     });
