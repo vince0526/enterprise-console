@@ -46,6 +46,10 @@ class CoreDatabaseRequest extends FormRequest
             ];
             $data['environment'] = $rev[$data['env']] ?? $data['env'];
         }
+        // legacy 'platform' column may be NOT NULL; if only 'engine' supplied, backfill platform.
+        if (! isset($data['platform']) && isset($data['engine']) && is_string($data['engine'])) {
+            $data['platform'] = $data['engine'];
+        }
 
         // tier defaulting: prefer explicit; else infer from presence of wizard path
         if (! isset($data['tier']) || $data['tier'] === null || $data['tier'] === '') {
