@@ -96,4 +96,77 @@ class SavedViewController extends Controller
 
         return response()->json(['status' => 'deleted']);
     }
+
+    public function update(Request $request, SavedView $savedView): JsonResponse
+    {
+        $this->authorize('update', $savedView);
+        // Optional updates: name and/or filters. Context change is allowed but validated.
+        $data = $request->validate([
+            'name' => ['sometimes', 'string', 'max:120'],
+            'context' => ['sometimes', 'string', 'max:64'],
+            'filters' => ['sometimes', 'array'],
+        ]);
+
+        $newContext = $data['context'] ?? $savedView->context;
+        if (isset($data['name'])) {
+            $newName = $data['name'];
+            // Prevent duplicate name within same user + context
+            $conflict = SavedView::query()
+                ->where('user_id', Auth::id())
+                ->where('context', $newContext)
+                ->where('name', $newName)
+                ->where('id', '!=', $savedView->id)
+                ->exists();
+            if ($conflict) {
+                return response()->json([
+                    'message' => 'A saved view with this name already exists.',
+                    'errors' => ['name' => ['duplicate']],
+                ], 422);
+            }
+            $savedView->name = $newName;
+        }
+        $savedView->context = $newContext;
+        if (array_key_exists('filters', $data)) {
+            $savedView->filters = $data['filters'];
+        }
+        $savedView->save();
+
+        return response()->json($savedView);
+    }
+
+    public function duplicate(Request $request, SavedView $savedView): JsonResponse
+    {
+        // Must own the source and be allowed to create
+        $this->authorize('create', SavedView::class);
+        if ($savedView->user_id !== (int) Auth::id()) {
+            abort(403);
+        }
+
+        $data = $request->validate([
+            'name' => ['required', 'string', 'max:120'],
+            'context' => ['sometimes', 'string', 'max:64'],
+        ]);
+        $context = $data['context'] ?? $savedView->context;
+
+        $exists = SavedView::query()
+            ->where('user_id', Auth::id())
+            ->where('context', $context)
+            ->where('name', $data['name'])
+            ->exists();
+        if ($exists) {
+            return response()->json([
+                'message' => 'A saved view with this name already exists.',
+                'errors' => ['name' => ['duplicate']],
+            ], 422);
+        }
+
+        $copy = SavedView::create([
+            'user_id' => Auth::id(),
+            'context' => $context,
+            'name' => $data['name'],
+            'filters' => $savedView->filters,
+        ]);
+
+        return response()->json($copy, 201);
+    }
 }

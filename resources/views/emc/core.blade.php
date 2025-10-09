@@ -327,7 +327,10 @@
                                     href="{{ route('emc.core.index', ['tab' => 'registry', 'tier' => 'Public Goods & Governance']) }}">Public
                                     Goods</a>
                                 <!-- Managed saved views (client-side) -->
-                                <div id="savedViewsManaged" class="flex gap-2" aria-live="polite"></div>
+                                <div class="flex items-center gap-2">
+                                    <input type="search" id="svSearch" class="form__input w-auto" placeholder="Search saved views" style="min-width: 200px;" />
+                                    <div id="savedViewsManaged" class="flex gap-2" aria-live="polite"></div>
+                                </div>
                                 <!-- Saved Views pagination controls -->
                                 <div id="savedViewsPager" class="flex items-center gap-2 mt-2">
                                     <button type="button" id="svPrev" class="btn btn--tiny" disabled>◀ Prev</button>
@@ -1503,7 +1506,8 @@
                 next: null,
                 prev: null,
                 nextOffset: null,
-                prevOffset: null
+                prevOffset: null,
+                q: ''
             };
 
             function parseLinkHeader(linkHeader) {
@@ -1524,6 +1528,8 @@
                     const offset = params.offset ?? SV_STATE.offset;
                     p.set('limit', String(limit));
                     p.set('offset', String(offset));
+                    const q = (params.q ?? SV_STATE.q || '').trim();
+                    if (q) p.set('q', q);
                     const r = await fetch(`${SAVED_VIEWS_API}?${p.toString()}`);
                     if (!r.ok) throw new Error();
                     const data = await r.json();
@@ -1650,8 +1656,8 @@
                 views.forEach((v) => {
                     const btn = document.createElement('button');
                     btn.type = 'button';
-                    btn.className = 'btn btn--tiny btn--secondary';
-                    btn.textContent = v.name;
+                    btn.className = 'btn btn--tiny btn--secondary saved-view-item';
+                    btn.innerHTML = `<span class="sv-name">${v.name}</span>`;
                     btn.title = 'Apply saved view';
                     btn.addEventListener('click', () => {
                         // apply filters to form inputs then submit
@@ -1659,32 +1665,66 @@
                             const input = form.querySelector(`[name="${k}"]`);
                             const multi = form.querySelectorAll(`[name="${k}[]"]`);
                             if (multi && multi.length) {
-                                // scopes[] etc.
-                                multi.forEach(cb => {
-                                    cb.checked = Array.isArray(val) ? val.includes(cb
-                                            .value) :
-                                        false;
-                                });
+                                multi.forEach(cb => { cb.checked = Array.isArray(val) ? val.includes(cb.value) : false; });
                             } else if (input) {
                                 input.value = val;
                             }
                         });
                         form.requestSubmit();
                     });
-                    const del = document.createElement('button');
-                    del.type = 'button';
-                    del.className = 'btn btn--tiny';
-                    del.textContent = '×';
-                    del.title = 'Delete saved view';
-                    del.addEventListener('click', async () => {
+                    // Inline actions: rename, duplicate, delete
+                    const actions = document.createElement('span');
+                    actions.className = 'sv-actions';
+                    actions.style.marginLeft = '.25rem';
+                    actions.innerHTML = `
+                        <button type="button" class="btn btn--tiny" title="Rename">✎</button>
+                        <button type="button" class="btn btn--tiny" title="Duplicate">⧉</button>
+                        <button type="button" class="btn btn--tiny btn--danger" title="Delete">✕</button>
+                    `;
+                    const [renameBtn, dupBtn, delBtn] = actions.querySelectorAll('button');
+                    renameBtn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const name = prompt('Rename view', v.name);
+                        if (!name || name === v.name) return;
+                        if (v.id) {
+                            await fetch(`${SAVED_VIEWS_API}/${v.id}`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                                body: JSON.stringify({ name })
+                            });
+                        } else {
+                            // local fallback: rename
+                            const list = lsLoad();
+                            const idx = list.findIndex(x => x.name === v.name);
+                            if (idx >= 0) { list[idx].name = name; lsSave(list); }
+                        }
+                        await renderSavedViews(container, form);
+                    });
+                    dupBtn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        const name = prompt('Duplicate as', `${v.name} (copy)`);
+                        if (!name) return;
+                        if (v.id) {
+                            await fetch(`${SAVED_VIEWS_API}/${v.id}/duplicate`, {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                                body: JSON.stringify({ name })
+                            });
+                        } else {
+                            const list = lsLoad();
+                            list.push({ name, filters: v.filters, context: 'core_databases' });
+                            lsSave(list);
+                        }
+                        await renderSavedViews(container, form);
+                    });
+                    delBtn.addEventListener('click', async (e) => {
+                        e.stopPropagation();
+                        if (!confirm('Delete this saved view?')) return;
                         await deleteSavedView(v);
                         await renderSavedViews(container, form);
                     });
-                    const wrap = document.createElement('span');
-                    wrap.className = 'flex gap-2';
-                    wrap.appendChild(btn);
-                    wrap.appendChild(del);
-                    container.appendChild(wrap);
+                    btn.appendChild(actions);
+                    container.appendChild(btn);
                 });
                 // update pager UI
                 const meta = document.getElementById('svMeta');
@@ -1814,6 +1854,26 @@
                         await renderSavedViews(container, form);
                     }
                 });
+
+                // Search saved views
+                const searchInput = document.getElementById('svSearch');
+                if (searchInput) {
+                    try {
+                        const persisted = localStorage.getItem('emc.core.savedViews.search') || '';
+                        searchInput.value = persisted;
+                        SV_STATE.q = persisted;
+                    } catch {}
+                    let t;
+                    searchInput.addEventListener('input', async () => {
+                        clearTimeout(t);
+                        t = setTimeout(async () => {
+                            SV_STATE.q = searchInput.value.trim();
+                            SV_STATE.offset = 0;
+                            try { localStorage.setItem('emc.core.savedViews.search', SV_STATE.q); } catch {}
+                            await renderSavedViews(container, form);
+                        }, 200);
+                    });
+                }
             });
         </script>
     @endpush

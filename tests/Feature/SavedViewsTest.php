@@ -198,4 +198,39 @@ class SavedViewsTest extends TestCase
         $this->assertStringContainsString('rel="prev"', $resp3->headers->get('Link'));
         $this->assertStringNotContainsString('rel="next"', $resp3->headers->get('Link'));
     }
+
+    public function test_update_and_duplicate_endpoints(): void
+    {
+        /** @var User&\Illuminate\Contracts\Auth\Authenticatable $user */
+        $user = User::factory()->create();
+        // Create base view
+        $create = $this->actingAs($user)
+            ->postJson(route('emc.core.saved-views.store'), [
+                'name' => 'Base',
+                'context' => 'core_databases',
+                'filters' => ['engine' => 'PostgreSQL', 'env' => 'Prod'],
+            ])->assertCreated()->json();
+
+        // Rename via PATCH
+        $this->actingAs($user)
+            ->patchJson(route('emc.core.saved-views.update', $create['id']), [
+                'name' => 'Renamed',
+            ])->assertOk()->assertJsonFragment(['name' => 'Renamed']);
+
+        // Duplicate with new name
+        $dup = $this->actingAs($user)
+            ->postJson(route('emc.core.saved-views.duplicate', $create['id']), [
+                'name' => 'Renamed (copy)',
+            ])->assertCreated()->json();
+        $this->assertArrayHasKey('id', $dup);
+        $this->assertSame(2, SavedView::query()->where('user_id', $user->id)->count());
+
+        // Search should find both when q='Renamed'
+        $resp = $this->actingAs($user)
+            ->getJson(route('emc.core.saved-views.index', ['q' => 'Renamed', 'limit' => 50]));
+        $resp->assertOk();
+        $names = array_column($resp->json(), 'name');
+        $this->assertContains('Renamed', $names);
+        $this->assertContains('Renamed (copy)', $names);
+    }
 }

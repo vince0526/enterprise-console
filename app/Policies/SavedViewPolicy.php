@@ -22,8 +22,13 @@ class SavedViewPolicy
         return true; // Allow creation (upsert) for auth users
     }
 
+    public function update(User $user, SavedView $savedView): bool
+    {
+        return (int) $savedView->user_id === (int) $user->id;
+    }
+
     public function delete(User $user, SavedView $savedView): bool
     {
-        return $savedView->user_id === $user->id;
+        return (int) $savedView->user_id === (int) $user->id;
     }
 }

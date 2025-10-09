@@ -148,6 +148,8 @@ Route::prefix('emc')->name('emc.')->group(function () {
             Route::get('saved-views', [\App\Http\Controllers\Web\Emc\SavedViewController::class, 'index'])->name('saved-views.index');
             Route::post('saved-views', [\App\Http\Controllers\Web\Emc\SavedViewController::class, 'store'])->name('saved-views.store');
             Route::delete('saved-views/{savedView}', [\App\Http\Controllers\Web\Emc\SavedViewController::class, 'destroy'])->name('saved-views.destroy');
+            Route::patch('saved-views/{savedView}', [\App\Http\Controllers\Web\Emc\SavedViewController::class, 'update'])->name('saved-views.update');
+            Route::post('saved-views/{savedView}/duplicate', [\App\Http\Controllers\Web\Emc\SavedViewController::class, 'duplicate'])->name('saved-views.duplicate');
         });
     });
 
