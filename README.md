@@ -36,6 +36,7 @@ See [SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md) for detailed manual setup ins
 ## ✨ Features
 
 ### 🗄️ Database Management Module
+
 - **Database Backup**: Complete backup and restore functionality
 - **Database Connections**: Connection management and monitoring
 - **Database Performance**: Performance metrics and optimization tools
@@ -43,6 +44,7 @@ See [SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md) for detailed manual setup ins
 - **Database Replication**: Replication setup and monitoring
 
 ### 🔧 Core Features
+
 - Modern Laravel-based architecture
 - Responsive dashboard interface
 - User authentication and authorization
@@ -77,9 +79,10 @@ Core Databases tabs can be navigated with `?tab=`:
 
 ## 📋 Requirements
 
- - PHP 8.1+
- - Composer
- - MySQL/MariaDB or SQLite
+- PHP 8.1+
+- Composer
+- MySQL/MariaDB or SQLite
+
 ### MySQL .env Quick Start
 
 Set your local `.env` for MySQL (Laragon/XAMPP/WAMP):
@@ -110,7 +113,7 @@ php artisan db:seed --class="Database\\Seeders\\CoreSubmodulesSeeder" --force
 
 ### Dev Quick Start (Windows)
 
-1) One-shot setup + background serve + sweep
+1. One-shot setup + background serve + sweep
 
 Run this to configure .env, ensure sqlite DB, clear caches, start the PHP server in the background, and verify endpoints.
 
@@ -121,16 +124,17 @@ Run this to configure .env, ensure sqlite DB, clear caches, start the PHP server
 ```
 
 Notes:
+
 - Omit `-SkipNpm` if you need to rebuild assets (requires Node 20.19+ or 22.12+).
 - Use `-StopServe` to kill any prior `php artisan serve` processes.
 
-2) Start PHP + Vite together
+2. Start PHP + Vite together
 
 ```powershell
 ./scripts/dev-up.ps1
 ```
 
-3) Quick health test
+3. Quick health test
 
 ```powershell
 php artisan test --filter=HealthRouteTest --stop-on-failure
@@ -158,6 +162,10 @@ php artisan test
 ## 📚 Documentation
 
 - [Complete Setup Instructions](SETUP_INSTRUCTIONS.md)
+- [Deployment Guide](docs/DEPLOYMENT.md)
+- [Saved Views API](docs/saved-views-api.md)
+- [Git Credential Manager on Windows](docs/git-credential-manager-windows.md)
+- [Changelog](CHANGELOG.md)
 - [Laravel Documentation](https://laravel.com/docs)
 
 ## 🤝 Support
@@ -168,11 +176,11 @@ If you encounter issues:
 2. Verify all requirements are met
 3. Check Laravel logs in `storage/logs/`
 
-## 📈 Version Info
+## � Version Info
 
-- **Current Version**: EMC with Core Databases (Registry, Ownership, Lifecycle, Links)
-- **Last Updated**: September 24, 2025
-- **Commit Hash**: `220942eede37102a1ed67bc78f5adf1a5e54cc74`
+- **Current Version**: v0.6.1 — Core Databases + Saved Views with inline rename, API docs, and CI
+- **Last Updated**: October 9, 2025
+- See [CHANGELOG](CHANGELOG.md) for details
 
 ---
 
@@ -245,6 +253,7 @@ DEV_AUTO_LOGIN_USER_ID=1   # adjust to an existing user id
 ```bash
 php artisan optimize:clear
 ```
+
 1. Visit any protected route (e.g. /dashboard); you should be auto-authenticated as that user.
 
 Safety:
@@ -252,7 +261,6 @@ Safety:
 - Middleware is skipped automatically in `production` environment.
 - Disable by removing the vars or setting `DEV_AUTO_LOGIN=false`.
 - Use only on local/dev; never push an enabled flag to shared environments.
-
 
 ### DOCX Automation
 
@@ -276,10 +284,10 @@ We would like to extend our thanks to the following sponsors for funding Laravel
 
 ### Premium Partners
 
--   **[Vehikl](https://vehikl.com)**
--   **[Tighten Co.](https://tighten.co)**
--   **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
--   **[64 Robots](https://64robots.com)**
+- **[Vehikl](https://vehikl.com)**
+- **[Tighten Co.](https://tighten.co)**
+- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+- **[64 Robots](https://64robots.com)**
 - **[Curotec](https://www.curotec.com/services/technologies/laravel)**
 - **[DevSquad](https://devsquad.com/hire-laravel-developers)**
 - **[Redberry](https://redberry.international/laravel-development)**

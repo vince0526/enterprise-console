@@ -1681,59 +1681,87 @@
                     actions.className = 'sv-actions';
                     actions.style.marginLeft = '.25rem';
                     actions.innerHTML = `
-                        <button type="button" class="btn btn--tiny" title="Rename">✎</button>
-                        <button type="button" class="btn btn--tiny" title="Duplicate">⧉</button>
-                        <button type="button" class="btn btn--tiny btn--danger" title="Delete">✕</button>
+                        <button type="button" class="btn btn--tiny" title="Rename">\u270e</button>
+                        <button type="button" class="btn btn--tiny" title="Duplicate">\u29c9</button>
+                        <button type="button" class="btn btn--tiny btn--danger" title="Delete">\u2715</button>
                     `;
                     const [renameBtn, dupBtn, delBtn] = actions.querySelectorAll('button');
-                    renameBtn.addEventListener('click', async (e) => {
-                        e.stopPropagation();
-                        const name = prompt('Rename view', v.name);
-                        if (!name || name === v.name) return;
+
+                    // Inline editable rename: convert name span into contenteditable on click of rename
+                    const nameSpan = btn.querySelector('.sv-name');
+                    let renaming = false;
+                    async function commitRename(newName) {
+                        const trimmed = (newName || '').trim();
+                        if (!trimmed || trimmed === v.name) return false;
                         if (v.id) {
-                            await fetch(`${SAVED_VIEWS_API}/${v.id}`, {
+                            const resp = await fetch(`${SAVED_VIEWS_API}/${v.id}`, {
                                 method: 'PATCH',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                },
-                                body: JSON.stringify({
-                                    name
-                                })
+                                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                                body: JSON.stringify({ name: trimmed })
                             });
+                            if (resp.status === 422) {
+                                try { const j = await resp.json(); alert(j.message || 'Duplicate name.'); } catch { alert('Duplicate name.'); }
+                                return false;
+                            }
+                            if (!resp.ok) { alert('Rename failed.'); return false; }
                         } else {
-                            // local fallback: rename
                             const list = lsLoad();
                             const idx = list.findIndex(x => x.name === v.name);
-                            if (idx >= 0) {
-                                list[idx].name = name;
-                                lsSave(list);
-                            }
+                            if (idx >= 0) { list[idx].name = trimmed; lsSave(list); }
                         }
-                        await renderSavedViews(container, form);
-                    });
+                        v.name = trimmed;
+                        return true;
+                    }
+                    function startInlineRename() {
+                        if (renaming || !nameSpan) return;
+                        renaming = true;
+                        const prev = v.name;
+                        nameSpan.contentEditable = 'true';
+                        nameSpan.spellcheck = false;
+                        nameSpan.focus();
+                        // place caret at end
+                        const range = document.createRange();
+                        range.selectNodeContents(nameSpan);
+                        range.collapse(false);
+                        const sel = window.getSelection();
+                        sel.removeAllRanges();
+                        sel.addRange(range);
+                        const endEdit = async (accept) => {
+                            nameSpan.removeEventListener('blur', onBlur);
+                            nameSpan.removeEventListener('keydown', onKey);
+                            nameSpan.contentEditable = 'false';
+                            renaming = false;
+                            if (!accept) { nameSpan.textContent = prev; return; }
+                            const ok = await commitRename(nameSpan.textContent);
+                            if (!ok) nameSpan.textContent = prev;
+                            await renderSavedViews(container, form);
+                        };
+                        const onBlur = () => endEdit(true);
+                        const onKey = (e) => {
+                            if (e.key === 'Enter') { e.preventDefault(); endEdit(true); }
+                            if (e.key === 'Escape') { e.preventDefault(); endEdit(false); }
+                        };
+                        nameSpan.addEventListener('blur', onBlur);
+                        nameSpan.addEventListener('keydown', onKey);
+                    }
+                    renameBtn.addEventListener('click', (e) => { e.stopPropagation(); startInlineRename(); });
+
                     dupBtn.addEventListener('click', async (e) => {
                         e.stopPropagation();
-                        const name = prompt('Duplicate as', `${v.name} (copy)`);
-                        if (!name) return;
+                        const defaultName = `${v.name} (copy)`;
+                        let copyName = prompt('Duplicate as', defaultName);
+                        if (!copyName) return;
+                        copyName = copyName.trim();
                         if (v.id) {
-                            await fetch(`${SAVED_VIEWS_API}/${v.id}/duplicate`, {
+                            const r = await fetch(`${SAVED_VIEWS_API}/${v.id}/duplicate`, {
                                 method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                },
-                                body: JSON.stringify({
-                                    name
-                                })
+                                headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': '{{ csrf_token() }}' },
+                                body: JSON.stringify({ name: copyName })
                             });
+                            if (r.status === 422) { alert('Duplicate name.'); return; }
                         } else {
                             const list = lsLoad();
-                            list.push({
-                                name,
-                                filters: v.filters,
-                                context: 'core_databases'
-                            });
+                            list.push({ name: copyName, filters: v.filters, context: 'core_databases' });
                             lsSave(list);
                         }
                         await renderSavedViews(container, form);
