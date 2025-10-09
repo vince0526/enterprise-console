@@ -1,8 +1,4 @@
-git remote -vgit remote -vgit remote add origin <repo-url>
-# or
-git remote set-url origin <repo-url>git remote add origin <repo-url>
-# or
-git remote set-url origin <repo-url><?php
+<?php
 
 declare(strict_types=1);
 
