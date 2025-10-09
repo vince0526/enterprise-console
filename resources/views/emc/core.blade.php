@@ -316,6 +316,12 @@
                                     Goods</a>
                                 <!-- Managed saved views (client-side) -->
                                 <div id="savedViewsManaged" class="flex gap-2" aria-live="polite"></div>
+                                <!-- Saved Views pagination controls -->
+                                <div id="savedViewsPager" class="flex items-center gap-2 mt-2">
+                                    <button type="button" id="svPrev" class="btn btn--tiny" disabled>◀ Prev</button>
+                                    <span id="svMeta" class="text-muted text-xs"></span>
+                                    <button type="button" id="svNext" class="btn btn--tiny" disabled>Next ▶</button>
+                                </div>
                             </div>
                             @php($hasFilters = request()->hasAny(['q', 'tier', 'engine', 'env', 'scopes', 'vc_stage']))
                             @if ($hasFilters)
@@ -1467,12 +1473,46 @@
             // Saved Views (persisted via API with localStorage fallback)
             const SAVED_VIEWS_KEY = 'emc.core.savedViews.v1';
             const SAVED_VIEWS_API = "{{ route('emc.core.saved-views.index') }}";
+            const SV_STATE = { offset: 0, limit: 10, total: 0, next: null, prev: null };
 
-            async function apiList() {
+            function parseLinkHeader(linkHeader) {
+                // Parse RFC 5988 Link header into { rel: url }
+                const out = {};
+                if (!linkHeader) return out;
+                linkHeader.split(',').forEach(part => {
+                    const m = part.match(/<([^>]+)>;\s*rel="([^"]+)"/);
+                    if (m) out[m[2]] = m[1];
+                });
+                return out;
+            }
+
+            async function apiList(params = {}) {
                 try {
-                    const r = await fetch(SAVED_VIEWS_API);
+                    const p = new URLSearchParams();
+                    const limit = params.limit ?? SV_STATE.limit;
+                    const offset = params.offset ?? SV_STATE.offset;
+                    p.set('limit', String(limit));
+                    p.set('offset', String(offset));
+                    const r = await fetch(`${SAVED_VIEWS_API}?${p.toString()}`);
                     if (!r.ok) throw new Error();
-                    return await r.json();
+                    const data = await r.json();
+                    // update pagination state from headers
+                    SV_STATE.total = Number(r.headers.get('X-SavedViews-Total') || '0');
+                    SV_STATE.limit = Number(r.headers.get('X-SavedViews-Limit') || String(limit));
+                    const links = parseLinkHeader(r.headers.get('Link'));
+                    SV_STATE.next = links.next || null;
+                    SV_STATE.prev = links.prev || null;
+                    // try to derive offset from Link URLs if present
+                    const derive = (url) => {
+                        if (!url) return null;
+                        try {
+                            const u = new URL(url, window.location.origin);
+                            return Number(u.searchParams.get('offset') || '0');
+                        } catch { return null; }
+                    };
+                    SV_STATE.nextOffset = derive(SV_STATE.next);
+                    SV_STATE.prevOffset = derive(SV_STATE.prev);
+                    return data;
                 } catch {
                     return null;
                 }
@@ -1518,7 +1558,7 @@
                 } catch {}
             }
             async function loadSavedViews() {
-                const api = await apiList();
+                const api = await apiList({ offset: SV_STATE.offset, limit: SV_STATE.limit });
                 return api ?? lsLoad();
             }
             async function saveSavedView(entry) {
@@ -1591,7 +1631,7 @@
                     del.className = 'btn btn--tiny';
                     del.textContent = '×';
                     del.title = 'Delete saved view';
-                    del.addEventListener('click', () => {
+                    del.addEventListener('click', async () => {
                         await deleteSavedView(v);
                         await renderSavedViews(container, form);
                     });
@@ -1601,6 +1641,27 @@
                     wrap.appendChild(del);
                     container.appendChild(wrap);
                 });
+                // update pager UI
+                const meta = document.getElementById('svMeta');
+                const prevBtn = document.getElementById('svPrev');
+                const nextBtn = document.getElementById('svNext');
+                if (meta) meta.textContent = `${Math.min(SV_STATE.offset + 1, SV_STATE.total)}-${Math.min(SV_STATE.offset + views.length, SV_STATE.total)} of ${SV_STATE.total}`;
+                if (prevBtn) {
+                    prevBtn.disabled = !SV_STATE.prev;
+                    prevBtn.onclick = async () => {
+                        if (!SV_STATE.prev) return;
+                        SV_STATE.offset = SV_STATE.prevOffset ?? Math.max(0, SV_STATE.offset - SV_STATE.limit);
+                        await renderSavedViews(container, form);
+                    };
+                }
+                if (nextBtn) {
+                    nextBtn.disabled = !SV_STATE.next;
+                    nextBtn.onclick = async () => {
+                        if (!SV_STATE.next) return;
+                        SV_STATE.offset = SV_STATE.nextOffset ?? (SV_STATE.offset + SV_STATE.limit);
+                        await renderSavedViews(container, form);
+                    };
+                }
             }
             document.addEventListener('DOMContentLoaded', function() {
                 // Clickable sortable headers (also keyboard accessible)
@@ -1634,7 +1695,7 @@
                 const saveBtn = document.getElementById('btnSaveView');
                 if (container && form) renderSavedViews(container, form);
                 if (saveBtn && form) {
-                    saveBtn.addEventListener('click', () => {
+                    saveBtn.addEventListener('click', async () => {
                         const name = prompt('Name this view');
                         if (!name) return;
                         const filters = currentFiltersFromForm(form);
