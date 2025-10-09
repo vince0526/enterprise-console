@@ -1,26 +1,26 @@
-﻿# Normalize line endings to LF in repo - let Git handle checkout
+﻿## Line ending normalization
 * text=auto
 
-# Force LF for source/config
-*.php   text eol=lf
-*.blade.php text eol=lf
-*.js    text eol=lf
-*.ts    text eol=lf
-*.css   text eol=lf
-*.scss  text eol=lf
-*.json  text eol=lf
-*.yml   text eol=lf
-*.yaml  text eol=lf
-*.neon  text eol=lf
-*.md    text eol=lf
-Makefile text eol=lf
+## Force LF for text/source files
+*.php         text eol=lf
+*.blade.php   text eol=lf
+*.js          text eol=lf
+*.ts          text eol=lf
+*.css         text eol=lf
+*.scss        text eol=lf
+*.json        text eol=lf
+*.yml         text eol=lf
+*.yaml        text eol=lf
+*.neon        text eol=lf
+*.md          text eol=lf
+Makefile      text eol=lf
 
-# Ensure Git hooks and scripts keep LF to remain executable across environments
-.githooks/* text eol=lf
-*.sh       text eol=lf
-*.ps1      text eol=lf
+## Scripts & hooks
+.githooks/*   text eol=lf
+*.sh          text eol=lf
+*.ps1         text eol=lf
 
-# Treat common binary assets and Office docs as binary
+## Binary assets (never normalize)
 *.png binary
 *.jpg binary
 *.jpeg binary
@@ -31,8 +31,13 @@ Makefile text eol=lf
 *.xlsx binary
 *.pptx binary
 
-# Omit dev-only folders from `git archive`
-/.github export-ignore
-/.vscode export-ignore
-/tests export-ignore
-/scripts export-ignore
+## Archive exclusions
+/.github      export-ignore
+/.vscode      export-ignore
+/tests        export-ignore
+/scripts      export-ignore
+
+## GitHub linguist hints (optional)
+/public/build/* linguist-generated
+/public/js/*     linguist-generated
+/public/css/*    linguist-generated
