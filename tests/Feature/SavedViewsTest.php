@@ -69,4 +69,75 @@ class SavedViewsTest extends TestCase
 
         $this->assertSame(0, SavedView::query()->count());
     }
+
+    public function test_search_and_limit_and_isolation(): void
+    {
+        /** @var User&\Illuminate\Contracts\Auth\Authenticatable $alice */
+        $alice = User::factory()->create();
+        /** @var User&\Illuminate\Contracts\Auth\Authenticatable $bob */
+        $bob = User::factory()->create();
+
+        // Seed multiple views for Alice
+        foreach (['Alpha Prod', 'Alpha Dev', 'Beta Prod', 'Gamma'] as $name) {
+            SavedView::factory()->create([
+                'user_id' => $alice->id,
+                'context' => 'core_databases',
+                'name' => $name,
+                'filters' => ['engine' => 'PostgreSQL'],
+            ]);
+        }
+        // Bob gets one view with similar name to ensure isolation
+        SavedView::factory()->create([
+            'user_id' => $bob->id,
+            'context' => 'core_databases',
+            'name' => 'Alpha Staging',
+            'filters' => ['env' => 'UAT'],
+        ]);
+
+        // Alice searches 'Alpha' limited to 2
+        $resp = $this->actingAs($alice)
+            ->getJson(route('emc.core.saved-views.index', ['q' => 'Alpha', 'limit' => 2]));
+        $resp->assertOk();
+        $data = $resp->json();
+        $this->assertCount(2, $data); // limited
+        $names = array_column($data, 'name');
+        $this->assertNotContains('Alpha Staging', $names); // Bob's view excluded
+
+        // Bob lists his (should only see his one)
+        $this->actingAs($bob)
+            ->getJson(route('emc.core.saved-views.index'))
+            ->assertOk()
+            ->assertJsonCount(1)
+            ->assertJsonFragment(['name' => 'Alpha Staging']);
+    }
+
+    public function test_validation_and_unauthorized_delete(): void
+    {
+        /** @var User&\Illuminate\Contracts\Auth\Authenticatable $alice */
+        $alice = User::factory()->create();
+        /** @var User&\Illuminate\Contracts\Auth\Authenticatable $bob */
+        $bob = User::factory()->create();
+
+        // Missing filters should 422
+        $this->actingAs($alice)
+            ->postJson(route('emc.core.saved-views.store'), [
+                'name' => 'Invalid',
+                'context' => 'core_databases',
+            ])
+            ->assertStatus(422);
+
+        // Valid create
+        $view = $this->actingAs($alice)
+            ->postJson(route('emc.core.saved-views.store'), [
+                'name' => 'Owned',
+                'filters' => ['engine' => 'MySQL'],
+            ])
+            ->assertCreated()
+            ->json();
+
+        // Bob attempts delete -> 403
+        $this->actingAs($bob)
+            ->deleteJson(route('emc.core.saved-views.destroy', $view['id']))
+            ->assertStatus(403);
+    }
 }

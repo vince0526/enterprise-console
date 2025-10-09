@@ -20,11 +20,11 @@
 
 @section('content')
     @push('head')
-    <!-- PrismJS theme bundled via app.css -->
+        <!-- PrismJS theme bundled via app.css -->
     @endpush
     <style>
         /* TIP: Prefer moving repeated styles into resources/css/emc.css.
-                               Keep inline styles here only for small page-specific tweaks. */
+                                   Keep inline styles here only for small page-specific tweaks. */
         /* Layout polish */
         .page-header {
             display: flex;
@@ -201,8 +201,7 @@
                     <p class="page-header__subtitle">Workbench for registry, creation wizard, submodules, and DDL tools</p>
                 </div>
                 @if ($activeTab === 'registry')
-                    <a class="btn btn--small" href="{{ route('emc.core.export.csv') }}"
-                        title="Export registry as CSV">Export
+                    <a class="btn btn--small" href="{{ route('emc.core.export.csv') }}" title="Export registry as CSV">Export
                         CSV</a>
                 @endif
             </div>
@@ -1464,7 +1463,7 @@
         }
     </script>
     @push('scripts')
-    <!-- Prism is loaded via app.js bundle -->
+        <!-- Prism is loaded via app.js bundle -->
         <script>
             // Saved Views (persisted via API with localStorage fallback)
             const SAVED_VIEWS_KEY = 'emc.core.savedViews.v1';
@@ -1475,20 +1474,50 @@
                     const r = await fetch(SAVED_VIEWS_API);
                     if (!r.ok) throw new Error();
                     return await r.json();
-                } catch { return null; }
+                } catch {
+                    return null;
+                }
             }
             async function apiSave(view) {
                 try {
-                    const r = await fetch(SAVED_VIEWS_API, { method:'POST', headers:{'Content-Type':'application/json','X-CSRF-TOKEN':'{{ csrf_token() }}'}, body: JSON.stringify(view) });
+                    const r = await fetch(SAVED_VIEWS_API, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify(view)
+                    });
                     if (!r.ok) throw new Error();
                     return await r.json();
-                } catch { return null; }
+                } catch {
+                    return null;
+                }
             }
             async function apiDelete(id) {
-                try { await fetch(`${SAVED_VIEWS_API}/${id}`, { method:'DELETE', headers:{'X-CSRF-TOKEN':'{{ csrf_token() }}'} }); } catch {}
+                try {
+                    await fetch(`${SAVED_VIEWS_API}/${id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        }
+                    });
+                } catch {}
             }
-            function lsLoad() { try { return JSON.parse(localStorage.getItem(SAVED_VIEWS_KEY) || '[]'); } catch { return []; } }
-            function lsSave(list) { try { localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(list)); } catch {} }
+
+            function lsLoad() {
+                try {
+                    return JSON.parse(localStorage.getItem(SAVED_VIEWS_KEY) || '[]');
+                } catch {
+                    return [];
+                }
+            }
+
+            function lsSave(list) {
+                try {
+                    localStorage.setItem(SAVED_VIEWS_KEY, JSON.stringify(list));
+                } catch {}
+            }
             async function loadSavedViews() {
                 const api = await apiList();
                 return api ?? lsLoad();
@@ -1499,15 +1528,20 @@
                 // fallback merge
                 const list = lsLoad();
                 const existing = list.findIndex(v => v.name === entry.name);
-                if (existing >= 0) list[existing] = entry; else list.push(entry);
+                if (existing >= 0) list[existing] = entry;
+                else list.push(entry);
                 lsSave(list);
                 return entry;
             }
             async function deleteSavedView(entry) {
-                if (entry.id) await apiDelete(entry.id); else {
+                if (entry.id) await apiDelete(entry.id);
+                else {
                     const list = lsLoad();
                     const idx = list.findIndex(v => v.name === entry.name);
-                    if (idx >= 0) { list.splice(idx,1); lsSave(list); }
+                    if (idx >= 0) {
+                        list.splice(idx, 1);
+                        lsSave(list);
+                    }
                 }
             }
 
@@ -1543,7 +1577,8 @@
                             if (multi && multi.length) {
                                 // scopes[] etc.
                                 multi.forEach(cb => {
-                                    cb.checked = Array.isArray(val) ? val.includes(cb.value) :
+                                    cb.checked = Array.isArray(val) ? val.includes(cb
+                                        .value) :
                                         false;
                                 });
                             } else if (input) {
@@ -1604,7 +1639,11 @@
                         const name = prompt('Name this view');
                         if (!name) return;
                         const filters = currentFiltersFromForm(form);
-                        await saveSavedView({ name, context: 'core_databases', filters });
+                        await saveSavedView({
+                            name,
+                            context: 'core_databases',
+                            filters
+                        });
                         await renderSavedViews(container, form);
                     });
                 }

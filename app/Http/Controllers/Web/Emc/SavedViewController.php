@@ -21,12 +21,21 @@ class SavedViewController extends Controller
 {
     public function index(Request $request): JsonResponse
     {
-        $this->authorizeAccess();
+        $this->authorize('viewAny', SavedView::class);
         $context = $request->query('context', 'core_databases');
+        $q = trim((string) $request->query('q', ''));
+        $limitParam = $request->query('limit', '50');
+        $limit = (int) (is_array($limitParam) ? 50 : $limitParam);
+        $limit = $limit > 0 ? min($limit, 100) : 50; // cap
+
         $views = SavedView::query()
             ->where('user_id', Auth::id())
             ->where('context', $context)
+            ->when($q !== '', function ($qb) use ($q) {
+                $qb->where('name', 'like', "%{$q}%");
+            })
             ->orderBy('name')
+            ->limit($limit)
             ->get(['id', 'name', 'filters']);
 
         return response()->json($views);
@@ -34,7 +43,7 @@ class SavedViewController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $this->authorizeAccess();
+        $this->authorize('create', SavedView::class);
         $data = $request->validate([
             'name' => ['required', 'string', 'max:120'],
             'context' => ['sometimes', 'string', 'max:64'],
@@ -54,18 +63,12 @@ class SavedViewController extends Controller
 
     public function destroy(SavedView $savedView): JsonResponse
     {
-        $this->authorizeAccess();
-        abort_unless($savedView->user_id === Auth::id(), 403);
+        $this->authorize('delete', $savedView);
         $savedView->delete();
 
         return response()->json(['status' => 'deleted']);
     }
 
-    private function authorizeAccess(): void
-    {
-        if (! (bool) config('app.dev_auto_login', false)) {
-            // Generic gate: require authenticated user
-            abort_unless(Auth::check(), 401);
-        }
-    }
+    // Legacy helper retained (unused) for potential compatibility
+    private function authorizeAccess(): void {}
 }
