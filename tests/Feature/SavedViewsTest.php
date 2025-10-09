@@ -19,10 +19,12 @@ class SavedViewsTest extends TestCase
         $user = User::factory()->create();
 
         // List empty
-        $this->actingAs($user)
-            ->getJson(route('emc.core.saved-views.index'))
-            ->assertOk()
-            ->assertExactJson([]);
+        $resp = $this->actingAs($user)
+            ->getJson(route('emc.core.saved-views.index'));
+        $resp->assertOk()->assertExactJson([]);
+        $resp->assertHeader('X-SavedViews-Total', '0');
+        $resp->assertHeader('X-SavedViews-Limit', '50');
+        $resp->assertHeader('X-SavedViews-Returned', '0');
 
         // Create
         $create = $this->actingAs($user)
@@ -41,11 +43,14 @@ class SavedViewsTest extends TestCase
         $id = $create['id'];
 
         // List shows one
-        $this->actingAs($user)
-            ->getJson(route('emc.core.saved-views.index'))
-            ->assertOk()
+        $resp = $this->actingAs($user)
+            ->getJson(route('emc.core.saved-views.index'));
+        $resp->assertOk()
             ->assertJsonCount(1)
             ->assertJsonFragment(['name' => 'My Prod PG']);
+        $resp->assertHeader('X-SavedViews-Total', '1');
+        $resp->assertHeader('X-SavedViews-Limit', '50');
+        $resp->assertHeader('X-SavedViews-Returned', '1');
 
         // Update (same name -> upsert)
         $this->actingAs($user)
@@ -100,6 +105,9 @@ class SavedViewsTest extends TestCase
         $resp->assertOk();
         $data = $resp->json();
         $this->assertCount(2, $data); // limited
+        $resp->assertHeader('X-SavedViews-Total', '2');
+        $resp->assertHeader('X-SavedViews-Limit', '2');
+        $resp->assertHeader('X-SavedViews-Returned', '2');
         $names = array_column($data, 'name');
         $this->assertNotContains('Alpha Staging', $names); // Bob's view excluded
 
@@ -139,5 +147,26 @@ class SavedViewsTest extends TestCase
         $this->actingAs($bob)
             ->deleteJson(route('emc.core.saved-views.destroy', $view['id']))
             ->assertStatus(403);
+    }
+
+    public function test_limit_capped_and_negative_defaults(): void
+    {
+        /** @var User&\Illuminate\Contracts\Auth\Authenticatable $user */
+        $user = User::factory()->create();
+        // create 130 views
+        SavedView::factory()->count(130)->create(['user_id' => $user->id]);
+        // limit >100 should cap at 100
+        $resp = $this->actingAs($user)
+            ->getJson(route('emc.core.saved-views.index', ['limit' => 1000]));
+        $resp->assertOk()->assertJsonCount(100);
+        $resp->assertHeader('X-SavedViews-Limit', '100');
+        $resp->assertHeader('X-SavedViews-Returned', '100');
+        $this->assertSame('130', $resp->headers->get('X-SavedViews-Total'));
+        // negative limit -> default (50)
+        $resp = $this->actingAs($user)
+            ->getJson(route('emc.core.saved-views.index', ['limit' => -5]));
+        $resp->assertOk()->assertJsonCount(50);
+        $resp->assertHeader('X-SavedViews-Limit', '50');
+        $resp->assertHeader('X-SavedViews-Returned', '50');
     }
 }

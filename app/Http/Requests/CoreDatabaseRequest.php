@@ -5,9 +5,16 @@ declare(strict_types=1);
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Validation\Rule;
 
 class CoreDatabaseRequest extends FormRequest
 {
+    /** @var string[] */
+    private array $allowedEngines = ['PostgreSQL', 'MySQL', 'SQL Server'];
+
+    /** @var string[] */
+    private array $allowedEnvs = ['Dev', 'UAT', 'Prod'];
+
     public function authorize(): bool
     {
         return true; // gate later if needed
@@ -86,8 +93,8 @@ class CoreDatabaseRequest extends FormRequest
             'functional_scopes' => ['nullable', 'array'],
             'functional_scopes.*' => ['string', 'max:255'],
             // Engine + Env are required for generated records
-            'engine' => ['required', 'string', 'max:255'],
-            'env' => ['required', 'string', 'max:50'],
+            'engine' => ['required', 'string', 'max:255', Rule::in($this->allowedEngines)],
+            'env' => ['required', 'string', 'max:50', Rule::in($this->allowedEnvs)],
         ];
     }
 }

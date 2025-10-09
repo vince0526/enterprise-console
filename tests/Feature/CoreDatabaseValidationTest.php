@@ -65,4 +65,17 @@ class CoreDatabaseValidationTest extends TestCase
             'engine' => 'PostgreSQL',
         ]);
     }
+
+    public function test_invalid_engine_and_env_rejected(): void
+    {
+        $user = $this->actingUser();
+        $payload = [
+            'name' => 'bad_values',
+            'tier' => 'Legacy',
+            'engine' => 'MongoDB', // not allowed
+            'env' => 'QA', // not allowed
+        ];
+        $resp = $this->actingAs($user)->post(route('emc.core.store'), $payload);
+        $resp->assertSessionHasErrors(['engine', 'env']);
+    }
 }

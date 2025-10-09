@@ -38,7 +38,20 @@ class SavedViewController extends Controller
             ->limit($limit)
             ->get(['id', 'name', 'filters']);
 
-        return response()->json($views);
+        // Collect metadata
+        $total = SavedView::query()
+            ->where('user_id', Auth::id())
+            ->where('context', $context)
+            ->when($q !== '', function ($qb) use ($q) {
+                $qb->where('name', 'like', "%{$q}%");
+            })
+            ->count();
+
+        return response()
+            ->json($views)
+            ->header('X-SavedViews-Total', (string) $total)
+            ->header('X-SavedViews-Limit', (string) $limit)
+            ->header('X-SavedViews-Returned', (string) $views->count());
     }
 
     public function store(Request $request): JsonResponse

@@ -81,4 +81,29 @@ class CoreDatabase extends Model
         // Links to database_connections (if present) or external policies/resources
         return $this->hasMany(CoreDatabaseLink::class);
     }
+
+    /**
+     * Virtualized legacy environment accessor (maps short env codes back to long form).
+     */
+    public function getEnvironmentAttribute($value): ?string
+    {
+        if ($value) {
+            return $value;
+        } // existing legacy column still populated
+        $map = ['Prod' => 'Production', 'UAT' => 'Staging', 'Dev' => 'Development'];
+
+        return $map[$this->attributes['env'] ?? ''] ?? ($this->attributes['env'] ?? null);
+    }
+
+    /**
+     * Virtualized legacy platform accessor fallback to engine.
+     */
+    public function getPlatformAttribute($value): ?string
+    {
+        if ($value) {
+            return $value;
+        }
+
+        return $this->attributes['engine'] ?? null;
+    }
 }

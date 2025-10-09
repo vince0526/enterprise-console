@@ -144,9 +144,11 @@ Route::prefix('emc')->name('emc.')->group(function () {
         Route::delete('links/{link}', [CoreDatabaseLinkController::class, 'destroy'])->name('links.destroy');
 
         // Saved Views JSON API
-        Route::get('saved-views', [\App\Http\Controllers\Web\Emc\SavedViewController::class, 'index'])->name('saved-views.index');
-        Route::post('saved-views', [\App\Http\Controllers\Web\Emc\SavedViewController::class, 'store'])->name('saved-views.store');
-        Route::delete('saved-views/{savedView}', [\App\Http\Controllers\Web\Emc\SavedViewController::class, 'destroy'])->name('saved-views.destroy');
+        Route::middleware('throttle:60,1')->group(function () {
+            Route::get('saved-views', [\App\Http\Controllers\Web\Emc\SavedViewController::class, 'index'])->name('saved-views.index');
+            Route::post('saved-views', [\App\Http\Controllers\Web\Emc\SavedViewController::class, 'store'])->name('saved-views.store');
+            Route::delete('saved-views/{savedView}', [\App\Http\Controllers\Web\Emc\SavedViewController::class, 'destroy'])->name('saved-views.destroy');
+        });
     });
 
     Route::get('/db', [EmcController::class, 'db'])->name('db');
