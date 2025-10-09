@@ -808,10 +808,9 @@
                                 <div class="form__group">
                                     <label class="form__label form__label--required">Platform</label>
                                     <select name="platform" class="form__select" required>
-                                        <option value="MySQL">MySQL</option>
                                         <option value="PostgreSQL">PostgreSQL</option>
+                                        <option value="MySQL">MySQL</option>
                                         <option value="SQL Server">SQL Server</option>
-                                        <option value="MongoDB">MongoDB</option>
                                     </select>
                                 </div>
                                 <div class="form__group">

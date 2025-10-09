@@ -169,4 +169,33 @@ class SavedViewsTest extends TestCase
         $resp->assertHeader('X-SavedViews-Limit', '50');
         $resp->assertHeader('X-SavedViews-Returned', '50');
     }
+
+    public function test_pagination_link_headers_next_and_prev(): void
+    {
+        /** @var User&\Illuminate\Contracts\Auth\Authenticatable $user */
+        $user = User::factory()->create();
+        // Seed 75 views to ensure multiple pages
+        SavedView::factory()->count(75)->create(['user_id' => $user->id, 'context' => 'core_databases']);
+        // First page: limit 30, expect Link: rel="next" only
+        $resp1 = $this->actingAs($user)
+            ->getJson(route('emc.core.saved-views.index', ['limit' => 30, 'offset' => 0]));
+        $resp1->assertOk()->assertJsonCount(30);
+        $this->assertTrue($resp1->headers->has('Link'));
+        $this->assertStringContainsString('rel="next"', $resp1->headers->get('Link'));
+        $this->assertStringNotContainsString('rel="prev"', $resp1->headers->get('Link'));
+        // Second page: offset 30, expect both prev and next
+        $resp2 = $this->actingAs($user)
+            ->getJson(route('emc.core.saved-views.index', ['limit' => 30, 'offset' => 30]));
+        $resp2->assertOk()->assertJsonCount(30);
+        $this->assertTrue($resp2->headers->has('Link'));
+        $this->assertStringContainsString('rel="prev"', $resp2->headers->get('Link'));
+        $this->assertStringContainsString('rel="next"', $resp2->headers->get('Link'));
+        // Last page: offset 60, expect only prev
+        $resp3 = $this->actingAs($user)
+            ->getJson(route('emc.core.saved-views.index', ['limit' => 30, 'offset' => 60]));
+        $resp3->assertOk()->assertJsonCount(15);
+        $this->assertTrue($resp3->headers->has('Link'));
+        $this->assertStringContainsString('rel="prev"', $resp3->headers->get('Link'));
+        $this->assertStringNotContainsString('rel="next"', $resp3->headers->get('Link'));
+    }
 }

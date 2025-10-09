@@ -27,31 +27,46 @@ class SavedViewController extends Controller
         $limitParam = $request->query('limit', '50');
         $limit = (int) (is_array($limitParam) ? 50 : $limitParam);
         $limit = $limit > 0 ? min($limit, 100) : 50; // cap
+        $offsetParam = $request->query('offset', '0');
+        $offset = (int) (is_array($offsetParam) ? 0 : $offsetParam);
+        $offset = max(0, $offset);
 
-        $views = SavedView::query()
+        $baseQuery = SavedView::query()
             ->where('user_id', Auth::id())
             ->where('context', $context)
             ->when($q !== '', function ($qb) use ($q) {
                 $qb->where('name', 'like', "%{$q}%");
             })
-            ->orderBy('name')
+            ->orderBy('name');
+
+        $views = (clone $baseQuery)
+            ->offset($offset)
             ->limit($limit)
             ->get(['id', 'name', 'filters']);
 
         // Collect metadata
-        $total = SavedView::query()
-            ->where('user_id', Auth::id())
-            ->where('context', $context)
-            ->when($q !== '', function ($qb) use ($q) {
-                $qb->where('name', 'like', "%{$q}%");
-            })
-            ->count();
-
-        return response()
+        $total = (clone $baseQuery)->count();
+        $response = response()
             ->json($views)
             ->header('X-SavedViews-Total', (string) $total)
             ->header('X-SavedViews-Limit', (string) $limit)
             ->header('X-SavedViews-Returned', (string) $views->count());
+
+        // RFC 5988 Link headers for pagination (prev/next based on offset)
+        $links = [];
+        if ($offset > 0) {
+            $prevOffset = max(0, $offset - $limit);
+            $links[] = '<'.$request->fullUrlWithQuery(['offset' => $prevOffset, 'limit' => $limit]).'>; rel="prev"';
+        }
+        if ($offset + $views->count() < $total) {
+            $nextOffset = $offset + $limit;
+            $links[] = '<'.$request->fullUrlWithQuery(['offset' => $nextOffset, 'limit' => $limit]).'>; rel="next"';
+        }
+        if ($links) {
+            $response->headers->set('Link', implode(', ', $links));
+        }
+
+        return $response;
     }
 
     public function store(Request $request): JsonResponse
