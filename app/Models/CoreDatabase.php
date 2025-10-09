@@ -85,7 +85,7 @@ class CoreDatabase extends Model
     /**
      * Virtualized legacy environment accessor (maps short env codes back to long form).
      */
-    public function getEnvironmentAttribute($value): ?string
+    public function getEnvironmentAttribute(?string $value): ?string
     {
         if ($value) {
             return $value;
@@ -98,7 +98,7 @@ class CoreDatabase extends Model
     /**
      * Virtualized legacy platform accessor fallback to engine.
      */
-    public function getPlatformAttribute($value): ?string
+    public function getPlatformAttribute(?string $value): ?string
     {
         if ($value) {
             return $value;

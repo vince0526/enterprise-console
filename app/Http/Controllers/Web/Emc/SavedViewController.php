@@ -96,7 +96,4 @@ class SavedViewController extends Controller
 
         return response()->json(['status' => 'deleted']);
     }
-
-    // Legacy helper retained (unused) for potential compatibility
-    private function authorizeAccess(): void {}
 }

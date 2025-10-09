@@ -59,7 +59,7 @@ class CoreDatabaseRequest extends FormRequest
         }
 
         // tier defaulting: prefer explicit; else infer from presence of wizard path
-        if (! isset($data['tier']) || $data['tier'] === null || $data['tier'] === '') {
+        if (! isset($data['tier']) || $data['tier'] === '') {
             $data['tier'] = isset($data['tax_path']) && is_string($data['tax_path']) && $data['tax_path'] !== ''
                 ? 'Value Chain'
                 : 'Legacy';

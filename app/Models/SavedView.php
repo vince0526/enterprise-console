@@ -17,6 +17,7 @@ use Illuminate\Database\Eloquent\Model;
  */
 class SavedView extends Model
 {
+    /** @phpstan-use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\SavedViewFactory> */
     use HasFactory;
 
     /** @var list<string> */
