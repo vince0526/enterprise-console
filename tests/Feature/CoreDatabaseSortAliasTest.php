@@ -48,10 +48,18 @@ class CoreDatabaseSortAliasTest extends TestCase
         ]));
         $resp->assertStatus(200);
         $html = $resp->getContent();
-        $mysqlPos = strpos($html, 'MySQL');
-        $pgPos = strpos($html, 'PostgreSQL');
+
+        // The full page contains wizard select options listing engines (PostgreSQL, MySQL, ...)
+        // before the registry table, which can cause substring position assertions to produce
+        // false negatives. Limit our search scope to the registry table container so ordering
+        // reflects the actual sorted result set.
+        $tableStart = strpos($html, 'id="coreDbsTable"');
+        $scoped = $tableStart !== false ? substr($html, $tableStart) : $html; // fallback to full HTML if marker missing
+
+        $mysqlPos = strpos($scoped, 'MySQL');
+        $pgPos = strpos($scoped, 'PostgreSQL');
         $this->assertIsInt($mysqlPos);
         $this->assertIsInt($pgPos);
-        $this->assertTrue($mysqlPos < $pgPos, 'Expected MySQL to appear before PostgreSQL when sorting by platform asc');
+        $this->assertTrue($mysqlPos < $pgPos, 'Expected MySQL to appear before PostgreSQL when sorting by platform asc within registry table');
     }
 }
