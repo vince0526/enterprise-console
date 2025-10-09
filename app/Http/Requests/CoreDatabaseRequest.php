@@ -37,6 +37,15 @@ class CoreDatabaseRequest extends FormRequest
             ];
             $data['env'] = $map[$data['environment']] ?? $data['environment'];
         }
+        // legacy 'environment' column may be NOT NULL; if only 'env' supplied, backfill environment.
+        if (! isset($data['environment']) && isset($data['env']) && is_string($data['env'])) {
+            $rev = [
+                'Prod' => 'Production',
+                'UAT' => 'Staging',
+                'Dev' => 'Development',
+            ];
+            $data['environment'] = $rev[$data['env']] ?? $data['env'];
+        }
 
         // tier defaulting: prefer explicit; else infer from presence of wizard path
         if (! isset($data['tier']) || $data['tier'] === null || $data['tier'] === '') {
