@@ -24,7 +24,7 @@
     @endpush
     <style>
         /* TIP: Prefer moving repeated styles into resources/css/emc.css.
-                                       Keep inline styles here only for small page-specific tweaks. */
+                                           Keep inline styles here only for small page-specific tweaks. */
         /* Layout polish */
         .page-header {
             display: flex;
@@ -1473,7 +1473,13 @@
             // Saved Views (persisted via API with localStorage fallback)
             const SAVED_VIEWS_KEY = 'emc.core.savedViews.v1';
             const SAVED_VIEWS_API = "{{ route('emc.core.saved-views.index') }}";
-            const SV_STATE = { offset: 0, limit: 10, total: 0, next: null, prev: null };
+            const SV_STATE = {
+                offset: 0,
+                limit: 10,
+                total: 0,
+                next: null,
+                prev: null
+            };
 
             function parseLinkHeader(linkHeader) {
                 // Parse RFC 5988 Link header into { rel: url }
@@ -1508,7 +1514,9 @@
                         try {
                             const u = new URL(url, window.location.origin);
                             return Number(u.searchParams.get('offset') || '0');
-                        } catch { return null; }
+                        } catch {
+                            return null;
+                        }
                     };
                     SV_STATE.nextOffset = derive(SV_STATE.next);
                     SV_STATE.prevOffset = derive(SV_STATE.prev);
@@ -1558,7 +1566,10 @@
                 } catch {}
             }
             async function loadSavedViews() {
-                const api = await apiList({ offset: SV_STATE.offset, limit: SV_STATE.limit });
+                const api = await apiList({
+                    offset: SV_STATE.offset,
+                    limit: SV_STATE.limit
+                });
                 return api ?? lsLoad();
             }
             async function saveSavedView(entry) {
@@ -1645,7 +1656,8 @@
                 const meta = document.getElementById('svMeta');
                 const prevBtn = document.getElementById('svPrev');
                 const nextBtn = document.getElementById('svNext');
-                if (meta) meta.textContent = `${Math.min(SV_STATE.offset + 1, SV_STATE.total)}-${Math.min(SV_STATE.offset + views.length, SV_STATE.total)} of ${SV_STATE.total}`;
+                if (meta) meta.textContent =
+                    `${Math.min(SV_STATE.offset + 1, SV_STATE.total)}-${Math.min(SV_STATE.offset + views.length, SV_STATE.total)} of ${SV_STATE.total}`;
                 if (prevBtn) {
                     prevBtn.disabled = !SV_STATE.prev;
                     prevBtn.onclick = async () => {
