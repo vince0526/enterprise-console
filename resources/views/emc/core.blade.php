@@ -24,7 +24,7 @@
     @endpush
     <style>
         /* TIP: Prefer moving repeated styles into resources/css/emc.css.
-                                                           Keep inline styles here only for small page-specific tweaks. */
+                                                               Keep inline styles here only for small page-specific tweaks. */
         /* Layout polish */
         .page-header {
             display: flex;
@@ -494,7 +494,7 @@
                             <form id="wizardForm" onsubmit="return submitWizard(event)">
                                 <div class="wizard-grid-3">
                                     <div>
-                                        <label class="form__label">Tier</label>
+                                        <label class="form__label" for="w_tier">Tier</label>
                                         <select class="form__select" id="w_tier">
                                             <option>Value Chain</option>
                                             <option>Public Goods & Governance</option>
@@ -504,7 +504,7 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="form__label">Engine</label>
+                                        <label class="form__label" for="w_engine">Engine</label>
                                         <select class="form__select" id="w_engine">
                                             <option>PostgreSQL</option>
                                             <option>MySQL</option>
@@ -512,7 +512,7 @@
                                         </select>
                                     </div>
                                     <div>
-                                        <label class="form__label">Environment</label>
+                                        <label class="form__label" for="w_env">Environment</label>
                                         <select class="form__select" id="w_env">
                                             <option>Dev</option>
                                             <option>UAT</option>
@@ -522,41 +522,41 @@
                                 </div>
                                 <div class="wizard-grid-3 mt-4" id="vc_fields">
                                     <div>
-                                        <label class="form__label">Value-Chain Stage</label>
-                                        <select class="form__select" id="w_stage"></select>
+                                        <label class="form__label" for="w_stage">Value-Chain Stage</label>
+                                        <select class="form__select" id="w_stage" aria-describedby="w_stage_help"></select>
                                         <div class="text-muted text-xs mt-2">Order: Stage
                                             → Industry → Subindustry</div>
                                     </div>
                                     <div>
-                                        <label class="form__label">Industry</label>
+                                        <label class="form__label" for="w_industry">Industry</label>
                                         <select class="form__select" id="w_industry" disabled></select>
                                     </div>
                                     <div>
-                                        <label class="form__label">Subindustry</label>
+                                        <label class="form__label" for="w_subindustry">Subindustry</label>
                                         <select class="form__select" id="w_subindustry" disabled></select>
                                     </div>
                                 </div>
                                 <div class="wizard-grid-3 mt-4" id="pg_fields" style="display:none">
                                     <div>
-                                        <label class="form__label">Public Good</label>
+                                        <label class="form__label" for="w_pg">Public Good</label>
                                         <select class="form__select" id="w_pg"></select>
                                     </div>
                                     <div>
-                                        <label class="form__label">Lead Organization</label>
+                                        <label class="form__label" for="w_lead_org">Lead Organization</label>
                                         <select class="form__select" id="w_lead_org"></select>
                                     </div>
                                     <div>
-                                        <label class="form__label">Program</label>
+                                        <label class="form__label" for="w_program">Program</label>
                                         <select class="form__select" id="w_program" disabled></select>
                                     </div>
                                 </div>
                                 <div class="wizard-grid-3 mt-4" id="cso_fields" style="display:none">
                                     <div>
-                                        <label class="form__label">CSO Super Category</label>
+                                        <label class="form__label" for="w_cso_super">CSO Super Category</label>
                                         <select class="form__select" id="w_cso_super"></select>
                                     </div>
                                     <div>
-                                        <label class="form__label">CSO Type</label>
+                                        <label class="form__label" for="w_cso_type">CSO Type</label>
                                         <select class="form__select" id="w_cso_type" disabled></select>
                                     </div>
                                     <div></div>
@@ -577,7 +577,7 @@
                                             </label>
                                         @endforeach
                                     </div>
-                                    <div class="text-muted suggested-text" id="w_suggested">
+                                    <div class="text-muted suggested-text" id="w_suggested" aria-live="polite">
                                     </div>
                                     <div class="mt-3 flex gap-2">
                                         <button type="button" class="btn btn--secondary"
@@ -588,12 +588,12 @@
                                 </div>
                                 <div class="wizard-grid-2 mt-4">
                                     <div>
-                                        <label class="form__label">Name</label>
+                                        <label class="form__label" for="w_name">Name</label>
                                         <input class="form__input" id="w_name"
                                             placeholder="auto-suggested if blank" />
                                     </div>
                                     <div>
-                                        <label class="form__label">Owner (email)</label>
+                                        <label class="form__label" for="w_owner_email">Owner (email)</label>
                                         <input class="form__input" id="w_owner_email" placeholder="owner@example.com" />
                                     </div>
                                 </div>
@@ -609,8 +609,9 @@
                                             onclick="copyDDL()">Copy</button>
                                     </div>
                                 </div>
+                                <div id="w_errors" class="text-xs" style="color:#842029; display:none;"></div>
                                 <div class="flex gap-2 justify-end">
-                                    <button type="submit" class="btn btn--primary">Generate</button>
+                                    <button type="submit" id="w_generate" class="btn btn--primary" disabled>Generate</button>
                                 </div>
                             </form>
                         </div>
@@ -983,6 +984,15 @@
             return String(s || '').toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
         }
 
+        // Simple in-memory cache for GET endpoints
+        const __cache = new Map();
+        async function cachedGet(url) {
+            if (__cache.has(url)) return __cache.get(url);
+            const p = fetch(url).then(r => r.ok ? r.json() : Promise.reject(new Error('HTTP'))).catch(() => null);
+            __cache.set(url, p);
+            return p;
+        }
+
         function setSelectOptions(selectEl, options, placeholder) {
             if (!selectEl) return;
             selectEl.innerHTML = '';
@@ -1322,16 +1332,15 @@
 
             async function loadStages() {
                 try {
-                    const r = await fetch('/erd/stages');
-                    const j = await r.json();
-                    setSelectOptionsFromData(stageSel, j, 'id', 'stage_name', 'Pick a stage');
-                } catch {
-                    setSelectOptions(stageSel, VC_STACK, 'Pick a stage');
-                }
+                    const j = await cachedGet('/erd/stages');
+                    if (Array.isArray(j) && j.length) setSelectOptionsFromData(stageSel, j, 'id', 'stage_name', 'Pick a stage');
+                    else setSelectOptions(stageSel, VC_STACK, 'Pick a stage');
+                } catch { setSelectOptions(stageSel, VC_STACK, 'Pick a stage'); }
             }
             async function loadIndustriesForStage() {
                 // DB doesn't map stage->industry directly; fallback to static mapping by stage name
-                const stageName = stageSel?.selectedOptions?.[0]?.dataset?.name || stageSel?.selectedOptions?.[0]?.textContent || '';
+                const stageName = stageSel?.selectedOptions?.[0]?.dataset?.name || stageSel?.selectedOptions?.[
+                    0]?.textContent || '';
                 const inds = STAGE_TO_VC_MAP[stageName] || [];
                 setSelectOptions(indSel, inds, 'Choose industry');
                 indSel.disabled = inds.length === 0;
@@ -1341,12 +1350,11 @@
             async function loadSubindustriesForIndustry() {
                 const name = indSel.value;
                 try {
-                    const allInd = await fetch('/erd/industries');
-                    const list = await allInd.json();
-                    const match = list.find(x => (x.industry_name || '').toLowerCase() === String(name || '').toLowerCase());
+                    const list = await cachedGet('/erd/industries');
+                    const match = list.find(x => (x.industry_name || '').toLowerCase() === String(name || '')
+                        .toLowerCase());
                     if (match) {
-                        const r = await fetch(`/erd/subindustries?industry_id=${match.id}`);
-                        const j = await r.json();
+                        const j = await cachedGet(`/erd/subindustries?industry_id=${match.id}`);
                         setSelectOptionsFromData(subSel, j, 'id', 'subindustry_name', 'Choose subindustry');
                         subSel.disabled = j.length === 0;
                         return;
@@ -1358,25 +1366,28 @@
             }
             async function loadPublicGoods() {
                 try {
-                    const r = await fetch('/erd/public-goods');
-                    const j = await r.json();
-                    setSelectOptionsFromData(pgSel, j, 'id', 'name', 'Select public good');
+                    const j = await cachedGet('/erd/public-goods');
+                    setSelectOptionsFromData(pgSel, j || [], 'id', 'name', 'Select public good');
                 } catch { setSelectOptions(pgSel, [], 'Select public good'); }
             }
             async function loadGovOrgs() {
                 try {
-                    const r = await fetch('/erd/gov-orgs');
-                    const j = await r.json();
-                    setSelectOptionsFromData(orgSel, j, 'id', 'name', 'Select organization');
+                    const j = await cachedGet('/erd/gov-orgs');
+                    setSelectOptionsFromData(orgSel, j || [], 'id', 'name', 'Select organization');
                 } catch { setSelectOptions(orgSel, [], 'Select organization'); }
             }
             async function loadProgramsForPg() {
                 try {
                     const pgId = pgSel.value;
-                    const r = await fetch(`/erd/programs?pg_id=${encodeURIComponent(pgId)}`);
-                    const j = await r.json();
-                    setSelectOptionsFromData(programSel, j, 'id', 'id', 'Select program');
-                    programSel.disabled = j.length === 0;
+                    const j = await cachedGet(`/erd/programs?pg_id=${encodeURIComponent(pgId)}`);
+                    if (Array.isArray(j)) {
+                        const rows = j.map(r => ({...r, _label: r.name || r.program_name || r.id}));
+                        setSelectOptionsFromData(programSel, rows, 'id', '_label', 'Select program');
+                        programSel.disabled = rows.length === 0;
+                    } else {
+                        setSelectOptions(programSel, [], 'Select program');
+                        programSel.disabled = true;
+                    }
                 } catch {
                     setSelectOptions(programSel, [], 'Select program');
                     programSel.disabled = true;
@@ -1384,43 +1395,73 @@
             }
             async function loadCsoSuper() {
                 try {
-                    const r = await fetch('/erd/cso-super-categories');
-                    const j = await r.json();
-                    setSelectOptionsFromData(csoSuperSel, j, 'id', 'name', 'Select super category');
+                    const j = await cachedGet('/erd/cso-super-categories');
+                    setSelectOptionsFromData(csoSuperSel, j || [], 'id', 'name', 'Select super category');
                 } catch { setSelectOptions(csoSuperSel, [], 'Select super category'); }
             }
             async function loadCsoTypes() {
                 try {
                     const sid = csoSuperSel.value;
-                    const r = await fetch(`/erd/cso-types?cso_super_category_id=${encodeURIComponent(sid)}`);
-                    const j = await r.json();
-                    setSelectOptionsFromData(csoTypeSel, j, 'id', 'name', 'Select CSO type');
-                    csoTypeSel.disabled = j.length === 0;
+                    const j = await cachedGet(`/erd/cso-types?cso_super_category_id=${encodeURIComponent(sid)}`);
+                    setSelectOptionsFromData(csoTypeSel, j || [], 'id', 'name', 'Select CSO type');
+                    csoTypeSel.disabled = !j || j.length === 0;
                 } catch { setSelectOptions(csoTypeSel, [], 'Select CSO type'); csoTypeSel.disabled = true; }
             }
 
             function toggleTierSections() {
                 const tier = tierSel?.value || 'Value Chain';
                 document.getElementById('vc_fields').style.display = (tier === 'Value Chain') ? '' : 'none';
-                document.getElementById('pg_fields').style.display = (tier === 'Public Goods & Governance') ? '' : 'none';
+                document.getElementById('pg_fields').style.display = (tier === 'Public Goods & Governance') ? '' :
+                    'none';
                 document.getElementById('cso_fields').style.display = (tier === 'CSO') ? '' : 'none';
             }
 
             // Wire events
+            function validateWizard() {
+                const tier = tierSel?.value || 'Value Chain';
+                const errors = [];
+                if (!document.getElementById('w_engine').value) errors.push('Engine is required');
+                if (!document.getElementById('w_env').value) errors.push('Environment is required');
+                if (tier === 'Value Chain') {
+                    if (!stageSel?.value) errors.push('Stage is required for Value Chain');
+                    if (!indSel?.value) errors.push('Industry is required for Value Chain');
+                    if (!subSel?.value) errors.push('Subindustry is required for Value Chain');
+                }
+                if (tier === 'Public Goods & Governance') {
+                    if (!pgSel?.value) errors.push('Public Good is required');
+                    if (!orgSel?.value) errors.push('Lead Organization is required');
+                    if (!programSel?.value) errors.push('Program is required');
+                }
+                if (tier === 'CSO') {
+                    if (!csoSuperSel?.value) errors.push('CSO Super Category is required');
+                    if (!csoTypeSel?.value) errors.push('CSO Type is required');
+                }
+                const errEl = document.getElementById('w_errors');
+                const btn = document.getElementById('w_generate');
+                if (errors.length) {
+                    if (errEl) { errEl.style.display = ''; errEl.textContent = errors.join(' • '); }
+                    if (btn) btn.disabled = true;
+                } else {
+                    if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+                    if (btn) btn.disabled = false;
+                }
+                return errors.length === 0;
+            }
             if (tierSel) {
                 tierSel.addEventListener('change', function() {
                     toggleTierSections();
                     updateSuggestedText();
+                    validateWizard();
                 });
             }
-            if (stageSel) stageSel.addEventListener('change', () => { loadIndustriesForStage(); updateSuggestedText(); });
-            if (indSel) indSel.addEventListener('change', () => { loadSubindustriesForIndustry(); updateSuggestedText(); });
-            if (subSel) subSel.addEventListener('change', updateSuggestedText);
-            if (pgSel) pgSel.addEventListener('change', async () => { await loadProgramsForPg(); updateSuggestedText(); });
-            if (orgSel) orgSel.addEventListener('change', updateSuggestedText);
-            if (programSel) programSel.addEventListener('change', updateSuggestedText);
-            if (csoSuperSel) csoSuperSel.addEventListener('change', async () => { await loadCsoTypes(); updateSuggestedText(); });
-            if (csoTypeSel) csoTypeSel.addEventListener('change', updateSuggestedText);
+            if (stageSel) stageSel.addEventListener('change', () => { loadIndustriesForStage(); updateSuggestedText(); validateWizard(); });
+            if (indSel) indSel.addEventListener('change', () => { loadSubindustriesForIndustry(); updateSuggestedText(); validateWizard(); });
+            if (subSel) subSel.addEventListener('change', () => { updateSuggestedText(); validateWizard(); });
+            if (pgSel) pgSel.addEventListener('change', async () => { await loadProgramsForPg(); updateSuggestedText(); validateWizard(); });
+            if (orgSel) orgSel.addEventListener('change', () => { updateSuggestedText(); validateWizard(); });
+            if (programSel) programSel.addEventListener('change', () => { updateSuggestedText(); validateWizard(); });
+            if (csoSuperSel) csoSuperSel.addEventListener('change', async () => { await loadCsoTypes(); updateSuggestedText(); validateWizard(); });
+            if (csoTypeSel) csoTypeSel.addEventListener('change', () => { updateSuggestedText(); validateWizard(); });
 
             // Initial loads
             loadStages();
@@ -1428,9 +1469,18 @@
             loadGovOrgs();
             loadCsoSuper();
             toggleTierSections();
-            if (indSel) { setSelectOptions(indSel, [], 'Choose industry'); indSel.disabled = true; }
-            if (subSel) { setSelectOptions(subSel, [], 'Choose subindustry'); subSel.disabled = true; }
-            if (programSel) { setSelectOptions(programSel, [], 'Select program'); programSel.disabled = true; }
+            if (indSel) {
+                setSelectOptions(indSel, [], 'Choose industry');
+                indSel.disabled = true;
+            }
+            if (subSel) {
+                setSelectOptions(subSel, [], 'Choose subindustry');
+                subSel.disabled = true;
+            }
+            if (programSel) {
+                setSelectOptions(programSel, [], 'Select program');
+                programSel.disabled = true;
+            }
             // Cross Enablers
             const enWrap = document.getElementById('w_enablers');
             if (enWrap) {
@@ -1449,6 +1499,7 @@
                 });
             }
             updateSuggestedText();
+            validateWizard();
         });
     </script>
     <script>
@@ -1488,15 +1539,19 @@
             const stageEl = document.getElementById('w_stage');
             const indEl = document.getElementById('w_industry');
             const subEl = document.getElementById('w_subindustry');
-            const stage = stageEl?.selectedOptions?.[0]?.dataset?.name || stageEl?.selectedOptions?.[0]?.textContent || stageEl?.value || '';
-            const ind = indEl?.selectedOptions?.[0]?.dataset?.name || indEl?.selectedOptions?.[0]?.textContent || indEl?.value || '';
-            const sub = subEl?.selectedOptions?.[0]?.dataset?.name || subEl?.selectedOptions?.[0]?.textContent || subEl?.value || '';
+            const stage = stageEl?.selectedOptions?.[0]?.dataset?.name || stageEl?.selectedOptions?.[0]?.textContent ||
+                stageEl?.value || '';
+            const ind = indEl?.selectedOptions?.[0]?.dataset?.name || indEl?.selectedOptions?.[0]?.textContent || indEl
+                ?.value || '';
+            const sub = subEl?.selectedOptions?.[0]?.dataset?.name || subEl?.selectedOptions?.[0]?.textContent || subEl
+                ?.value || '';
             const pg = document.getElementById('w_pg')?.selectedOptions?.[0]?.textContent || '';
             const org = document.getElementById('w_lead_org')?.selectedOptions?.[0]?.textContent || '';
             const program = document.getElementById('w_program')?.selectedOptions?.[0]?.textContent || '';
             const csoSuper = document.getElementById('w_cso_super')?.selectedOptions?.[0]?.textContent || '';
             const csoType = document.getElementById('w_cso_type')?.selectedOptions?.[0]?.textContent || '';
-            const enablers = Array.from(document.querySelectorAll('#w_enablers input[type=checkbox]:checked')).map(cb => cb.value);
+            const enablers = Array.from(document.querySelectorAll('#w_enablers input[type=checkbox]:checked')).map(cb => cb
+                .value);
             const suggested = scopeSuggest(tier, sub, stage, enablers);
             const el = document.getElementById('w_suggested');
             if (el) {
@@ -1504,7 +1559,13 @@
             }
             // Update name field placeholder suggestion
             const nameEl = document.getElementById('w_name');
-            const suggestedName = suggestNameByTier(tier, stage, ind, sub, { public_good: pg, lead_org: org, program, cso_super: csoSuper, cso_type: csoType });
+            const suggestedName = suggestNameByTier(tier, stage, ind, sub, {
+                public_good: pg,
+                lead_org: org,
+                program,
+                cso_super: csoSuper,
+                cso_type: csoType
+            });
             if (nameEl && !nameEl.value) nameEl.placeholder = suggestedName;
             return suggested;
         }
@@ -1608,9 +1669,12 @@
             const stageEl = document.getElementById('w_stage');
             const industryEl = document.getElementById('w_industry');
             const subEl = document.getElementById('w_subindustry');
-            const stage = stageEl?.selectedOptions?.[0]?.dataset?.name || stageEl?.selectedOptions?.[0]?.textContent || stageEl?.value || '';
-            const industry = industryEl?.selectedOptions?.[0]?.dataset?.name || industryEl?.selectedOptions?.[0]?.textContent || industryEl?.value || '';
-            const subindustry = subEl?.selectedOptions?.[0]?.dataset?.name || subEl?.selectedOptions?.[0]?.textContent || subEl?.value || '';
+            const stage = stageEl?.selectedOptions?.[0]?.dataset?.name || stageEl?.selectedOptions?.[0]?.textContent ||
+                stageEl?.value || '';
+            const industry = industryEl?.selectedOptions?.[0]?.dataset?.name || industryEl?.selectedOptions?.[0]
+                ?.textContent || industryEl?.value || '';
+            const subindustry = subEl?.selectedOptions?.[0]?.dataset?.name || subEl?.selectedOptions?.[0]
+                ?.textContent || subEl?.value || '';
             const stage_id = stageEl?.value || '';
             const industry_id = industryEl?.value || '';
             const subindustry_id = subEl?.value || '';
@@ -1630,11 +1694,23 @@
             const cso_super_category_id = csoSuperEl?.value || '';
             const cso_type_id = csoTypeEl?.value || '';
             const scopes = selectedWizardScopes();
-            const name = document.getElementById('w_name').value || suggestNameByTier(tier, stage, industry, subindustry, { public_good: pg_name, program: program_name, cso_super: cso_super_name, cso_type: cso_type_name });
+            const name = document.getElementById('w_name').value || suggestNameByTier(tier, stage, industry,
+                subindustry, {
+                    public_good: pg_name,
+                    program: program_name,
+                    cso_super: cso_super_name,
+                    cso_type: cso_type_name
+                });
             const owner_email = document.getElementById('w_owner_email').value || 'owner@example.com';
             const engine = document.getElementById('w_engine').value;
             const env = document.getElementById('w_env').value;
-            const tax_path = buildPath(tier, stage, industry, subindustry, { public_good: pg_name, lead_org: lead_org_name, program: program_name, cso_super: cso_super_name, cso_type: cso_type_name });
+            const tax_path = buildPath(tier, stage, industry, subindustry, {
+                public_good: pg_name,
+                lead_org: lead_org_name,
+                program: program_name,
+                cso_super: cso_super_name,
+                cso_type: cso_type_name
+            });
             const body = new URLSearchParams();
             body.set('name', name);
             body.set('owner_email', owner_email);
