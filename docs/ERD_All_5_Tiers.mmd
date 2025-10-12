@@ -1,0 +1,228 @@
+
+erDiagram
+
+  %% ---------- 1) VALUE CHAIN INDUSTRIES ----------
+  INDUSTRY {
+    INT industry_id PK
+    VARCHAR industry_name
+    TEXT notes
+  }
+  SUBINDUSTRY {
+    INT subindustry_id PK
+    INT industry_id FK
+    VARCHAR subindustry_name
+  }
+  VALUE_CHAIN_STAGE {
+    INT stage_id PK
+    VARCHAR stage_name
+    TEXT description
+  }
+
+  SUBINDUSTRY }o--|| INDUSTRY : "N:1"
+  %% VALUE_CHAIN_STAGE stands alone; linked by PROGRAM_STAGE_MAP
+
+  %% ---------- 2) PUBLIC GOODS & GOVERNANCE (combined) ----------
+  PUBLIC_GOOD {
+    INT pg_id PK
+    VARCHAR name
+  }
+  GOV_ORG {
+    INT org_id PK
+    VARCHAR name
+    VARCHAR org_type
+    VARCHAR jurisdiction
+    BOOLEAN is_soe
+    INT parent_org_id FK
+  }
+  PROGRAM {
+    INT program_id PK
+    INT pg_id FK
+    INT lead_org_id FK
+    VARCHAR delivery_mode
+    VARCHAR benefit_type
+    VARCHAR status
+  }
+  REGULATION_DOMAIN {
+    INT domain_id PK
+    VARCHAR name
+  }
+  LEGAL_INSTRUMENT {
+    INT instr_id PK
+    INT domain_id FK
+    VARCHAR jurisdiction
+    VARCHAR title
+    VARCHAR citation
+    DATE effective_date
+  }
+  REGULATED_SECTOR {
+    INT reg_sec_id PK
+    INT domain_id FK
+    INT industry_id FK
+    INT subindustry_id FK
+    TEXT notes
+  }
+  COMPLIANCE_OBLIGATION {
+    INT obligation_id PK
+    INT domain_id FK
+    TEXT description
+    VARCHAR control_type
+  }
+  PROGRAM_OBLIGATION_MAP {
+    INT program_id FK
+    INT obligation_id FK
+    %% (PK: program_id, obligation_id)
+  }
+  SERVICE_CHANNEL {
+    INT channel_id PK
+    VARCHAR name
+    VARCHAR channel_type
+  }
+  FACILITY_SITE {
+    INT site_id PK
+    INT channel_id FK
+    INT operator_org_id FK
+    VARCHAR site_type
+    VARCHAR geo_ref
+  }
+  PROGRAM_SITE_MAP {
+    INT program_id FK
+    INT site_id FK
+    %% (PK: program_id, site_id)
+  }
+  PROGRAM_STAGE_MAP {
+    INT program_id FK
+    INT stage_id FK
+    %% (PK: program_id, stage_id)
+  }
+  PROVIDER_REGISTRY {
+    INT provider_id PK
+    VARCHAR provider_type
+    VARCHAR site_link_type
+    INT org_id FK
+    INT cso_type_id FK
+    INT industry_id FK
+    VARCHAR accreditation_status
+  }
+  BENEFICIARY_GROUP {
+    INT group_id PK
+    VARCHAR name
+    TEXT criteria
+  }
+  PROGRAM_ELIGIBILITY {
+    INT program_id FK
+    INT group_id FK
+    TEXT rule_ref
+    %% (PK: program_id, group_id)
+  }
+  FUNDING_SOURCE {
+    INT source_id PK
+    VARCHAR name
+    VARCHAR type
+  }
+  PROGRAM_FUNDING {
+    INT program_id FK
+    INT source_id FK
+    DECIMAL amount
+    INT fiscal_year
+    %% (PK: program_id, source_id, fiscal_year)
+  }
+  KPI_LIBRARY {
+    INT kpi_id PK
+    VARCHAR kpi_name
+  }
+  PROGRAM_KPI {
+    INT program_id FK
+    INT kpi_id FK
+    VARCHAR target
+    VARCHAR baseline
+    VARCHAR unit
+    %% (PK: program_id, kpi_id)
+  }
+  GRIEVANCE_CHANNEL {
+    INT gch_id PK
+    INT program_id FK
+    VARCHAR channel_type
+  }
+  GRIEVANCE_CASE {
+    INT case_id PK
+    INT program_id FK
+    INT gch_id FK
+    VARCHAR status
+  }
+
+  PROGRAM }o--|| PUBLIC_GOOD : "N:1"
+  PROGRAM }o--|| GOV_ORG : "lead"
+  GOV_ORG ||--o{ GOV_ORG : "parent of"
+  LEGAL_INSTRUMENT }o--|| REGULATION_DOMAIN : "N:1"
+  COMPLIANCE_OBLIGATION }o--|| REGULATION_DOMAIN : "N:1"
+  REGULATED_SECTOR }o--|| REGULATION_DOMAIN : "N:1"
+  REGULATED_SECTOR }o--|| INDUSTRY : "N:1"
+  REGULATED_SECTOR }o--o{ SUBINDUSTRY : "opt N:1"
+  PROGRAM_OBLIGATION_MAP }o--|| PROGRAM : "N:1"
+  PROGRAM_OBLIGATION_MAP }o--|| COMPLIANCE_OBLIGATION : "N:1"
+  FACILITY_SITE }o--|| SERVICE_CHANNEL : "N:1"
+  FACILITY_SITE }o--o| GOV_ORG : "operator"
+  PROGRAM_SITE_MAP }o--|| PROGRAM : "N:1"
+  PROGRAM_SITE_MAP }o--|| FACILITY_SITE : "N:1"
+  PROGRAM_STAGE_MAP }o--|| PROGRAM : "N:1"
+  PROGRAM_STAGE_MAP }o--|| VALUE_CHAIN_STAGE : "N:1"
+  PROVIDER_REGISTRY }o--o| GOV_ORG : "provider-org"
+  PROVIDER_REGISTRY }o--o{ INDUSTRY : "provider-industry"
+  PROGRAM_ELIGIBILITY }o--|| PROGRAM : "N:1"
+  PROGRAM_ELIGIBILITY }o--|| BENEFICIARY_GROUP : "N:1"
+  PROGRAM_FUNDING }o--|| PROGRAM : "N:1"
+  PROGRAM_FUNDING }o--|| FUNDING_SOURCE : "N:1"
+  PROGRAM_KPI }o--|| PROGRAM : "N:1"
+  PROGRAM_KPI }o--|| KPI_LIBRARY : "N:1"
+  GRIEVANCE_CHANNEL }o--|| PROGRAM : "N:1"
+  GRIEVANCE_CASE }o--|| PROGRAM : "N:1"
+  GRIEVANCE_CASE }o--|| GRIEVANCE_CHANNEL : "N:1"
+
+  %% ---------- 3) CSO ----------
+  CSO_SUPER_CATEGORY {
+    INT cso_super_category_id PK
+    VARCHAR name
+  }
+  CSO_TYPE {
+    INT cso_type_id PK
+    INT cso_super_category_id FK
+    VARCHAR name
+  }
+  CSO_TYPE_PUBLIC_GOOD_MAP {
+    INT cso_type_id FK
+    INT pg_id FK
+    %% (PK: cso_type_id, pg_id)
+  }
+  CSO_TYPE_VALUE_CHAIN_STAGE_MAP {
+    INT cso_type_id FK
+    INT stage_id FK
+    %% (PK: cso_type_id, stage_id)
+  }
+  CSO_TYPE_REGULATOR_MAP {
+    INT cso_type_id FK
+    INT domain_id FK
+    INT org_id FK
+    %% (PK: cso_type_id, domain_id, org_id)
+  }
+
+  CSO_TYPE }o--|| CSO_SUPER_CATEGORY : "N:1"
+  CSO_TYPE_PUBLIC_GOOD_MAP }o--|| CSO_TYPE : "N:1"
+  CSO_TYPE_PUBLIC_GOOD_MAP }o--|| PUBLIC_GOOD : "N:1"
+  CSO_TYPE_VALUE_CHAIN_STAGE_MAP }o--|| CSO_TYPE : "N:1"
+  CSO_TYPE_VALUE_CHAIN_STAGE_MAP }o--|| VALUE_CHAIN_STAGE : "N:1"
+  CSO_TYPE_REGULATOR_MAP }o--|| CSO_TYPE : "N:1"
+  CSO_TYPE_REGULATOR_MAP }o--|| REGULATION_DOMAIN : "N:1"
+  CSO_TYPE_REGULATOR_MAP }o--|| GOV_ORG : "N:1"
+  PROVIDER_REGISTRY }o--o{ CSO_TYPE : "provider-cso (optional)"
+
+  %% ---------- 4) MEDIA INDUSTRIES (logical) ----------
+  MEDIA_SECTORS {
+    NOTE "Broadcasting, Print, Digital/Streaming, Film/TV, Music, Advertising/OOH, Gaming/Esports, Newsrooms"
+  }
+  MEDIA_SECTORS ||..|| INDUSTRY : "represented in industry/subindustry"
+
+  %% ---------- 5) FINANCIAL INDUSTRIES (logical) ----------
+  FINANCIAL_SECTORS {
+    NOTE "Banking, Payments, Capital Markets, Insurance, Pensions, Microfinance, Fintech, Credit Bureaus"
+  }
+  FINANCIAL_SECTORS ||..|| INDUSTRY : "represented in industry/subindustry"

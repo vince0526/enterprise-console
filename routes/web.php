@@ -29,6 +29,14 @@ Route::get('/health', function () {
 
 // Make Core Databases the default entry across all environments
 Route::get('/', fn () => redirect('/emc/core'));
+// Lightweight read-only endpoints for ERD taxonomies/programs (temporary for verification)
+Route::prefix('erd')->group(function () {
+    Route::get('industries', [\App\Http\Controllers\Web\Erd\ErdBrowseController::class, 'industries']);
+    Route::get('subindustries', [\App\Http\Controllers\Web\Erd\ErdBrowseController::class, 'subindustries']);
+    Route::get('stages', [\App\Http\Controllers\Web\Erd\ErdBrowseController::class, 'stages']);
+    Route::get('public-goods', [\App\Http\Controllers\Web\Erd\ErdBrowseController::class, 'publicGoods']);
+    Route::get('programs', [\App\Http\Controllers\Web\Erd\ErdBrowseController::class, 'programs']);
+});
 
 // If dev auto login is enabled, expose dashboard without auth middleware.
 if (config('app.dev_auto_login', false)) {
