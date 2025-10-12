@@ -19,76 +19,146 @@ class ErdBrowseController extends Controller
 {
     public function industries(Request $request)
     {
-        $qb = Industry::query()->orderBy('industry_name');
+        $qb = Industry::query();
         if ($request->filled('q')) {
             $q = trim((string) $request->get('q'));
             $qb->where('industry_name', 'like', "%$q%");
         }
-        $resp = response()->json($qb->get());
+        [$limit, $offset] = $this->limitOffset($request);
+        $items = $qb->orderBy('industry_name')->skip($offset)->take($limit)->get();
+        $resp = response()->json($items);
 
         return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
     public function subindustries(Request $request)
     {
-        $qb = Subindustry::with('industry')->orderBy('subindustry_name');
+        $qb = Subindustry::with('industry');
         if ($request->filled('industry_id')) {
             $qb->where('industry_id', (int) $request->integer('industry_id'));
         }
-
-        $resp = response()->json($qb->get());
-
-        return $resp->header('Cache-Control', 'public, max-age=60');
-    }
-
-    public function stages()
-    {
-        $resp = response()->json(ValueChainStage::orderBy('stage_name')->get());
+        if ($request->filled('q')) {
+            $q = trim((string) $request->get('q'));
+            $qb->where('subindustry_name', 'like', "%$q%");
+        }
+        [$limit, $offset] = $this->limitOffset($request);
+        $items = $qb->orderBy('subindustry_name')->skip($offset)->take($limit)->get();
+        $resp = response()->json($items);
 
         return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
-    public function publicGoods()
+    public function stages(Request $request)
     {
-        $resp = response()->json(PublicGood::orderBy('name')->get());
+        $qb = ValueChainStage::query();
+        if ($request->filled('q')) {
+            $q = trim((string) $request->get('q'));
+            $qb->where('stage_name', 'like', "%$q%");
+        }
+        [$limit, $offset] = $this->limitOffset($request);
+        $items = $qb->orderBy('stage_name')->skip($offset)->take($limit)->get();
+        $resp = response()->json($items);
+
+        return $resp->header('Cache-Control', 'public, max-age=60');
+    }
+
+    public function publicGoods(Request $request)
+    {
+        $qb = PublicGood::query();
+        if ($request->filled('q')) {
+            $q = trim((string) $request->get('q'));
+            $qb->where('name', 'like', "%$q%");
+        }
+        [$limit, $offset] = $this->limitOffset($request);
+        $items = $qb->orderBy('name')->skip($offset)->take($limit)->get();
+        $resp = response()->json($items);
 
         return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
     public function programs(Request $request)
     {
-        $qb = Program::query()->orderBy('id');
+        $qb = Program::query();
         if ($request->filled('pg_id')) {
             $qb->where('pg_id', (int) $request->integer('pg_id'));
         }
-        $resp = response()->json($qb->limit(500)->get());
+        if ($request->filled('lead_org_id')) {
+            $qb->where('lead_org_id', (int) $request->integer('lead_org_id'));
+        }
+        if ($request->filled('status')) {
+            $qb->where('status', (string) $request->get('status'));
+        }
+        [$limit, $offset] = $this->limitOffset($request, 100, 500);
+        $items = $qb->orderBy('id')->skip($offset)->take($limit)->get();
+        $resp = response()->json($items);
 
         return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
-    public function govOrgs()
+    public function govOrgs(Request $request)
     {
-        $resp = response()->json(GovOrg::orderBy('name')->get());
+        $qb = GovOrg::query();
+        if ($request->filled('q')) {
+            $q = trim((string) $request->get('q'));
+            $qb->where('name', 'like', "%$q%");
+        }
+        if ($request->filled('org_type')) {
+            $qb->where('org_type', (string) $request->get('org_type'));
+        }
+        if ($request->filled('jurisdiction')) {
+            $qb->where('jurisdiction', (string) $request->get('jurisdiction'));
+        }
+        if ($request->filled('is_soe')) {
+            $qb->where('is_soe', (bool) $request->boolean('is_soe'));
+        }
+        if ($request->filled('parent_org_id')) {
+            $qb->where('parent_org_id', (int) $request->integer('parent_org_id'));
+        }
+        [$limit, $offset] = $this->limitOffset($request);
+        $items = $qb->orderBy('name')->skip($offset)->take($limit)->get();
+        $resp = response()->json($items);
 
         return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
-    public function csoSuperCategories()
+    public function csoSuperCategories(Request $request)
     {
-        $resp = response()->json(CsoSuperCategory::orderBy('name')->get());
+        $qb = CsoSuperCategory::query();
+        if ($request->filled('q')) {
+            $q = trim((string) $request->get('q'));
+            $qb->where('name', 'like', "%$q%");
+        }
+        [$limit, $offset] = $this->limitOffset($request);
+        $items = $qb->orderBy('name')->skip($offset)->take($limit)->get();
+        $resp = response()->json($items);
 
         return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
     public function csoTypes(Request $request)
     {
-        $qb = CsoType::query()->orderBy('name');
+        $qb = CsoType::query();
         if ($request->filled('cso_super_category_id')) {
             $qb->where('cso_super_category_id', (int) $request->integer('cso_super_category_id'));
         }
-
-        $resp = response()->json($qb->get());
+        if ($request->filled('q')) {
+            $q = trim((string) $request->get('q'));
+            $qb->where('name', 'like', "%$q%");
+        }
+        [$limit, $offset] = $this->limitOffset($request);
+        $items = $qb->orderBy('name')->skip($offset)->take($limit)->get();
+        $resp = response()->json($items);
 
         return $resp->header('Cache-Control', 'public, max-age=60');
+    }
+
+    /** @return array{0:int,1:int} */
+    private function limitOffset(Request $request, int $default = 100, int $cap = 500): array
+    {
+        $limit = (int) $request->integer('limit', $default);
+        $limit = max(1, min($cap, $limit));
+        $offset = (int) max(0, (int) $request->integer('offset', 0));
+
+        return [$limit, $offset];
     }
 }
