@@ -24,28 +24,51 @@ class ErdCsoSeeder extends Seeder
         ];
         $typeMap = [
             'Non-Governmental Organizations' => [
-                'Advocacy NGO', 'Service NGO', 'Environmental NGO', 'Human Rights NGO', 'Health NGO',
+                'Advocacy NGO',
+                'Service NGO',
+                'Environmental NGO',
+                'Human Rights NGO',
+                'Health NGO',
             ],
             'Community-Based Organizations' => [
-                'Residents Association', 'Youth Group', 'Women’s Group', 'Farmers Group', 'Neighborhood Watch',
+                'Residents Association',
+                'Youth Group',
+                'Women’s Group',
+                'Farmers Group',
+                'Neighborhood Watch',
             ],
             'Faith-Based Organizations' => [
-                'Church Group', 'Relief Arm', 'Missionary Society', 'Interfaith Council',
+                'Church Group',
+                'Relief Arm',
+                'Missionary Society',
+                'Interfaith Council',
             ],
             'Professional Associations' => [
-                'Medical Association', 'Teachers Union', 'Bar Association', 'Engineers Society', 'Accountants Institute',
+                'Medical Association',
+                'Teachers Union',
+                'Bar Association',
+                'Engineers Society',
+                'Accountants Institute',
             ],
             'Trade Unions' => [
-                'Manufacturing Workers Union', 'Transport Workers Union', 'Public Sector Union',
+                'Manufacturing Workers Union',
+                'Transport Workers Union',
+                'Public Sector Union',
             ],
             'Cooperatives' => [
-                'Savings & Credit Cooperative', 'Agricultural Cooperative', 'Housing Cooperative',
+                'Savings & Credit Cooperative',
+                'Agricultural Cooperative',
+                'Housing Cooperative',
             ],
             'Foundations' => [
-                'Corporate Foundation', 'Family Foundation', 'Community Foundation',
+                'Corporate Foundation',
+                'Family Foundation',
+                'Community Foundation',
             ],
             'Social Enterprises' => [
-                'Impact Venture', 'Fair-Trade Enterprise', 'B-Corp',
+                'Impact Venture',
+                'Fair-Trade Enterprise',
+                'B-Corp',
             ],
         ];
         foreach ($super as $name) {

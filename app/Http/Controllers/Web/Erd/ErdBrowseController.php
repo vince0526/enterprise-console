@@ -17,9 +17,16 @@ use Illuminate\Http\Request;
 
 class ErdBrowseController extends Controller
 {
-    public function industries()
+    public function industries(Request $request)
     {
-        return response()->json(Industry::orderBy('industry_name')->get());
+        $qb = Industry::query()->orderBy('industry_name');
+        if ($request->filled('q')) {
+            $q = trim((string) $request->get('q'));
+            $qb->where('industry_name', 'like', "%$q%");
+        }
+        $resp = response()->json($qb->get());
+
+        return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
     public function subindustries(Request $request)
@@ -29,17 +36,23 @@ class ErdBrowseController extends Controller
             $qb->where('industry_id', (int) $request->integer('industry_id'));
         }
 
-        return response()->json($qb->get());
+        $resp = response()->json($qb->get());
+
+        return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
     public function stages()
     {
-        return response()->json(ValueChainStage::orderBy('stage_name')->get());
+        $resp = response()->json(ValueChainStage::orderBy('stage_name')->get());
+
+        return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
     public function publicGoods()
     {
-        return response()->json(PublicGood::orderBy('name')->get());
+        $resp = response()->json(PublicGood::orderBy('name')->get());
+
+        return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
     public function programs(Request $request)
@@ -48,18 +61,23 @@ class ErdBrowseController extends Controller
         if ($request->filled('pg_id')) {
             $qb->where('pg_id', (int) $request->integer('pg_id'));
         }
+        $resp = response()->json($qb->limit(500)->get());
 
-        return response()->json($qb->limit(500)->get());
+        return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
     public function govOrgs()
     {
-        return response()->json(GovOrg::orderBy('name')->get());
+        $resp = response()->json(GovOrg::orderBy('name')->get());
+
+        return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
     public function csoSuperCategories()
     {
-        return response()->json(CsoSuperCategory::orderBy('name')->get());
+        $resp = response()->json(CsoSuperCategory::orderBy('name')->get());
+
+        return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
     public function csoTypes(Request $request)
@@ -69,6 +87,8 @@ class ErdBrowseController extends Controller
             $qb->where('cso_super_category_id', (int) $request->integer('cso_super_category_id'));
         }
 
-        return response()->json($qb->get());
+        $resp = response()->json($qb->get());
+
+        return $resp->header('Cache-Control', 'public, max-age=60');
     }
 }
