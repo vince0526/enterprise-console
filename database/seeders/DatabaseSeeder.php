@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             CoreSubmodulesSeeder::class,
             ErdTaxonomySeeder::class,
             ErdProgramSeeder::class,
+            ErdCsoSeeder::class,
         ]);
     }
 }

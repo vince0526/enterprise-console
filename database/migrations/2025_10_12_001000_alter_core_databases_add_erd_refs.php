@@ -62,9 +62,14 @@ return new class extends Migration
             $table->dropIndex(['pg_id', 'lead_org_id', 'program_id']);
             $table->dropIndex(['cso_super_category_id', 'cso_type_id']);
             $table->dropColumn([
-                'stage_id', 'industry_id', 'subindustry_id',
-                'pg_id', 'lead_org_id', 'program_id',
-                'cso_super_category_id', 'cso_type_id',
+                'stage_id',
+                'industry_id',
+                'subindustry_id',
+                'pg_id',
+                'lead_org_id',
+                'program_id',
+                'cso_super_category_id',
+                'cso_type_id',
             ]);
         });
     }

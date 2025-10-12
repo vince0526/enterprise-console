@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Erd;
 
 use App\Http\Controllers\Controller;
+use App\Models\CsoSuperCategory;
+use App\Models\CsoType;
 use App\Models\GovOrg;
 use App\Models\Industry;
 use App\Models\Program;
@@ -53,5 +55,20 @@ class ErdBrowseController extends Controller
     public function govOrgs()
     {
         return response()->json(GovOrg::orderBy('name')->get());
+    }
+
+    public function csoSuperCategories()
+    {
+        return response()->json(CsoSuperCategory::orderBy('name')->get());
+    }
+
+    public function csoTypes(Request $request)
+    {
+        $qb = CsoType::query()->orderBy('name');
+        if ($request->filled('cso_super_category_id')) {
+            $qb->where('cso_super_category_id', (int) $request->integer('cso_super_category_id'));
+        }
+
+        return response()->json($qb->get());
     }
 }

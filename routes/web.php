@@ -37,6 +37,8 @@ Route::prefix('erd')->group(function () {
     Route::get('public-goods', [\App\Http\Controllers\Web\Erd\ErdBrowseController::class, 'publicGoods']);
     Route::get('programs', [\App\Http\Controllers\Web\Erd\ErdBrowseController::class, 'programs']);
     Route::get('gov-orgs', [\App\Http\Controllers\Web\Erd\ErdBrowseController::class, 'govOrgs']);
+    Route::get('cso-super-categories', [\App\Http\Controllers\Web\Erd\ErdBrowseController::class, 'csoSuperCategories']);
+    Route::get('cso-types', [\App\Http\Controllers\Web\Erd\ErdBrowseController::class, 'csoTypes']);
 });
 
 // If dev auto login is enabled, expose dashboard without auth middleware.
