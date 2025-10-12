@@ -17,10 +17,14 @@ class ErdProgramSeeder extends Seeder
     {
         // Government Orgs
         $ministry = GovOrg::firstOrCreate(['name' => 'Ministry of Health'], [
-            'org_type' => 'Ministry', 'jurisdiction' => 'National', 'is_soe' => false,
+            'org_type' => 'Ministry',
+            'jurisdiction' => 'National',
+            'is_soe' => false,
         ]);
         $agency = GovOrg::firstOrCreate(['name' => 'National Health Agency'], [
-            'org_type' => 'Agency', 'jurisdiction' => 'National', 'is_soe' => false,
+            'org_type' => 'Agency',
+            'jurisdiction' => 'National',
+            'is_soe' => false,
             'parent_org_id' => $ministry->id,
         ]);
 

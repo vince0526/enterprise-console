@@ -5,11 +5,13 @@ declare(strict_types=1);
 namespace App\Http\Controllers\Web\Erd;
 
 use App\Http\Controllers\Controller;
+use App\Models\GovOrg;
 use App\Models\Industry;
 use App\Models\Program;
 use App\Models\PublicGood;
 use App\Models\Subindustry;
 use App\Models\ValueChainStage;
+use Illuminate\Http\Request;
 
 class ErdBrowseController extends Controller
 {
@@ -18,9 +20,14 @@ class ErdBrowseController extends Controller
         return response()->json(Industry::orderBy('industry_name')->get());
     }
 
-    public function subindustries()
+    public function subindustries(Request $request)
     {
-        return response()->json(Subindustry::with('industry')->orderBy('subindustry_name')->get());
+        $qb = Subindustry::with('industry')->orderBy('subindustry_name');
+        if ($request->filled('industry_id')) {
+            $qb->where('industry_id', (int) $request->integer('industry_id'));
+        }
+
+        return response()->json($qb->get());
     }
 
     public function stages()
@@ -33,8 +40,18 @@ class ErdBrowseController extends Controller
         return response()->json(PublicGood::orderBy('name')->get());
     }
 
-    public function programs()
+    public function programs(Request $request)
     {
-        return response()->json(Program::orderBy('id')->limit(200)->get());
+        $qb = Program::query()->orderBy('id');
+        if ($request->filled('pg_id')) {
+            $qb->where('pg_id', (int) $request->integer('pg_id'));
+        }
+
+        return response()->json($qb->limit(500)->get());
+    }
+
+    public function govOrgs()
+    {
+        return response()->json(GovOrg::orderBy('name')->get());
     }
 }

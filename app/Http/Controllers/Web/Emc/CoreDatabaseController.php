@@ -8,6 +8,12 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\CoreDatabaseRequest;
 use App\Models\CoreDatabase;
 use App\Models\DatabaseConnection;
+use App\Models\GovOrg;
+use App\Models\Industry;
+use App\Models\Program as ProgramModel;
+use App\Models\PublicGood;
+use App\Models\Subindustry;
+use App\Models\ValueChainStage;
 use App\Services\CoreDatabaseDdlGenerator;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -109,6 +115,29 @@ class CoreDatabaseController extends Controller
         // Creation requires policy permission; validation handled by CoreDatabaseRequest.
         $this->authorize('create', CoreDatabase::class);
         $data = $request->validated();
+
+        // If ERD IDs are present, fill vc_* fields and tax_path to keep legacy views in sync
+        $tier = (string) ($data['tier'] ?? '');
+        if ($tier === 'Value Chain') {
+            $stage = isset($data['stage_id']) ? ValueChainStage::find($data['stage_id']) : null;
+            $industry = isset($data['industry_id']) ? Industry::find($data['industry_id']) : null;
+            $sub = isset($data['subindustry_id']) ? Subindustry::find($data['subindustry_id']) : null;
+            if ($stage) {
+                $data['vc_stage'] = $stage->stage_name;
+            }
+            if ($industry) {
+                $data['vc_industry'] = $industry->industry_name;
+            }
+            if ($sub) {
+                $data['vc_subindustry'] = $sub->subindustry_name;
+            }
+            $data['tax_path'] = sprintf('Value Chain → %s → %s → %s', $data['vc_stage'] ?? 'Stage', $data['vc_industry'] ?? 'Industry', $data['vc_subindustry'] ?? 'Subindustry');
+        } elseif ($tier === 'Public Goods & Governance') {
+            $pg = isset($data['pg_id']) ? PublicGood::find($data['pg_id']) : null;
+            $lead = isset($data['lead_org_id']) ? GovOrg::find($data['lead_org_id']) : null;
+            $program = isset($data['program_id']) ? ProgramModel::find($data['program_id']) : null;
+            $data['tax_path'] = sprintf('Public Goods → %s → %s → %s', $pg->name ?? 'PG', $lead->name ?? 'Org', $program ? ('Program#'.$program->id) : 'Program');
+        }
 
         CoreDatabase::create($data);
 

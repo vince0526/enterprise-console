@@ -16,7 +16,11 @@ class ErdTaxonomySeeder extends Seeder
     {
         // Value Chain Stages
         $stages = [
-            'Input Sourcing', 'Production', 'Distribution', 'Retail', 'After-Sales',
+            'Input Sourcing',
+            'Production',
+            'Distribution',
+            'Retail',
+            'After-Sales',
         ];
         foreach ($stages as $name) {
             ValueChainStage::firstOrCreate(['stage_name' => $name]);

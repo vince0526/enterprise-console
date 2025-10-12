@@ -47,6 +47,10 @@ class CoreDatabase extends Model
         'functional_scopes',
         'engine',
         'env',
+        // ERD foreign keys for tier-driven selections
+        'stage_id', 'industry_id', 'subindustry_id',
+        'pg_id', 'lead_org_id', 'program_id',
+        'cso_super_category_id', 'cso_type_id',
     ];
 
     /** @var array<string, string> */

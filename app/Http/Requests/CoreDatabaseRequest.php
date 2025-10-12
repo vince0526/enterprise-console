@@ -95,6 +95,15 @@ class CoreDatabaseRequest extends FormRequest
             // Engine + Env are required for generated records
             'engine' => ['required', 'string', 'max:255', Rule::in($this->allowedEngines)],
             'env' => ['required', 'string', 'max:50', Rule::in($this->allowedEnvs)],
+            // ERD references (nullable unless tier dictates)
+            'stage_id' => ['nullable', 'integer', 'exists:value_chain_stages,id'],
+            'industry_id' => ['nullable', 'integer', 'exists:industries,id'],
+            'subindustry_id' => ['nullable', 'integer', 'exists:subindustries,id'],
+            'pg_id' => ['nullable', 'integer', 'exists:public_goods,id'],
+            'lead_org_id' => ['nullable', 'integer', 'exists:gov_orgs,id'],
+            'program_id' => ['nullable', 'integer', 'exists:programs,id'],
+            'cso_super_category_id' => ['nullable', 'integer', 'exists:cso_super_categories,id'],
+            'cso_type_id' => ['nullable', 'integer', 'exists:cso_types,id'],
         ];
     }
 }

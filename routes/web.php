@@ -36,6 +36,7 @@ Route::prefix('erd')->group(function () {
     Route::get('stages', [\App\Http\Controllers\Web\Erd\ErdBrowseController::class, 'stages']);
     Route::get('public-goods', [\App\Http\Controllers\Web\Erd\ErdBrowseController::class, 'publicGoods']);
     Route::get('programs', [\App\Http\Controllers\Web\Erd\ErdBrowseController::class, 'programs']);
+    Route::get('gov-orgs', [\App\Http\Controllers\Web\Erd\ErdBrowseController::class, 'govOrgs']);
 });
 
 // If dev auto login is enabled, expose dashboard without auth middleware.
