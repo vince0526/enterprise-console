@@ -11,7 +11,9 @@ class CoreDatabasePolicy
 {
     private function allowAll(): bool
     {
-        return app()->environment('testing') || (bool) config('app.dev_auto_login', false);
+        // In local and testing environments, or when dev auto-login is enabled,
+        // allow all policy checks to pass for smoother developer experience.
+        return app()->environment(['local', 'testing']) || (bool) config('app.dev_auto_login', false);
     }
 
     public function viewAny(?User $user): bool
@@ -20,7 +22,7 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return (bool) ($user?->can('core.view') ?? false);
+        return (bool) ($user?->can('core.view'));
     }
 
     public function view(?User $user, CoreDatabase $db): bool
@@ -29,7 +31,7 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return (bool) ($user?->can('core.view') ?? false);
+        return (bool) ($user?->can('core.view'));
     }
 
     public function create(?User $user): bool
@@ -38,7 +40,7 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return (bool) ($user?->can('core.create') ?? false);
+        return (bool) ($user?->can('core.create'));
     }
 
     public function update(?User $user, CoreDatabase $db): bool
@@ -47,7 +49,7 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return (bool) ($user?->can('core.update') ?? false);
+        return (bool) ($user?->can('core.update'));
     }
 
     public function delete(?User $user, CoreDatabase $db): bool
@@ -56,7 +58,7 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return (bool) ($user?->can('core.delete') ?? false);
+        return (bool) ($user?->can('core.delete'));
     }
 
     public function manageOwners(?User $user, CoreDatabase $db): bool
@@ -65,7 +67,7 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return (bool) ($user?->can('core.manage-owners') ?? false);
+        return (bool) ($user?->can('core.manage-owners'));
     }
 
     public function manageLifecycle(?User $user, CoreDatabase $db): bool
@@ -74,7 +76,7 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return (bool) ($user?->can('core.manage-lifecycle') ?? false);
+        return (bool) ($user?->can('core.manage-lifecycle'));
     }
 
     public function manageLinks(?User $user, CoreDatabase $db): bool
@@ -83,6 +85,6 @@ class CoreDatabasePolicy
             return true;
         }
 
-        return (bool) ($user?->can('core.manage-links') ?? false);
+        return (bool) ($user?->can('core.manage-links'));
     }
 }
