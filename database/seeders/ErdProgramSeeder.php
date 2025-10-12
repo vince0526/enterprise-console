@@ -40,8 +40,11 @@ class ErdProgramSeeder extends Seeder
             'status' => 'Active',
         ]);
 
-        // Map program to a couple of value chain stages
-        $stageNames = ['Distribution', 'After-Sales'];
+        // Map program to a couple of value chain stages (aligned with updated taxonomy)
+        $stageNames = [
+            'Logistics, Ports & Fulfillment',
+            'After-Sales, Reverse & End-of-Life',
+        ];
         foreach ($stageNames as $name) {
             $stage = ValueChainStage::firstOrCreate(['stage_name' => $name]);
             DB::table('program_stage')->updateOrInsert([

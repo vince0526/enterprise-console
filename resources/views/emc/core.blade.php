@@ -24,7 +24,7 @@
     @endpush
     <style>
         /* TIP: Prefer moving repeated styles into resources/css/emc.css.
-                                                               Keep inline styles here only for small page-specific tweaks. */
+                                                                   Keep inline styles here only for small page-specific tweaks. */
         /* Layout polish */
         .page-header {
             display: flex;
@@ -523,7 +523,8 @@
                                 <div class="wizard-grid-3 mt-4" id="vc_fields">
                                     <div>
                                         <label class="form__label" for="w_stage">Value-Chain Stage</label>
-                                        <select class="form__select" id="w_stage" aria-describedby="w_stage_help"></select>
+                                        <select class="form__select" id="w_stage"
+                                            aria-describedby="w_stage_help"></select>
                                         <div class="text-muted text-xs mt-2">Order: Stage
                                             → Industry → Subindustry</div>
                                     </div>
@@ -611,7 +612,8 @@
                                 </div>
                                 <div id="w_errors" class="text-xs" style="color:#842029; display:none;"></div>
                                 <div class="flex gap-2 justify-end">
-                                    <button type="submit" id="w_generate" class="btn btn--primary" disabled>Generate</button>
+                                    <button type="submit" id="w_generate" class="btn btn--primary"
+                                        disabled>Generate</button>
                                 </div>
                             </form>
                         </div>
@@ -1333,14 +1335,18 @@
             async function loadStages() {
                 try {
                     const j = await cachedGet('/erd/stages');
-                    if (Array.isArray(j) && j.length) setSelectOptionsFromData(stageSel, j, 'id', 'stage_name', 'Pick a stage');
+                    if (Array.isArray(j) && j.length) setSelectOptionsFromData(stageSel, j, 'id', 'stage_name',
+                        'Pick a stage');
                     else setSelectOptions(stageSel, VC_STACK, 'Pick a stage');
-                } catch { setSelectOptions(stageSel, VC_STACK, 'Pick a stage'); }
+                } catch {
+                    setSelectOptions(stageSel, VC_STACK, 'Pick a stage');
+                }
             }
             async function loadIndustriesForStage() {
                 // DB doesn't map stage->industry directly; fallback to static mapping by stage name
                 const stageName = stageSel?.selectedOptions?.[0]?.dataset?.name || stageSel?.selectedOptions?.[
-                    0]?.textContent || '';
+                    0
+                ]?.textContent || '';
                 const inds = STAGE_TO_VC_MAP[stageName] || [];
                 setSelectOptions(indSel, inds, 'Choose industry');
                 indSel.disabled = inds.length === 0;
@@ -1368,20 +1374,27 @@
                 try {
                     const j = await cachedGet('/erd/public-goods');
                     setSelectOptionsFromData(pgSel, j || [], 'id', 'name', 'Select public good');
-                } catch { setSelectOptions(pgSel, [], 'Select public good'); }
+                } catch {
+                    setSelectOptions(pgSel, [], 'Select public good');
+                }
             }
             async function loadGovOrgs() {
                 try {
                     const j = await cachedGet('/erd/gov-orgs');
                     setSelectOptionsFromData(orgSel, j || [], 'id', 'name', 'Select organization');
-                } catch { setSelectOptions(orgSel, [], 'Select organization'); }
+                } catch {
+                    setSelectOptions(orgSel, [], 'Select organization');
+                }
             }
             async function loadProgramsForPg() {
                 try {
                     const pgId = pgSel.value;
                     const j = await cachedGet(`/erd/programs?pg_id=${encodeURIComponent(pgId)}`);
                     if (Array.isArray(j)) {
-                        const rows = j.map(r => ({...r, _label: r.name || r.program_name || r.id}));
+                        const rows = j.map(r => ({
+                            ...r,
+                            _label: r.name || r.program_name || r.id
+                        }));
                         setSelectOptionsFromData(programSel, rows, 'id', '_label', 'Select program');
                         programSel.disabled = rows.length === 0;
                     } else {
@@ -1397,15 +1410,21 @@
                 try {
                     const j = await cachedGet('/erd/cso-super-categories');
                     setSelectOptionsFromData(csoSuperSel, j || [], 'id', 'name', 'Select super category');
-                } catch { setSelectOptions(csoSuperSel, [], 'Select super category'); }
+                } catch {
+                    setSelectOptions(csoSuperSel, [], 'Select super category');
+                }
             }
             async function loadCsoTypes() {
                 try {
                     const sid = csoSuperSel.value;
-                    const j = await cachedGet(`/erd/cso-types?cso_super_category_id=${encodeURIComponent(sid)}`);
+                    const j = await cachedGet(
+                    `/erd/cso-types?cso_super_category_id=${encodeURIComponent(sid)}`);
                     setSelectOptionsFromData(csoTypeSel, j || [], 'id', 'name', 'Select CSO type');
                     csoTypeSel.disabled = !j || j.length === 0;
-                } catch { setSelectOptions(csoTypeSel, [], 'Select CSO type'); csoTypeSel.disabled = true; }
+                } catch {
+                    setSelectOptions(csoTypeSel, [], 'Select CSO type');
+                    csoTypeSel.disabled = true;
+                }
             }
 
             function toggleTierSections() {
@@ -1439,10 +1458,16 @@
                 const errEl = document.getElementById('w_errors');
                 const btn = document.getElementById('w_generate');
                 if (errors.length) {
-                    if (errEl) { errEl.style.display = ''; errEl.textContent = errors.join(' • '); }
+                    if (errEl) {
+                        errEl.style.display = '';
+                        errEl.textContent = errors.join(' • ');
+                    }
                     if (btn) btn.disabled = true;
                 } else {
-                    if (errEl) { errEl.style.display = 'none'; errEl.textContent = ''; }
+                    if (errEl) {
+                        errEl.style.display = 'none';
+                        errEl.textContent = '';
+                    }
                     if (btn) btn.disabled = false;
                 }
                 return errors.length === 0;
@@ -1454,14 +1479,42 @@
                     validateWizard();
                 });
             }
-            if (stageSel) stageSel.addEventListener('change', () => { loadIndustriesForStage(); updateSuggestedText(); validateWizard(); });
-            if (indSel) indSel.addEventListener('change', () => { loadSubindustriesForIndustry(); updateSuggestedText(); validateWizard(); });
-            if (subSel) subSel.addEventListener('change', () => { updateSuggestedText(); validateWizard(); });
-            if (pgSel) pgSel.addEventListener('change', async () => { await loadProgramsForPg(); updateSuggestedText(); validateWizard(); });
-            if (orgSel) orgSel.addEventListener('change', () => { updateSuggestedText(); validateWizard(); });
-            if (programSel) programSel.addEventListener('change', () => { updateSuggestedText(); validateWizard(); });
-            if (csoSuperSel) csoSuperSel.addEventListener('change', async () => { await loadCsoTypes(); updateSuggestedText(); validateWizard(); });
-            if (csoTypeSel) csoTypeSel.addEventListener('change', () => { updateSuggestedText(); validateWizard(); });
+            if (stageSel) stageSel.addEventListener('change', () => {
+                loadIndustriesForStage();
+                updateSuggestedText();
+                validateWizard();
+            });
+            if (indSel) indSel.addEventListener('change', () => {
+                loadSubindustriesForIndustry();
+                updateSuggestedText();
+                validateWizard();
+            });
+            if (subSel) subSel.addEventListener('change', () => {
+                updateSuggestedText();
+                validateWizard();
+            });
+            if (pgSel) pgSel.addEventListener('change', async () => {
+                await loadProgramsForPg();
+                updateSuggestedText();
+                validateWizard();
+            });
+            if (orgSel) orgSel.addEventListener('change', () => {
+                updateSuggestedText();
+                validateWizard();
+            });
+            if (programSel) programSel.addEventListener('change', () => {
+                updateSuggestedText();
+                validateWizard();
+            });
+            if (csoSuperSel) csoSuperSel.addEventListener('change', async () => {
+                await loadCsoTypes();
+                updateSuggestedText();
+                validateWizard();
+            });
+            if (csoTypeSel) csoTypeSel.addEventListener('change', () => {
+                updateSuggestedText();
+                validateWizard();
+            });
 
             // Initial loads
             loadStages();
