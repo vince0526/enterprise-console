@@ -45,6 +45,8 @@ class Kernel extends HttpKernel
             // \Laravel\Sanctum\Http\Middleware\EnsureFrontendRequestsAreStateful::class,
             \Illuminate\Routing\Middleware\ThrottleRequests::class.':api',
             \Illuminate\Routing\Middleware\SubstituteBindings::class,
+            // Development-only auto login (no effect outside local env)
+            \App\Http\Middleware\DevAutoLogin::class,
         ],
     ];
 
@@ -64,5 +66,7 @@ class Kernel extends HttpKernel
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
         'verified' => \Illuminate\Auth\Middleware\EnsureEmailIsVerified::class,
         'dev.override' => \App\Http\Middleware\EnsureDevOverrideEnabled::class,
+        // Development-only: auto-login a user locally (alias)
+        'dev.autologin' => \App\Http\Middleware\DevAutoLogin::class,
     ];
 }
