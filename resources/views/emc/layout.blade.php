@@ -101,9 +101,9 @@
                 <li class="nav__item">
                     <!-- Theme controls -->
                     <div class="theme-switcher">
-                        <button type="button" class="btn btn--small" id="theme-toggle"
+                        <button type="button" class="btn btn--small" id="theme-toggle" aria-pressed="false"
                             title="Toggle theme">Theme</button>
-                        <select id="accent-select" class="form__select" style="width:auto" title="Accent color">
+                        <select id="accent-select" class="form__select w-auto" title="Accent color">
                             <option value="blue">Blue</option>
                             <option value="teal">Teal</option>
                             <option value="violet">Violet</option>
@@ -234,7 +234,10 @@
             function moveIndicator() {
                 if (!navViewport || !navIndicator) return;
                 const active = navViewport.querySelector('.nav__link--active');
-                if (!active) { navIndicator.style.width = 0; return; }
+                if (!active) {
+                    navIndicator.style.width = 0;
+                    return;
+                }
                 const rect = active.getBoundingClientRect();
                 const parentRect = navViewport.getBoundingClientRect();
                 navIndicator.style.left = (rect.left - parentRect.left) + 'px';
@@ -243,15 +246,36 @@
             moveIndicator();
             window.addEventListener('resize', moveIndicator);
             const obs = new MutationObserver(moveIndicator);
-            if (navViewport) obs.observe(navViewport, { attributes: true, subtree: true, attributeFilter: ['class'] });
+            if (navViewport) obs.observe(navViewport, {
+                attributes: true,
+                subtree: true,
+                attributeFilter: ['class']
+            });
 
             function smoothScroll(dir) {
                 if (!navViewport) return;
-                navViewport.scrollBy({ left: (dir < 0 ? -240 : 240), behavior: 'smooth' });
+                navViewport.scrollBy({
+                    left: (dir < 0 ? -240 : 240),
+                    behavior: 'smooth'
+                });
                 setTimeout(moveIndicator, 280);
             }
             if (scrollPrev) scrollPrev.addEventListener('click', () => smoothScroll(-1));
             if (scrollNext) scrollNext.addEventListener('click', () => smoothScroll(1));
+
+                function updateScrollButtons() {
+                    if (!navViewport) return;
+                    const maxScrollLeft = navViewport.scrollWidth - navViewport.clientWidth;
+                    const atStart = navViewport.scrollLeft <= 0;
+                    const atEnd = navViewport.scrollLeft >= maxScrollLeft - 2;
+                    if (scrollPrev) scrollPrev.style.visibility = atStart ? 'hidden' : 'visible';
+                    if (scrollNext) scrollNext.style.visibility = atEnd ? 'hidden' : 'visible';
+                }
+                updateScrollButtons();
+                if (navViewport) navViewport.addEventListener('scroll', () => {
+                    updateScrollButtons();
+                    moveIndicator();
+                }, { passive: true });
         });
     </script>
     @stack('scripts')
