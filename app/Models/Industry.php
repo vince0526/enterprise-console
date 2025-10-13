@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @phpstan-use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\IndustryFactory>
+ */
 class Industry extends Model
 {
     use HasFactory;
@@ -15,10 +18,13 @@ class Industry extends Model
     protected $fillable = ['industry_name', 'notes'];
 
     /**
-     * @phpstan-return HasMany<\App\Models\Subindustry, \App\Models\Industry>
+     * @return HasMany<\App\Models\Subindustry, \App\Models\Industry>
      */
     public function subindustries(): HasMany
     {
-        return $this->hasMany(Subindustry::class);
+        /** @var HasMany<\App\Models\Subindustry, \App\Models\Industry> $relation */
+        $relation = $this->hasMany(Subindustry::class);
+
+        return $relation;
     }
 }

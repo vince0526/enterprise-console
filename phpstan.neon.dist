@@ -11,3 +11,27 @@ parameters:
     -
       message: '#^Class App\\Models\\DevOverrideLog uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
       path: app/Models/DevOverrideLog.php
+    -
+      message: '#^Class App\\Models\\CsoSuperCategory uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
+      path: app/Models/CsoSuperCategory.php
+    -
+      message: '#^Class App\\Models\\CsoType uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
+      path: app/Models/CsoType.php
+    -
+      message: '#^Class App\\Models\\GovOrg uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
+      path: app/Models/GovOrg.php
+    -
+      message: '#^Class App\\Models\\Industry uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
+      path: app/Models/Industry.php
+    -
+      message: '#^Class App\\Models\\Program uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
+      path: app/Models/Program.php
+    -
+      message: '#^Class App\\Models\\PublicGood uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
+      path: app/Models/PublicGood.php
+    -
+      message: '#^Class App\\Models\\Subindustry uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
+      path: app/Models/Subindustry.php
+    -
+      message: '#^Class App\\Models\\ValueChainStage uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
+      path: app/Models/ValueChainStage.php

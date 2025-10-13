@@ -8,6 +8,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @phpstan-use \Illuminate\Database\Eloquent\Factories\HasFactory<\Database\Factories\SubindustryFactory>
+ */
 class Subindustry extends Model
 {
     use HasFactory;
@@ -15,10 +18,13 @@ class Subindustry extends Model
     protected $fillable = ['industry_id', 'subindustry_name'];
 
     /**
-     * @phpstan-return BelongsTo<\App\Models\Industry, \App\Models\Subindustry>
+     * @return BelongsTo<\App\Models\Industry, \App\Models\Subindustry>
      */
     public function industry(): BelongsTo
     {
-        return $this->belongsTo(Industry::class);
+        /** @var BelongsTo<\App\Models\Industry, \App\Models\Subindustry> $relation */
+        $relation = $this->belongsTo(Industry::class);
+
+        return $relation;
     }
 }
