@@ -73,7 +73,12 @@
       "@php artisan ide-helper:generate",
       "@php artisan ide-helper:models --nowrite",
       "@php artisan ide-helper:meta"
-    ]
+    ],
+    "ide-helper:fast": [
+      "@php artisan ide-helper:generate",
+      "@php artisan ide-helper:models --nowrite"
+    ],
+    "ide-helper:meta": "@php artisan ide-helper:meta"
   },
   "extra": {
     "laravel": {
