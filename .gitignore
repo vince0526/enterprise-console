@@ -26,6 +26,11 @@ Homestead.yaml
 Thumbs.db
 *.txt
 
+# IDE Helper (dev-only generated files)
+_ide_helper.php
+_ide_helper_models.php
+.phpstorm.meta.php
+
 # Documentation extraction temp artifacts
 temp_doc_raw.xml
 temp_docx/
