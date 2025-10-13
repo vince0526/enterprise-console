@@ -100,7 +100,7 @@
             <ul class="nav__list" role="list">
                 <li class="nav__item">
                     <!-- Theme controls -->
-                    <div class="theme-switcher" style="display:flex;align-items:center;gap:.5rem;">
+                    <div class="theme-switcher">
                         <button type="button" class="btn btn--small" id="theme-toggle"
                             title="Toggle theme">Theme</button>
                         <select id="accent-select" class="form__select" style="width:auto" title="Accent color">
@@ -204,6 +204,10 @@
             const root = document.documentElement;
             const themeBtn = document.getElementById('theme-toggle');
             const accentSel = document.getElementById('accent-select');
+            const navViewport = document.getElementById('top-nav-viewport');
+            const navIndicator = document.getElementById('nav-indicator');
+            const scrollPrev = document.querySelector('.nav__scroll--prev');
+            const scrollNext = document.querySelector('.nav__scroll--next');
             if (themeBtn) {
                 themeBtn.addEventListener('click', function() {
                     const prefersLight = window.matchMedia && window.matchMedia(
@@ -226,6 +230,28 @@
                     } catch (e) {}
                 });
             }
+
+            function moveIndicator() {
+                if (!navViewport || !navIndicator) return;
+                const active = navViewport.querySelector('.nav__link--active');
+                if (!active) { navIndicator.style.width = 0; return; }
+                const rect = active.getBoundingClientRect();
+                const parentRect = navViewport.getBoundingClientRect();
+                navIndicator.style.left = (rect.left - parentRect.left) + 'px';
+                navIndicator.style.width = rect.width + 'px';
+            }
+            moveIndicator();
+            window.addEventListener('resize', moveIndicator);
+            const obs = new MutationObserver(moveIndicator);
+            if (navViewport) obs.observe(navViewport, { attributes: true, subtree: true, attributeFilter: ['class'] });
+
+            function smoothScroll(dir) {
+                if (!navViewport) return;
+                navViewport.scrollBy({ left: (dir < 0 ? -240 : 240), behavior: 'smooth' });
+                setTimeout(moveIndicator, 280);
+            }
+            if (scrollPrev) scrollPrev.addEventListener('click', () => smoothScroll(-1));
+            if (scrollNext) scrollNext.addEventListener('click', () => smoothScroll(1));
         });
     </script>
     @stack('scripts')
