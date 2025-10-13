@@ -78,7 +78,10 @@
       "@php artisan ide-helper:generate",
       "@php artisan ide-helper:models --nowrite"
     ],
-    "ide-helper:meta": "@php artisan ide-helper:meta"
+    "ide-helper:meta": "@php artisan ide-helper:meta",
+    "ide-helper:meta:win": [
+      "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/ide-helper-meta.ps1"
+    ]
   },
   "extra": {
     "laravel": {

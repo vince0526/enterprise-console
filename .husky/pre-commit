@@ -1,5 +1,4 @@
 #!/usr/bin/env sh
-
-# Husky v9+: no need to source _/husky.sh (deprecated). Keep script minimal.
-command -v npx >/dev/null 2>&1 || { echo >&2 "npx not found"; exit 1; }
-npx --no-install lint-staged
+# Husky v9 pre-commit hook
+# Run lint-staged (Prettier + Pint on staged files)
+npx lint-staged
