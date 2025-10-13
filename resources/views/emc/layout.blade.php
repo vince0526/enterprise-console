@@ -14,6 +14,22 @@
     <link rel="stylesheet" href="{{ asset('css/emc.css') }}">
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
+    <script>
+        // Initialize theme from local storage before paint
+        (function() {
+            try {
+                const root = document.documentElement;
+                const savedTheme = localStorage.getItem('emc.theme');
+                const savedAccent = localStorage.getItem('emc.accent');
+                const savedNeutral = localStorage.getItem('emc.neutral');
+                if (savedTheme) root.setAttribute('data-theme', savedTheme);
+                if (savedAccent) root.setAttribute('data-accent', savedAccent);
+                if (savedNeutral) root.setAttribute('data-neutral', savedNeutral);
+            } catch (e) {
+                /* no-op */
+            }
+        })();
+    </script>
     @stack('head')
 </head>
 
@@ -129,53 +145,10 @@
                     </a>
                 </li>
                 <li class="nav__item">
-                    <a href="{{ route('emc.ai') }}" <script>
-                        // Initialize theme from local storage before paint if possible
-                        (function() {
-                            try {
-                                const root = document.documentElement;
-                                const savedTheme = localStorage.getItem('emc.theme');
-                                const savedAccent = localStorage.getItem('emc.accent');
-                                const savedNeutral = localStorage.getItem('emc.neutral');
-                                if (savedTheme) root.setAttribute('data-theme', savedTheme);
-                                if (savedAccent) root.setAttribute('data-accent', savedAccent);
-                                if (savedNeutral) root.setAttribute('data-neutral', savedNeutral);
-                            } catch (e) {
-                                /* no-op */ }
-                        })();
-                        document.addEventListener('DOMContentLoaded', function() {
-                            const root = document.documentElement;
-                            const themeBtn = document.getElementById('theme-toggle');
-                            const accentSel = document.getElementById('accent-select');
-                            if (themeBtn) {
-                                themeBtn.addEventListener('click', function() {
-                                    const cur = root.getAttribute('data-theme') || (window.matchMedia && window.matchMedia(
-                                        '(prefers-color-scheme: light)').matches ? 'light' : 'dark');
-                                    const next = cur === 'light' ? 'dark' : 'light';
-                                    root.setAttribute('data-theme', next);
-                                    try {
-                                        localStorage.setItem('emc.theme', next);
-                                    } catch (e) {}
-                                });
-                            }
-                            if (accentSel) {
-                                // hydrate selection
-                                const saved = root.getAttribute('data-accent') || 'blue';
-                                accentSel.value = saved;
-                                accentSel.addEventListener('change', function() {
-                                    root.setAttribute('data-accent', this.value);
-                                    try {
-                                        localStorage.setItem('emc.accent', this.value);
-                                    } catch (e) {}
-                                });
-                            }
-                        });
-                    </script>
-                    class="nav__link {{ request()->routeIs('emc.ai') ? 'nav__link--active' : '' }}"
-                    @if (request()->routeIs('emc.ai'))
-                        aria-current="page"
-                    @endif>
-                    Artificial Intelligence Access
+                    <a href="{{ route('emc.ai') }}"
+                        class="nav__link {{ request()->routeIs('emc.ai') ? 'nav__link--active' : '' }}"
+                        @if (request()->routeIs('emc.ai')) aria-current="page" @endif>
+                        Artificial Intelligence Access
                     </a>
                 </li>
                 <li class="nav__item">
@@ -226,6 +199,35 @@
 
     <!-- Scripts -->
     <script src="{{ asset('js/emc.js') }}" defer></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const root = document.documentElement;
+            const themeBtn = document.getElementById('theme-toggle');
+            const accentSel = document.getElementById('accent-select');
+            if (themeBtn) {
+                themeBtn.addEventListener('click', function() {
+                    const prefersLight = window.matchMedia && window.matchMedia(
+                        '(prefers-color-scheme: light)').matches;
+                    const cur = root.getAttribute('data-theme') || (prefersLight ? 'light' : 'dark');
+                    const next = cur === 'light' ? 'dark' : 'light';
+                    root.setAttribute('data-theme', next);
+                    try {
+                        localStorage.setItem('emc.theme', next);
+                    } catch (e) {}
+                });
+            }
+            if (accentSel) {
+                const saved = root.getAttribute('data-accent') || 'blue';
+                accentSel.value = saved;
+                accentSel.addEventListener('change', function() {
+                    root.setAttribute('data-accent', this.value);
+                    try {
+                        localStorage.setItem('emc.accent', this.value);
+                    } catch (e) {}
+                });
+            }
+        });
+    </script>
     @stack('scripts')
 </body>
 
