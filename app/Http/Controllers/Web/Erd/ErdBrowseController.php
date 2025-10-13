@@ -17,7 +17,7 @@ use Illuminate\Http\Request;
 
 class ErdBrowseController extends Controller
 {
-    public function industries(Request $request)
+    public function industries(Request $request): \Illuminate\Http\JsonResponse
     {
         $qb = Industry::query();
         if ($request->filled('q')) {
@@ -31,7 +31,7 @@ class ErdBrowseController extends Controller
         return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
-    public function subindustries(Request $request)
+    public function subindustries(Request $request): \Illuminate\Http\JsonResponse
     {
         $qb = Subindustry::with('industry');
         if ($request->filled('industry_id')) {
@@ -48,7 +48,7 @@ class ErdBrowseController extends Controller
         return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
-    public function stages(Request $request)
+    public function stages(Request $request): \Illuminate\Http\JsonResponse
     {
         $qb = ValueChainStage::query();
         if ($request->filled('q')) {
@@ -62,7 +62,7 @@ class ErdBrowseController extends Controller
         return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
-    public function publicGoods(Request $request)
+    public function publicGoods(Request $request): \Illuminate\Http\JsonResponse
     {
         $qb = PublicGood::query();
         if ($request->filled('q')) {
@@ -76,7 +76,7 @@ class ErdBrowseController extends Controller
         return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
-    public function programs(Request $request)
+    public function programs(Request $request): \Illuminate\Http\JsonResponse
     {
         $qb = Program::query();
         if ($request->filled('pg_id')) {
@@ -95,7 +95,7 @@ class ErdBrowseController extends Controller
         return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
-    public function govOrgs(Request $request)
+    public function govOrgs(Request $request): \Illuminate\Http\JsonResponse
     {
         $qb = GovOrg::query();
         if ($request->filled('q')) {
@@ -121,7 +121,7 @@ class ErdBrowseController extends Controller
         return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
-    public function csoSuperCategories(Request $request)
+    public function csoSuperCategories(Request $request): \Illuminate\Http\JsonResponse
     {
         $qb = CsoSuperCategory::query();
         if ($request->filled('q')) {
@@ -135,7 +135,7 @@ class ErdBrowseController extends Controller
         return $resp->header('Cache-Control', 'public, max-age=60');
     }
 
-    public function csoTypes(Request $request)
+    public function csoTypes(Request $request): \Illuminate\Http\JsonResponse
     {
         $qb = CsoType::query();
         if ($request->filled('cso_super_category_id')) {

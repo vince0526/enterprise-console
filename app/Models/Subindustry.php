@@ -6,6 +6,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Subindustry extends Model
 {
@@ -13,7 +14,10 @@ class Subindustry extends Model
 
     protected $fillable = ['industry_id', 'subindustry_name'];
 
-    public function industry()
+    /**
+     * @phpstan-return BelongsTo<\App\Models\Industry, \App\Models\Subindustry>
+     */
+    public function industry(): BelongsTo
     {
         return $this->belongsTo(Industry::class);
     }
