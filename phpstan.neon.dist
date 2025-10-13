@@ -9,14 +9,14 @@ parameters:
   reportUnmatchedIgnoredErrors: true
   ignoreErrors:
     -
-      message: '#^Class App\\Models\\DevOverrideLog uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
-      path: app/Models/DevOverrideLog.php
-    -
       message: '#^Class App\\Models\\CsoSuperCategory uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
       path: app/Models/CsoSuperCategory.php
     -
       message: '#^Class App\\Models\\CsoType uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
       path: app/Models/CsoType.php
+    -
+      message: '#^Class App\\Models\\DevOverrideLog uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
+      path: app/Models/DevOverrideLog.php
     -
       message: '#^Class App\\Models\\GovOrg uses generic trait Illuminate\\Database\\Eloquent\\Factories\\HasFactory but does not specify its types: TFactory$#'
       path: app/Models/GovOrg.php
