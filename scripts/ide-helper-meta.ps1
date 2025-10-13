@@ -16,7 +16,8 @@ if ($hadEnv) {
             CreationTimeUtc  = $origFile.CreationTimeUtc
             LastWriteTimeUtc = $origFile.LastWriteTimeUtc
         }
-    } catch { }
+    }
+    catch { }
 }
 
 # Minimal safe .env content to satisfy phpdotenv while keeping app side-effects minimal
@@ -42,16 +43,18 @@ try {
 finally {
     if (Test-Path $backupPath) {
         # Restore original .env content and timestamps when possible to avoid watcher restarts
-        if (Test-Path $envPath) { Remove-Item -Force $envPath }
-        Move-Item -Force $backupPath $envPath
+        # Avoid deleting .env to prevent brief missing window observed by file watchers
+        Copy-Item -Force $backupPath $envPath
+        Remove-Item -Force $backupPath
         if ($origTimes) {
             try {
                 $envFile = Get-Item $envPath
-                $envFile.CreationTime     = $origTimes.CreationTime
-                $envFile.LastWriteTime    = $origTimes.LastWriteTime
-                $envFile.CreationTimeUtc  = $origTimes.CreationTimeUtc
+                $envFile.CreationTime = $origTimes.CreationTime
+                $envFile.LastWriteTime = $origTimes.LastWriteTime
+                $envFile.CreationTimeUtc = $origTimes.CreationTimeUtc
                 $envFile.LastWriteTimeUtc = $origTimes.LastWriteTimeUtc
-            } catch { }
+            }
+            catch { }
         }
     }
     else {
