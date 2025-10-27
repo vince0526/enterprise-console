@@ -24,7 +24,7 @@ jobs:
           cp docs/modules-outline-numbered-level5-updated-new.docx docs/modules.docx
           python tools/python-docx-sample/edit_docx.py
       - name: Upload generated docs
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: generated-docs-scheduled
           path: |
