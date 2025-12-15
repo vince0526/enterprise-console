@@ -37,7 +37,7 @@ jobs:
           python scripts/env_setup_md_to_docx.py
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: environment-setup-docx
           path: docs/environment-setup.docx
