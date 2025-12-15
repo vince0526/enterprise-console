@@ -33,7 +33,7 @@ jobs:
           python scripts/generate-all-docs.py
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v6
         with:
           name: all-docx
           path: |
