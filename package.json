@@ -23,7 +23,7 @@
     "lint-staged": "^16.2.7",
     "markdownlint-cli": "^0.47.0",
     "postcss": "^8.4.47",
-    "prettier": "^3.7.4",
+    "prettier": "^3.8.1",
     "tailwindcss": "^4.1.18",
     "vite": "^7.3.1"
   },
