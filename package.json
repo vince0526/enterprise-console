@@ -19,7 +19,7 @@
     "autoprefixer": "^10.4.23",
     "axios": "^1.13.3",
     "husky": "^9.1.6",
-    "laravel-vite-plugin": "^2.0.1",
+    "laravel-vite-plugin": "^2.1.0",
     "lint-staged": "^16.2.7",
     "markdownlint-cli": "^0.47.0",
     "postcss": "^8.4.47",
