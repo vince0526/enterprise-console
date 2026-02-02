@@ -17,7 +17,7 @@
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^5.1.2",
     "autoprefixer": "^10.4.23",
-    "axios": "^1.13.3",
+    "axios": "^1.13.4",
     "husky": "^9.1.6",
     "laravel-vite-plugin": "^2.1.0",
     "lint-staged": "^16.2.7",
