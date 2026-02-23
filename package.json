@@ -15,7 +15,7 @@
     "@tailwindcss/postcss": "^4.2.0",
     "@types/react": "^19.2.14",
     "@types/react-dom": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.3",
+    "@vitejs/plugin-react": "^5.1.4",
     "autoprefixer": "^10.4.24",
     "axios": "^1.13.5",
     "husky": "^9.1.6",
