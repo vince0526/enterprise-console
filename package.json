@@ -28,7 +28,7 @@
     "vite": "^8.2.1"
   },
   "dependencies": {
-    "alpinejs": "^3.15.12",
+    "alpinejs": "^3.16.2",
     "react": "^19.2.7",
     "react-dom": "^19.2.8"
   },
